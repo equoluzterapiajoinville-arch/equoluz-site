@@ -829,7 +829,135 @@ async function promoteSocialToChildReal(id){
   }
 }
 
-const _oldSubmitForm=window.submitForm;
+async function editSocialReal(id){
+
+  const item=(state.social||[]).find(
+    x=>String(x.id)===String(id)
+  );
+
+  if(!item){
+    alert('Cadastro não encontrado.');
+    return;
+  }
+
+  if(!item.childId){
+    alert('Este cadastro não possui uma criança vinculada no banco.');
+    return;
+  }
+
+  const nome=prompt(
+    'Nome da criança:',
+    item.crianca||''
+  );
+
+  if(nome===null) return;
+
+  const resp=prompt(
+    'Nome do responsável:',
+    item.responsavel||''
+  );
+
+  if(resp===null) return;
+
+  const phone=prompt(
+    'WhatsApp:',
+    item.whatsapp||''
+  );
+
+  if(phone===null) return;
+
+  const email=prompt(
+    'E-mail:',
+    item.email||''
+  );
+
+  if(email===null) return;
+
+  const nascimento=prompt(
+    'Data de nascimento (AAAA-MM-DD):',
+    item.nascimento||''
+  );
+
+  if(nascimento===null) return;
+
+  const local=prompt(
+    'Cidade / bairro:',
+    item.localidade||''
+  );
+
+  if(local===null) return;
+
+  const obs=prompt(
+    'Observações:',
+    item.observacoes||''
+  );
+
+  if(obs===null) return;
+
+  try{
+
+    const parts=String(local).split('/');
+
+    const city=
+      (parts.shift()||'').trim()||null;
+
+    const neighborhood=
+      parts.join('/').trim()||null;
+
+    // Atualiza os dados da criança.
+    const {error:ce}=await equoluzSupabase
+      .from('children')
+      .update({
+        name:nome.trim(),
+        birth_date:nascimento||null,
+        city,
+        neighborhood,
+        notes:obs.trim()||null
+      })
+      .eq('id',item.childId);
+
+    if(ce) throw ce;
+
+    // Atualiza os dados do responsável.
+    if(item.responsibleId){
+
+      const {error:re}=await equoluzSupabase
+        .from('responsibles')
+        .update({
+          name:resp.trim(),
+          phone:phone.trim(),
+          email:email.trim()||null
+        })
+        .eq('id',item.responsibleId);
+
+      if(re) throw re;
+    }
+
+    // Atualiza as observações do cadastro social.
+    const {error:we}=await equoluzSupabase
+      .from('social_waitlist')
+      .update({
+        important_needs:obs.trim()||null,
+        updated_at:new Date().toISOString()
+      })
+      .eq('id',id);
+
+    if(we) throw we;
+
+    await syncSocialWaitlistFromSupabase();
+    await syncChildrenFromSupabase();
+
+    alert('Cadastro da Lista Social atualizado.');
+
+  }catch(err){
+
+    alert(
+      'Não foi possível editar: '+
+      (err.message||err)
+    );
+
+  }
+}const _oldSubmitForm=window.submitForm;
 window.submitForm=async function(e,successId,type){
   if(type==='social'){
     e.preventDefault();
