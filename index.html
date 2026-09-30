@@ -255,6 +255,62 @@ function addAacContractForm(e){
 function fillAacContractClient(){const id=Number(document.getElementById('aacContractClient').value||0);const c=getAacClients().find(x=>x.id===id);if(!c)return;document.getElementById('aacContractName').value=c.name||'';document.getElementById('aacContractResponsible').value=c.responsible||'';document.getElementById('aacContractPhone').value=c.phone||'';if(c.email){}document.getElementById('aacContractNotes').value=c.notes||''}
 function removeAacContract(id){state.aacContracts=getAacContracts().filter(x=>String(x.id)!==String(id));const client=state.aacClients.find(x=>String(x.contractId)===String(id));if(client){client.contractId=null;client.status='Pré-cadastro';client.frequency=null;client.value=null;client.modality=null}persistAacData('Contrato AAC excluído');updateAacDashboard();render()}
 function addFinanceForm(e){e.preventDefault();equoluzFinance.add({kind:finKind.value,value:Number(finValue.value),category:finCategory.value,description:finDescription.value,date:finDate.value});save('Lançamento financeiro social registrado');e.target.reset();finDate.value=new Date().toISOString().slice(0,10);render()}
+/* EQUOLUZ PRODUÇÃO — persistência do site no Supabase */
+function getSitePayload(){
+  const st=JSON.parse(JSON.stringify(state.site||{}));
+  if(st.images){
+    st.images=Object.fromEntries(Object.entries(st.images).filter(([k,v])=>typeof v==='string' && !v.startsWith('data:')));
+  }
+  return st;
+}
+async function loadSiteSettingsFromSupabase(){
+  if(!window.equoluzSupabase) return;
+  try{
+    const {data,error}=await equoluzSupabase.from('site_settings').select('settings').eq('id',1).maybeSingle();
+    if(error) throw error;
+    if(data && data.settings && typeof data.settings==='object' && Object.keys(data.settings).length){
+      state.site=Object.assign({},state.site||{},data.settings);
+      localStorage.setItem(KEY,JSON.stringify(state));
+      applySiteSettings();
+      fillSiteTextFields();
+    }
+  }catch(err){ console.warn('Site Supabase: leitura indisponível.',err.message||err); }
+}
+async function saveSiteSettingsToSupabase(action){
+  if(!window.equoluzSupabase) throw new Error('Supabase não carregado.');
+  const {data:{user},error:ue}=await equoluzSupabase.auth.getUser();
+  if(ue || !user) throw new Error('Faça login como Administrador para publicar alterações.');
+  const payload=getSitePayload();
+  const {error}=await equoluzSupabase.from('site_settings').upsert({id:1,settings:payload,updated_by:user.id,updated_at:new Date().toISOString()},{onConflict:'id'});
+  if(error) throw error;
+  try{state.audit=Array.isArray(state.audit)?state.audit:[];state.audit.push({id:Date.now(),date:new Date().toISOString(),action});localStorage.setItem(KEY,JSON.stringify(state));}catch(e){}
+}
+function dataUrlToBlob(dataUrl){const parts=dataUrl.split(',');const mime=(parts[0].match(/:(.*?);/)||[])[1]||'application/octet-stream';const bin=atob(parts[1]);const arr=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)arr[i]=bin.charCodeAt(i);return new Blob([arr],{type:mime});}
+async function uploadSiteImagesToSupabase(){
+  if(!window.equoluzSupabase) throw new Error('Supabase não carregado.');
+  const {data:{user},error:ue}=await equoluzSupabase.auth.getUser();
+  if(ue || !user) throw new Error('Faça login como Administrador para publicar imagens.');
+  state.site=state.site||{};state.site.images=state.site.images||{};
+  const keys=['boneca','babaloo','logo','capa'];
+  for(const key of keys){
+    const value=state.site.images[key];
+    if(!value || !String(value).startsWith('data:')) continue;
+    const blob=dataUrlToBlob(value);
+    const ext=key==='logo'?'png':'jpg';
+    const path=key+'.'+ext;
+    const {error}=await equoluzSupabase.storage.from('site-media').upload(path,blob,{upsert:true,contentType:blob.type||('image/'+ext),cacheControl:'3600'});
+    if(error) throw error;
+    const {data}=equoluzSupabase.storage.from('site-media').getPublicUrl(path);
+    state.site.images[key]=data.publicUrl;
+  }
+}
+async function publishSiteSettings(action){
+  await saveSiteSettingsToSupabase(action);
+  localStorage.setItem(KEY,JSON.stringify(state));
+  applySiteSettings();
+}
+/* Fim da camada de produção */
+
 function saveSiteText(){state.site=state.site||{};state.site.title=siteTitle.value;state.site.lead=siteLead.value;save('Textos principais do site alterados');applySiteSettings();alert('Textos principais salvos.')}
 function saveSiteSocialText(){state.site=state.site||{};state.site.social={title:siteSocialTitle.value,lead:siteSocialLead.value,card1Title:siteSocialCard1Title.value,card1Text:siteSocialCard1Text.value,card2Title:siteSocialCard2Title.value,card2Text:siteSocialCard2Text.value,card3Title:siteSocialCard3Title.value,card3Text:siteSocialCard3Text.value};save('Textos do Instituto Equoluz alterados');applySiteSettings();alert('Textos do Instituto Equoluz salvos.')}
 function saveSiteAacText(){state.site=state.site||{};state.site.aac={title:siteAacTitle.value,lead:siteAacLead.value,card1Title:siteAacCard1Title.value,card1Text:siteAacCard1Text.value,card2Title:siteAacCard2Title.value,card2Text:siteAacCard2Text.value,card3Title:siteAacCard3Title.value,card3Text:siteAacCard3Text.value};save('Textos do Equoluz AAC alterados');applySiteSettings();alert('Textos do Equoluz AAC salvos.')}
@@ -263,8 +319,16 @@ function compressSiteImage(file,key){return new Promise((resolve,reject)=>{const
 async function loadSiteImage(e,key){const f=e.target.files[0];if(!f)return;try{state.site=state.site||{};state.site.images=state.site.images||{};const data=await compressSiteImage(f,key);state.site.images[key]=data;const img=document.getElementById('preview'+key.charAt(0).toUpperCase()+key.slice(1));if(img){img.src=data;img.style.display='block'}}catch(err){alert('Não foi possível carregar esta imagem.');console.error(err)}}
 function fillSiteTextFields(){const st=state.site||{},social=st.social||{},aac=st.aac||{};const vals={siteTitle:st.title,siteLead:st.lead,siteSocialTitle:social.title,siteSocialLead:social.lead,siteSocialCard1Title:social.card1Title,siteSocialCard1Text:social.card1Text,siteSocialCard2Title:social.card2Title,siteSocialCard2Text:social.card2Text,siteSocialCard3Title:social.card3Title,siteSocialCard3Text:social.card3Text,siteAacTitle:aac.title,siteAacLead:aac.lead,siteAacCard1Title:aac.card1Title,siteAacCard1Text:aac.card1Text,siteAacCard2Title:aac.card2Title,siteAacCard2Text:aac.card2Text,siteAacCard3Title:aac.card3Title,siteAacCard3Text:aac.card3Text};Object.keys(vals).forEach(id=>{const el=document.getElementById(id);if(el&&vals[id]!==undefined&&vals[id]!==null)el.value=vals[id]})}
 function fillSiteImagePreviews(){const imgs=(state.site&&state.site.images)||{};['boneca','babaloo','logo','capa'].forEach(key=>{const data=imgs[key];const el=document.getElementById('preview'+key.charAt(0).toUpperCase()+key.slice(1));if(el&&data){el.src=data;el.style.display='block'}})}
-function saveSiteImages(){try{save('Imagens do site alteradas');applySiteSettings();alert('Imagens salvas. Elas agora aparecem na página inicial deste navegador.');}catch(err){alert('As imagens são grandes demais para o armazenamento local. Tente fotos menores.');console.error(err)}}
+async function saveSiteImages(){try{await uploadSiteImagesToSupabase();await publishSiteSettings('Imagens do site alteradas');fillSiteImagePreviews();applySiteSettings();alert('Imagens publicadas com sucesso. Agora aparecem para todos os visitantes.');}catch(err){localStorage.setItem(KEY,JSON.stringify(state));applySiteSettings();alert('Não foi possível publicar as imagens: '+(err.message||err));console.error('Equoluz · publicação de imagens:',err)}}
 function saveBrand(){state.site=state.site||{};state.site.pink=sitePink.value;state.site.blue=siteBlue.value;save('Identidade visual alterada');document.documentElement.style.setProperty('--pink',state.site.pink);document.documentElement.style.setProperty('--blue',state.site.blue);alert('Identidade visual salva no protótipo.')}
+/* Overrides de produção: salvam também no Supabase */
+window.saveSiteText=async function(){state.site=state.site||{};state.site.title=siteTitle.value;state.site.lead=siteLead.value;try{await publishSiteSettings('Textos principais do site alterados');alert('Textos principais publicados com sucesso.');}catch(err){localStorage.setItem(KEY,JSON.stringify(state));applySiteSettings();alert('Não foi possível publicar no Supabase: '+(err.message||err));}};
+window.saveSiteSocialText=async function(){state.site=state.site||{};state.site.social={title:siteSocialTitle.value,lead:siteSocialLead.value,card1Title:siteSocialCard1Title.value,card1Text:siteSocialCard1Text.value,card2Title:siteSocialCard2Title.value,card2Text:siteSocialCard2Text.value,card3Title:siteSocialCard3Title.value,card3Text:siteSocialCard3Text.value};try{await publishSiteSettings('Textos do Instituto Equoluz alterados');alert('Textos do Instituto Equoluz publicados com sucesso.');}catch(err){localStorage.setItem(KEY,JSON.stringify(state));applySiteSettings();alert('Não foi possível publicar no Supabase: '+(err.message||err));}};
+window.saveSiteAacText=async function(){state.site=state.site||{};state.site.aac={title:siteAacTitle.value,lead:siteAacLead.value,card1Title:siteAacCard1Title.value,card1Text:siteAacCard1Text.value,card2Title:siteAacCard2Title.value,card2Text:siteAacCard2Text.value,card3Title:siteAacCard3Title.value,card3Text:siteAacCard3Text.value};try{await publishSiteSettings('Textos do Equoluz AAC alterados');alert('Textos do Equoluz AAC publicados com sucesso.');}catch(err){localStorage.setItem(KEY,JSON.stringify(state));applySiteSettings();alert('Não foi possível publicar no Supabase: '+(err.message||err));}};
+window.saveSiteContact=async function(){state.site=state.site||{};state.site.whatsapp=siteWhatsapp.value;state.site.email=siteEmail.value;state.site.instagram=siteInstagram.value;state.site.hours=siteHours.value;try{await publishSiteSettings('Contatos do site alterados');alert('Contatos publicados com sucesso.');}catch(err){localStorage.setItem(KEY,JSON.stringify(state));alert('Não foi possível publicar no Supabase: '+(err.message||err));}};
+window.saveBrand=async function(){state.site=state.site||{};state.site.pink=sitePink.value;state.site.blue=siteBlue.value;try{await publishSiteSettings('Identidade visual alterada');document.documentElement.style.setProperty('--pink',state.site.pink);document.documentElement.style.setProperty('--blue',state.site.blue);alert('Identidade visual publicada com sucesso.');}catch(err){localStorage.setItem(KEY,JSON.stringify(state));alert('Não foi possível publicar no Supabase: '+(err.message||err));}};
+window.saveSiteImages=async function(){try{await uploadSiteImagesToSupabase();await publishSiteSettings('Imagens do site alteradas');fillSiteImagePreviews();alert('Imagens publicadas com sucesso. Agora aparecem para todos os visitantes.');}catch(err){localStorage.setItem(KEY,JSON.stringify(state));applySiteSettings();alert('Não foi possível publicar as imagens: '+(err.message||err));}};
+
 function applySiteSettings(){const st=state.site||{};if(st.title&&document.querySelector('#public h1'))document.querySelector('#public h1').innerHTML=esc(st.title).replace(/\n/g,'<br>');if(st.lead&&document.querySelector('#public .lead'))document.querySelector('#public .lead').innerHTML=esc(st.lead);const social=st.social||{};const socialSec=document.getElementById('social');if(socialSec){const h=socialSec.querySelector('.sectionHead h2'),p=socialSec.querySelector('.sectionHead p'),cards=socialSec.querySelectorAll('.card');if(social.title&&h)h.textContent=social.title;if(social.lead&&p)p.textContent=social.lead;[[0,'card1Title','card1Text'],[1,'card2Title','card2Text'],[2,'card3Title','card3Text']].forEach(([i,t,d])=>{if(cards[i]){const hh=cards[i].querySelector('h3'),pp=cards[i].querySelector('p');if(social[t]&&hh)hh.textContent=social[t];if(social[d]&&pp)pp.textContent=social[d]}})}const aac=st.aac||{};const aacSec=document.getElementById('particular');if(aacSec){const h=aacSec.querySelector('.sectionHead h2'),p=aacSec.querySelector('.sectionHead p'),cards=aacSec.querySelectorAll('.card');if(aac.title&&h)h.textContent=aac.title;if(aac.lead&&p)p.innerHTML='<b>'+esc(aac.lead.split(':')[0])+':</b>'+esc(aac.lead.includes(':')?aac.lead.split(':').slice(1).join(':'):aac.lead);[[0,'card1Title','card1Text'],[1,'card2Title','card2Text'],[2,'card3Title','card3Text']].forEach(([i,t,d])=>{if(cards[i]){const hh=cards[i].querySelector('h3'),pp=cards[i].querySelector('p');if(aac[t]&&hh)hh.textContent=aac[t];if(aac[d]&&pp)pp.textContent=aac[d]}})}if(st.pink)document.documentElement.style.setProperty('--pink',st.pink);if(st.blue)document.documentElement.style.setProperty('--blue',st.blue);const imgs=st.images||{};const hero=document.querySelector('.heroVisual');const boneca=document.getElementById('publicBoneca');const babaloo=document.getElementById('publicBabaloo');if(boneca&&imgs.boneca){boneca.src=imgs.boneca;boneca.style.display='block'}if(babaloo&&imgs.babaloo){babaloo.src=imgs.babaloo;babaloo.style.display='block'}if(hero){hero.classList.toggle('hasPhotos',!!(imgs.boneca||imgs.babaloo));if(imgs.capa){hero.style.backgroundImage='linear-gradient(#0002,#0002),url("'+imgs.capa+'")';hero.style.backgroundSize='cover';hero.style.backgroundPosition='center'}}const logo=imgs.logo;if(logo){document.querySelectorAll('.logoMark').forEach(x=>{x.style.backgroundImage='url("'+logo+'")';x.style.backgroundSize='contain';x.style.backgroundRepeat='no-repeat';x.style.backgroundPosition='center';x.textContent=''})}fillSiteImagePreviews()}
 function clearDemo(){if(confirm('Apagar todos os dados demonstrativos deste navegador?')){localStorage.removeItem(KEY);location.reload()}}
 function exportCsv(){const rows=[['Tipo','Nome','Status'],...state.social.map(x=>['Instituto',x['Nome da criança']||'',x.status||'Novo cadastro']),...state.aac.map(x=>['AAC',x['Nome do participante']||'',x.status||'Novo interesse'])];const csv=rows.map(r=>r.map(v=>'"'+String(v).replaceAll('"','""')+'"').join(';')).join('\n');const blob=new Blob([csv],{type:'text/csv;charset=utf-8'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='equoluz-cadastros-v11.csv';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
@@ -386,6 +450,7 @@ render();
 initReports();
 applySiteSettings();
 fillSiteTextFields();
+loadSiteSettingsFromSupabase();
 </script>
 
 <style>
