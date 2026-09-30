@@ -132,8 +132,11 @@ async function login(e){
 
     await syncChildrenFromSupabase();
 
-    applySession();
-    showDashboard();
+   applySession();
+
+if(typeof showDashboard === 'function'){
+  showDashboard();
+}
 
     if(typeof addAudit === 'function'){
       addAudit('Login Supabase realizado · ' + session.email);
