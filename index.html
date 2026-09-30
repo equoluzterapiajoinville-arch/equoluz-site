@@ -563,14 +563,77 @@ async function addChildReal(e){
 }
 
 async function removeChildReal(id){
+
   if(!window.equoluzSupabase) return;
-  if(!confirm('Excluir este cadastro do banco?')) return;
+
+  if(!confirm(
+    'Excluir este cadastro de criança? Esta ação não poderá ser desfeita.'
+  )){
+    return;
+  }
+
   try{
-    const {error}=await equoluzSupabase.from('children').delete().eq('id',id);
-    if(error) throw error;
+
+    // Primeiro verifica se existem sessões registradas.
+    const {data:sessions,error:se}=await equoluzSupabase
+      .from('sessions')
+      .select('id')
+      .eq('child_id',id)
+      .limit(1);
+
+    if(se) throw se;
+
+    // Se houver histórico, não apagamos a criança.
+    if((sessions||[]).length){
+
+      alert(
+        'Esta criança possui sessões registradas. '+
+        'Para preservar o histórico, o cadastro não pode ser excluído.'
+      );
+
+      return;
+    }
+
+    // Remove eventual vínculo com a lista social.
+    const {error:wr}=await equoluzSupabase
+      .from('social_waitlist')
+      .delete()
+      .eq('child_id',id);
+
+    if(wr) throw wr;
+
+    // Remove o vínculo com o responsável.
+    const {error:cr}=await equoluzSupabase
+      .from('child_responsibles')
+      .delete()
+      .eq('child_id',id);
+
+    if(cr) throw cr;
+
+    // Finalmente remove a criança.
+    const {error:ce}=await equoluzSupabase
+      .from('children')
+      .delete()
+      .eq('id',id);
+
+    if(ce) throw ce;
+
     await syncChildrenFromSupabase();
-    alert('Cadastro excluído.');
-  }catch(err){alert('Não foi possível excluir: '+(err.message||err));}
+
+    if(typeof syncSocialWaitlistFromSupabase==='function'){
+      await syncSocialWaitlistFromSupabase();
+    }
+
+    alert('Cadastro excluído com sucesso.');
+
+  }catch(err){
+
+    alert(
+      'Não foi possível excluir o cadastro: '+
+      (err.message||err)
+    );
+
+  }
 }
 
 async function loadRealProfile(authUser){
