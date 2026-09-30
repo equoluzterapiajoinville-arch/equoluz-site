@@ -92,18 +92,67 @@ function save(action='Atualização do sistema'){state.audit.push({id:Date.now()
 const V8_USERS={admin:{name:'Administrador Equoluz',role:'admin'},professional:{name:'Profissional Equoluz',role:'professional'},finance:{name:'Diretor Financeiro',role:'finance'}};
 function openLogin(){const g=document.getElementById('loginGate');if(!g)return;g.classList.remove('hidden');g.classList.add('login-open');g.style.removeProperty('display');g.style.setProperty('display','grid','important');const email=document.getElementById('loginEmail');if(email){setTimeout(()=>email.focus(),50)}}
 function closeLogin(){const g=document.getElementById('loginGate');if(g){g.classList.remove('login-open');g.classList.add('hidden')}}
-```javascript
+
 async function login(e){
   if(e) e.preventDefault();
 
-  const emailEl=document.getElementById('loginEmail');
-  const passEl=document.getElementById('loginPass');
+  const emailEl = document.getElementById('loginEmail');
+  const passEl = document.getElementById('loginPass');
 
   if(!emailEl || !passEl){
-    alert('Campos de login não encontrados. Recarregue a página e tente novamente.');
-    console.error('Login: loginEmail ou loginPass não encontrado.');
+    alert('Campos de login não encontrados. Recarregue a página.');
     return;
   }
+
+  const email = emailEl.value.trim().toLowerCase();
+  const pass = passEl.value;
+
+  if(!window.equoluzSupabase){
+    alert('Conexão com o Supabase não carregada.');
+    return;
+  }
+
+  const {data,error} = await equoluzSupabase.auth.signInWithPassword({
+    email,
+    password: pass
+  });
+
+  if(error){
+    alert('Não foi possível entrar: ' + error.message);
+    return;
+  }
+
+  try{
+    const session = await loadRealProfile(data.user);
+
+    sessionStorage.setItem(
+      'equoluz_session',
+      JSON.stringify(session)
+    );
+
+    await syncChildrenFromSupabase();
+
+    applySession();
+    showDashboard();
+
+    if(typeof addAudit === 'function'){
+      addAudit('Login Supabase realizado · ' + session.email);
+    }
+
+    if(session.forceChange){
+      setTimeout(() => openSecurity(true),150);
+    }
+
+  }catch(err){
+
+    await equoluzSupabase.auth.signOut();
+
+    alert(
+      'Login autenticado, mas o perfil do sistema não está disponível: ' +
+      err.message
+    );
+  }
+}
 
   const email=emailEl.value.trim().toLowerCase();
   const pass=passEl.value;
