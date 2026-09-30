@@ -1,1291 +1,289 @@
-<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Equoluz — Site + Sistema V24</title><style>
-:root{--pink:#e86b9b;--pink2:#c94f7f;--blue:#4f8fc9;--blue2:#28639a;--cream:#f8f6fb;--paper:#ffffff;--line:#dfe7f0;--text:#263444;--muted:#68788a;--soft:#e8f1fb}*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--cream);color:var(--text);font-family:Georgia,serif}button{font:inherit;cursor:pointer}.top{background:var(--paper);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:10}.nav{max-width:1200px;margin:auto;padding:14px 22px;display:flex;align-items:center;gap:18px}.logo{display:flex;align-items:center;gap:9px;margin-right:auto;color:var(--blue);font-size:29px;font-weight:700;letter-spacing:-1px}.logoMark{width:39px;height:39px;border:2px solid var(--pink);border-radius:50%;display:grid;place-items:center;font-size:22px;color:var(--pink)}.logo small{display:block;font:700 8px Arial;letter-spacing:2px;color:var(--pink);margin-top:-4px}.nav button{border:0;background:none;color:var(--text);padding:9px 7px}.login{background:var(--blue)!important;color:#fff!important;border-radius:24px!important;padding:11px 17px!important}.hero{max-width:1200px;margin:auto;padding:72px 22px 58px;display:grid;grid-template-columns:1.05fr .95fr;gap:52px;align-items:center}.eyebrow{font:700 12px Arial;text-transform:uppercase;letter-spacing:2px;color:var(--pink)}h1{font-size:clamp(44px,6vw,76px);line-height:1.02;margin:15px 0 20px}h1 em{color:var(--blue);font-style:normal}.lead{font:18px/1.7 Arial;color:var(--muted);max-width:670px}.actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:28px}.primary,.secondary{border-radius:28px;padding:13px 20px;border:1px solid var(--blue)}.primary{background:var(--blue);color:#fff}.secondary{background:transparent;color:var(--blue)}.heroVisual{min-height:450px;border-radius:34px;background:radial-gradient(circle at 70% 20%,#fff8dc,transparent 35%),linear-gradient(145deg,#d9c59d,#839782);display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;box-shadow:0 22px 55px #33443322}.heroVisual .horse{font-size:150px;filter:drop-shadow(0 15px 15px #24312833)}.photoLabel{position:absolute;left:18px;bottom:18px;background:#243128cc;color:#fff;padding:10px 14px;border-radius:18px;font:700 11px Arial;letter-spacing:.5px}.brandBadge{position:absolute;right:18px;top:18px;background:#fffdf8e8;padding:10px 13px;border-radius:20px;color:var(--blue);font:700 10px Arial;letter-spacing:1px}.band{background:var(--blue2);color:#fff}.bandInner{max-width:1200px;margin:auto;padding:54px 22px;display:grid;grid-template-columns:1fr 1fr;gap:25px}.band h2{font-size:43px;margin:0 0 10px}.band p{font:16px/1.7 Arial;color:#eef2ed}.pathCards{display:grid;grid-template-columns:1fr 1fr;gap:15px}.path{background:var(--paper);color:var(--text);border-radius:24px;padding:25px}.path .pill{display:inline-block;padding:6px 10px;border-radius:20px;background:var(--soft);color:var(--blue);font:700 10px Arial;letter-spacing:1px}.path h3{font-size:25px;margin:14px 0 7px}.path p{color:var(--muted);font:14px/1.6 Arial}.path strong{color:var(--blue)}section{max-width:1200px;margin:auto;padding:65px 22px}.sectionHead{display:flex;justify-content:space-between;gap:30px;align-items:end;margin-bottom:28px}.sectionHead h2{font-size:39px;margin:0}.sectionHead p{font:15px/1.6 Arial;color:var(--muted);max-width:600px}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}.card{background:var(--paper);border:1px solid var(--line);border-radius:23px;padding:27px}.card h3{font-size:22px;margin:0 0 9px}.card p{font:15px/1.65 Arial;color:var(--muted)}.card .icon{font-size:29px;color:var(--pink);margin-bottom:12px}.split{background:#eef5fb}.splitInner{max-width:1200px;margin:auto;padding:62px 22px;display:grid;grid-template-columns:1fr 1fr;gap:38px}.splitInner h2{font-size:40px;margin:0 0 14px}.label{font:700 11px Arial;letter-spacing:1.5px;color:var(--pink)}.list{font:15px/1.9 Arial;color:var(--muted)}footer{background:#1e2b23;color:#e8eee8;padding:42px 22px;font:13px Arial}.footerInner{max-width:1200px;margin:auto;display:flex;justify-content:space-between;gap:25px;flex-wrap:wrap}.formWrap{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:25px}.formCard{background:var(--paper);border:1px solid var(--line);border-radius:23px;padding:26px;box-shadow:0 10px 30px #4f8fc91a}.formCard.social{border-top:5px solid var(--pink)}.formCard.aac{border-top:5px solid var(--blue)}.formCard h3{margin:0 0 8px;font-size:24px}.formCard p{font:14px/1.6 Arial;color:var(--muted)}form{display:grid;gap:10px}form input,form select,form textarea{width:100%;padding:12px;border:1px solid var(--line);border-radius:10px;font:14px Arial}form textarea{min-height:90px;resize:vertical}.check{font:12px/1.4 Arial;color:var(--muted)}.check input{width:auto;margin-right:7px}.success{display:none;padding:14px;border-radius:12px;background:#edf9f3;color:#246044;font:13px Arial}.formBtn{border:0;border-radius:24px;padding:13px 18px;color:#fff;background:var(--blue)}.social .formBtn{background:var(--pink)}.formGrid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}@media(max-width:850px){.formWrap,.formGrid2{grid-template-columns:1fr}.nav button:not(.login){display:none}.hero,.bandInner,.splitInner{grid-template-columns:1fr}.grid,.metrics{grid-template-columns:1fr}.pathCards{grid-template-columns:1fr}.hero{padding-top:45px}.heroVisual{min-height:320px}.sectionHead{display:block}.sectionHead p{margin-top:12px}}.modal{display:none;position:fixed;inset:0;background:#1b282099;z-index:30;align-items:center;justify-content:center;padding:20px}.modalBox{width:min(430px,100%);background:var(--paper);border-radius:25px;padding:28px}.modalBox input{width:100%;padding:13px;border:1px solid var(--line);border-radius:10px;margin:7px 0}.modalBox button{width:100%;margin-top:10px;padding:13px;border:0;border-radius:11px;background:var(--blue);color:#fff}.dashboard{display:none;max-width:1200px;margin:auto;padding:65px 22px}.metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}.metric{background:var(--paper);border:1px solid var(--line);border-radius:20px;padding:25px}.metric b{display:block;font-size:35px;color:var(--blue);margin-top:7px}@media(max-width:850px){.nav button:not(.login){display:none}.hero,.bandInner,.splitInner{grid-template-columns:1fr}.grid,.metrics{grid-template-columns:1fr}.pathCards{grid-template-columns:1fr}.hero{padding-top:45px}.heroVisual{min-height:320px}.sectionHead{display:block}.sectionHead p{margin-top:12px}}
-
-.loginGate{display:none!important;position:fixed;inset:0;background:linear-gradient(135deg,#f8f6fb 0%,#e8f1fb 100%);z-index:1000;display:grid;place-items:center;padding:20px}.loginGate.login-open{display:grid!important}.loginCard{width:min(440px,100%);background:#fff;border:1px solid var(--line);border-radius:22px;padding:28px;box-shadow:0 18px 60px rgba(38,52,68,.16)}.loginBrand{text-align:center;margin-bottom:20px}.loginBrand .logoMark{margin:auto}.loginBrand h1{margin:10px 0 4px;color:var(--blue2)}.loginBrand p{margin:0;color:var(--muted)}.loginField{display:grid;gap:6px;margin:14px 0}.loginField input,.loginField select{padding:12px;border:1px solid var(--line);border-radius:10px;font:inherit}.loginBtn{width:100%;padding:13px;border:0;border-radius:11px;background:linear-gradient(90deg,var(--pink2),var(--blue2));color:white;font-weight:700}.loginHint{font-size:12px;color:var(--muted);background:var(--soft);padding:10px;border-radius:10px;margin-top:12px}.sessionBadge{display:inline-flex;align-items:center;gap:7px;padding:7px 10px;border-radius:999px;background:var(--soft);font-size:12px}.logout{border:1px solid var(--line);background:#fff;padding:8px 11px;border-radius:9px}.hidden{display:none!important}.roleLock{opacity:.55;pointer-events:none}.backendCard{border:1px dashed var(--blue);background:#f7fbff;padding:16px;border-radius:14px}.backendGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px}.statusDot{width:9px;height:9px;border-radius:50%;background:#d59a32;display:inline-block}.
-
-.unified-bar{position:sticky;top:0;z-index:50;background:linear-gradient(90deg,var(--blue2),var(--pink2));color:#fff;padding:9px 18px;display:flex;justify-content:center;gap:18px;align-items:center;font:600 13px Arial,sans-serif;box-shadow:0 2px 10px #0002}.unified-bar span{font-weight:400;opacity:.95}@media(max-width:700px){.unified-bar{flex-direction:column;gap:3px;text-align:center;font-size:12px}}
-</style><style>
-.dashboard .moduleGrid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:18px}.moduleBtn{background:var(--paper);border:1px solid var(--line);border-radius:18px;padding:20px;text-align:left;min-height:105px}.moduleBtn b{display:block;font-size:17px;margin-bottom:6px}.moduleBtn span{font:12px Arial;color:var(--muted)}.modulePanel{display:none;margin-top:18px;background:var(--paper);border:1px solid var(--line);border-radius:20px;padding:24px}.modulePanel.active{display:block}.status{display:inline-block;padding:5px 9px;border-radius:15px;background:var(--soft);color:var(--blue);font:700 11px Arial}.flow{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0}.flow span{padding:8px 10px;border-radius:12px;background:#f5f7fa;font:12px Arial}.roleGrid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.role{padding:18px;border:1px solid var(--line);border-radius:16px}.role h4{margin:0 0 8px}.role ul{font:13px/1.7 Arial;color:var(--muted);margin:0;padding-left:18px}@media(max-width:850px){.dashboard .moduleGrid{grid-template-columns:1fr 1fr}.roleGrid{grid-template-columns:1fr}}
-</style><style>
-.siteEditor{display:grid;gap:14px}.siteEditor .editRow{display:grid;grid-template-columns:1fr 1fr;gap:12px}.siteEditor label{font:700 12px Arial;color:var(--muted);display:grid;gap:6px}.siteEditor input,.siteEditor textarea,.siteEditor select{padding:11px;border:1px solid var(--line);border-radius:10px;font:14px Arial;width:100%}.siteEditor textarea{min-height:100px}.horseGrid{display:grid;grid-template-columns:1fr 1fr;gap:16px}.horseCard{border:1px solid var(--line);border-radius:18px;padding:18px;background:#fbfcfe}.horseCard h4{margin:0 0 8px;font-size:21px}.horseCare{margin-top:14px;padding-top:14px;border-top:1px solid var(--line)}.horseCare .careRow{display:grid;grid-template-columns:1.1fr 1fr 1fr auto;gap:8px;align-items:end}.horseCare input,.horseCare select{padding:10px;border:1px solid var(--line);border-radius:9px;font:13px Arial;width:100%}.careItem{display:flex;justify-content:space-between;gap:10px;align-items:center;padding:9px 0;border-bottom:1px solid #edf0f4;font:12px/1.4 Arial}.permBox{display:grid;grid-template-columns:repeat(2,1fr);gap:7px;padding:12px;border:1px solid var(--line);border-radius:12px;background:#fbfcfe}.permBox label{font:12px Arial;color:var(--muted)}.smallBtn{border:1px solid var(--line);background:#fff;border-radius:9px;padding:8px 10px;font-size:12px}.previewImg{width:100%;max-height:150px;object-fit:cover;border-radius:14px;border:1px solid var(--line);display:none;margin-top:8px}@media(max-width:850px){.horseGrid,.siteEditor .editRow,.horseCare .careRow,.permBox{grid-template-columns:1fr}}
-
-.interestBox{display:grid;gap:8px;padding:12px;border:1px solid var(--line);border-radius:12px;background:#fbfcfe}.record{border:1px solid var(--line);border-radius:14px;padding:14px;margin-top:10px;background:#fbfcfe;font:13px/1.5 Arial}.record b{color:var(--blue)}.record .mini{color:var(--muted);font-size:12px}.danger{float:right;border:0;background:transparent;color:#b44;padding:3px 6px}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.actions .secondary{padding:7px 10px;font:12px Arial;border-radius:16px}.empty{padding:16px;border-radius:14px;background:#f5f7fa;color:var(--muted);font:13px Arial}.exportBox{white-space:pre-wrap;font:12px monospace}
-</style><style id="printReportOnly">
-@media print {
-  body * { visibility: hidden !important; }
-  #reportResult, #reportResult * { visibility: visible !important; }
-  #reportResult {
-    position: absolute !important;
-    left: 0 !important;
-    top: 0 !important;
-    width: 100% !important;
-    margin: 0 !important;
-    padding: 20px !important;
-    background: #fff !important;
-    color: #000 !important;
-  }
-  #reportResult table { width:100% !important; border-collapse:collapse !important; }
-  #reportResult th, #reportResult td { border:1px solid #999 !important; padding:7px !important; color:#000 !important; }
-  #reportResult h2, #reportResult h3 { color:#000 !important; }
-}
-</style>
-</head><body><div id="loginGate" class="loginGate"><div class="loginCard"><div class="loginBrand"><div class="logoMark">🐴</div><h1>Equoluz</h1><p>Sistema administrativo · V15</p></div><form onsubmit="login(event)"><div class="loginField"><label>E-mail</label><input id="loginEmail" type="email" required autocomplete="username" placeholder="seu e-mail"></div><div class="loginField"><label>Senha</label><input id="loginPass" type="password" required autocomplete="current-password" placeholder="sua senha"></div><button class="loginBtn">Entrar no sistema</button></form><div class="loginHint">Acesso protegido pelo Supabase. Use o e-mail e a senha cadastrados na Área de Autenticação.</div></div></div>
-<header class="top"><nav class="nav"><div class="logo"><div class="logoMark">✦</div><div>Equo<span>luz</span><small>TRANSFORMANDO VIDAS</small></div></div><button onclick="go('sobre')">O projeto</button><button onclick="go('instituto')">Instituto Equoluz</button><button onclick="go('aacPublic')">Equoluz AAC</button><button onclick="go('ajudar')">Como ajudar</button><button onclick="go('inscricoes')">Inscrições</button><button class="login" onclick="openLogin()">Área profissional</button></nav></header>
-<main id="public"><div class="hero"><div><div class="eyebrow">Equoluz · Joinville/SC</div><h1>Dois caminhos.<br><em>Um mesmo propósito.</em></h1><p class="lead">O Equoluz une uma frente social, gratuita e voluntária, a uma frente particular de <b>Atividades Assistidas com Cavalos</b> — com identidades e objetivos claramente apresentados.</p><div class="actions"><button class="primary" onclick="go('instituto')">Conheça o Instituto Equoluz</button><button class="secondary" onclick="go('aacPublic')">Conheça o Equoluz AAC</button></div></div><div class="heroVisual"><div class="brandBadge">EQUOLUZ</div><div class="horse">🐴</div><div class="photoLabel">Espaço reservado para a foto real da Boneca e da Babaloo</div></div></div>
-<section id="sobre"><div class="sectionHead"><div><div class="eyebrow">SOBRE O EQUOLUZ</div><h2>Uma marca, duas frentes.</h2></div><p>Conheça as duas formas de atuação do Equoluz e escolha o caminho que corresponde ao que você procura.</p></div><div class="pathCards"><div class="path" id="instituto"><span class="pill">SOCIAL · GRATUITO</span><h3>Instituto Equoluz</h3><p>Frente social do projeto, responsável pelo <strong>Equoluz Voluntário</strong> e pelos atendimentos gratuitos definidos pelo Instituto.</p><button class="secondary" onclick="go('social')">Conhecer o Instituto</button></div><div class="path" id="aacPublic"><span class="pill">PARTICULAR</span><h3>Equoluz Atividade Assistida com Cavalos Ltda. – AAC</h3><p>Frente particular para <strong>Atividades Assistidas com Cavalos</strong>, com atendimento em espaço próprio e contratação particular.</p><button class="secondary" onclick="go('particular')">Conhecer o AAC</button></div></div></section>
-<div class="band"><div class="bandInner"><div><div class="eyebrow">Instituto Equoluz</div><h2>Equoluz Voluntário</h2><p>Atendimento social e gratuito, com foco na continuidade do cuidado e no acolhimento das crianças e suas famílias.</p></div><div class="path"><span class="pill">ATENDIMENTO GRATUITO</span><h3>12 meses de atendimento</h3><p>Triagem → cadastro → planejamento → sessão → registro → acompanhamento.</p><button class="secondary" onclick="go('inscricoes')">Entrar na lista de espera</button></div></div></div>
-<section id="social"><div class="sectionHead"><h2>Instituto Equoluz</h2><p>O espaço institucional apresenta a história, o impacto social, a equipe, as crianças atendidas e as formas de participação.</p></div><div class="grid"><div class="card"><div class="icon">♡</div><h3>Projeto social</h3><p>Apresentação do propósito, história, missão e impacto do Equoluz.</p></div><div class="card"><div class="icon">♞</div><h3>Equoluz Voluntário</h3><p>Informações sobre atendimento gratuito, critérios, equipe e rotina das sessões.</p></div><div class="card"><div class="icon">✦</div><h3>Como ajudar</h3><p>Doações, patrocínios, voluntariado, parceiros e manutenção dos cavalos.</p></div></div></section>
-<section id="particular"><div class="sectionHead"><h2>Equoluz AAC</h2><p><b>Equoluz Atividade Assistida com Cavalos Ltda. – AAC</b>: atividades particulares com cavalos, apresentadas separadamente da frente social.</p></div><div class="grid"><div class="card"><div class="icon">♞</div><h3>Atividades Assistidas com Cavalos</h3><p>Vivências estruturadas de interação, manejo, montaria e desenvolvimento, conforme cada proposta contratada.</p></div><div class="card"><div class="icon">◉</div><h3>Modalidades e valores</h3><p>Página própria para explicar modalidades, duração, valores, regras e disponibilidade.</p></div><div class="card"><div class="icon">→</div><h3>Pré-cadastro e agendamento</h3><p>Formulário para interesse, dados iniciais e posterior confirmação de agenda.</p></div></div></section>
-<section id="inscricoes"><div class="sectionHead"><h2>Quer fazer parte?</h2><p>Escolha o caminho que corresponde ao que você procura. Os cadastros ficam separados: social gratuito ou atendimento particular.</p></div><div class="formWrap"><div class="formCard social"><h3>🌱 Lista de espera · Instituto Equoluz</h3><p>Cadastro de famílias interessadas no atendimento social e gratuito do Equoluz Voluntário.</p><form onsubmit="submitForm(event,'socialSuccess','social')"><div class="formGrid2"><input required name="responsavel" placeholder="Nome do responsável"><input required name="whatsapp" placeholder="WhatsApp"></div><div class="formGrid2"><input required name="crianca" placeholder="Nome da criança"><input name="nascimento" type="date" required aria-label="Data de nascimento"></div><div class="formGrid2"><input name="email" placeholder="E-mail"><input name="localidade" placeholder="Cidade / bairro"></div><select name="faixa" required><option value="">Faixa etária</option><option>0–5 anos</option><option>6–10 anos</option><option>11–15 anos</option><option>16+ anos</option></select><textarea name="observacoes" placeholder="Conte brevemente o que é importante sobre a criança"></textarea><label class="check"><input type="checkbox" required> Autorizo o contato e aceito a política de privacidade.</label><button class="formBtn">Entrar na lista de espera</button><div id="socialSuccess" class="success">Cadastro recebido! A família será contatada pela equipe do Instituto Equoluz quando houver disponibilidade de atendimento.</div></form></div><div class="formCard aac"><h3>🐴 Pré-cadastro · Equoluz AAC</h3><p>Registre seu interesse nas Atividades Assistidas com Cavalos em atendimento particular.</p><form onsubmit="submitForm(event,'aacSuccess','aac')"><div class="formGrid2"><input required name="responsavel" placeholder="Nome do responsável"><input required name="whatsapp" placeholder="WhatsApp"></div><div class="formGrid2"><input required name="participante" placeholder="Nome do participante"><input name="idade" type="number" min="1" placeholder="Idade"></div><div class="formGrid2"><input name="email" placeholder="E-mail"><input name="cidade" placeholder="Cidade"></div><div class="interestBox"><label><strong>Tenho interesse em:</strong></label><label class="check"><input type="checkbox" name="interesse" value="Atividades Assistidas com Cavalos"> Atividades Assistidas com Cavalos</label><label class="check"><input type="checkbox" name="interesse" value="Musicoterapia"> Musicoterapia</label><label class="check"><input type="checkbox" name="interesse" value="Reflexologia Podal"> Reflexologia Podal</label><label class="check"><input type="checkbox" name="interesse" value="Neuropsicólogo/psicólogo"> Neuropsicólogo/psicólogo</label></div><select name="periodo"><option value="">Melhor período</option><option>Manhã</option><option>Tarde</option><option>Horário flexível</option></select><textarea name="observacoes" placeholder="Objetivo ou observações"></textarea><label class="check"><input type="checkbox" required> Aceito a política de privacidade e o contato da equipe.</label><button class="formBtn">Quero conhecer a AAC</button><div id="aacSuccess" class="success">Seu interesse foi registrado! Nossa equipe entrará em contato para apresentar modalidades, valores e disponibilidade.</div></form></div></div></section><section id="ajudar"><div class="sectionHead"><h2>Faça parte dessa história</h2><p>O Instituto Equoluz poderá contar com pessoas, empresas e parceiros para fortalecer sua estrutura e manter o atendimento social.</p></div><div class="grid"><div class="card"><h3>Seja patrocinador</h3><p>Planos de apoio, contrapartidas e contato institucional.</p></div><div class="card"><h3>Doe</h3><p>Contribua para alimentação, cuidados, equipamentos e estrutura.</p></div><div class="card"><h3>Seja voluntário</h3><p>Cadastro de voluntários e profissionais interessados em participar.</p></div></div></section></main>
-<section class="dashboard" id="dashboard">
-<div style="display:flex;justify-content:space-between;align-items:center;gap:15px"><div><div class="eyebrow">Área profissional</div><h2>Painel Equoluz</h2><p style="font:14px Arial;color:var(--muted)">V15 · usuários, segurança, cadastro social e evolução de atendimento</p></div><div style="display:flex;gap:8px;align-items:center"><button class="secondary" onclick="openSecurity()">🔐 Segurança</button><button class="secondary" onclick="logout()">Sair</button></div></div>
-<div class="metrics"><div class="metric">Crianças ativas<b id="mActive">15</b><span class="status">Instituto</span></div><div class="metric">Lista social<b id="mWait">60</b><span class="status">Instituto</span></div><div class="metric" data-admin-only>Interesses AAC<b id="mAac">4</b><span class="status">AAC</span></div><div class="metric" data-admin-only>AAC — clientes ativos<b id="mAacActive">0</b><span class="status">Contratos ativos</span></div><div class="metric" data-admin-only>AAC — valor contratado<b id="mAacRevenue">R$ 0,00</b><span class="status">Valor mensal contratado</span></div></div>
-<div class="moduleGrid">
-<button class="moduleBtn" data-module="cadastro" onclick="panel('cadastro')"><b>👧 Crianças</b><span>Cadastro, ficha individual e responsáveis</span></button>
-<button class="moduleBtn" data-module="sessoes" onclick="panel('sessoes')"><b>🐴 Sessões</b><span>Registrar atendimento e evolução</span></button>
-<button class="moduleBtn" data-module="espera" onclick="panel('espera')"><b>⏳ Lista social</b><span>Visualizar e atualizar cadastros</span></button>
-<button class="moduleBtn" data-module="aac" data-admin-only onclick="panel('aac')"><b>💙 AAC</b><span>Interessados, contratos e clientes ativos</span></button>
-<button class="moduleBtn" data-module="financeiro" data-finance-only onclick="panel('financeiro')"><b>💰 Financeiro Social</b><span>Entradas, saídas e saldo do Instituto</span></button>
-<button class="moduleBtn" data-module="agenda" onclick="panel('agenda')"><b>📅 Agenda</b><span>Atendimentos, profissionais e cavalos</span></button>
-<button class="moduleBtn" data-module="relatorios" onclick="panel('relatorios')"><b>📊 Relatórios</b><span>Resumo dos dados cadastrados</span></button>
-<button class="moduleBtn" data-module="equipe" onclick="panel('equipe')"><b>👥 Profissionais</b><span>Usuários, funções e permissões</span></button>
-<button class="moduleBtn" data-module="cavalos" data-finance-visible onclick="panel('cavalos')"><b>🐎 Cavalos</b><span>Boneca, Babaloo e histórico</span></button>
-<button class="moduleBtn" data-module="config" data-admin-only onclick="panel('config')"><b>⚙️ Gerenciador do Site</b><span>Imagens, textos, contatos e identidade</span></button>
-</div>
-<div id="cadastro" class="modulePanel"><h3>Cadastro de crianças</h3><p>Ficha interna do Instituto Equoluz. Cadastre a criança, responsável, contato, situação e observações. O status alimenta automaticamente o dashboard.</p><form onsubmit="addChild(event)"><div class="formGrid2"><input id="childName" required placeholder="Nome da criança"><input id="childBirth" type="date" required><input id="childGuardian" required placeholder="Responsável"><input id="childPhone" required placeholder="WhatsApp"></div><div class="formGrid2"><select id="childStatus" required><option value="Ativa">Ativa</option><option value="Em avaliação">Em avaliação</option><option value="Aguardando vaga">Aguardando vaga</option><option value="Encerrada">Encerrada</option></select><input id="childEntry" type="date" placeholder="Data de entrada"></div><textarea id="childNotes" placeholder="Observações importantes, necessidades e informações da família"></textarea><button class="formBtn">Salvar criança</button></form><div id="childList" style="margin-top:18px"></div></div>
-<div id="sessoes" class="modulePanel"><h3>Registro de sessão e evolução</h3><p>Cada atendimento fica vinculado à criança e entra no histórico de evolução do Instituto.</p><form onsubmit="addSession(event)"><div class="formGrid2"><input id="sessionDate" type="date" required><select id="sessionChild" required><option value="">Selecione a criança</option></select><input id="sessionProfessional" required placeholder="Profissional"><input id="sessionHorse" placeholder="Cavalo utilizado"></div><input id="sessionActivity" required placeholder="Tipo de atividade"><textarea id="sessionEvolution" required placeholder="Atividade realizada, resposta da criança e evolução"></textarea><button class="formBtn">Registrar sessão</button></form><div id="sessionList" style="margin-top:18px"></div></div>
-<div id="espera" class="modulePanel"><h3>Lista de espera · Instituto Equoluz</h3><p>Fluxo interno separado do AAC. Os cadastros do formulário público entram automaticamente aqui e também podem ser cadastrados pela equipe.</p><div class="card" style="margin:16px 0"><h3>➕ Novo cadastro na Lista Social</h3><form onsubmit="addSocialWaitlistInternal(event)"><div class="formGrid2"><input name="responsavel" required placeholder="Nome do responsável"><input name="whatsapp" required placeholder="WhatsApp"></div><div class="formGrid2"><input name="crianca" required placeholder="Nome da criança"><input name="nascimento" type="date" required aria-label="Data de nascimento"></div><div class="formGrid2"><input name="email" type="email" placeholder="E-mail"><input name="localidade" placeholder="Cidade / bairro"></div><div class="formGrid2"><input name="diagnostico" placeholder="Diagnóstico/condição informada"><input name="experiencia" placeholder="Experiência anterior com cavalos"></div><textarea name="necessidades" placeholder="Necessidades ou informações importantes"></textarea><select name="status"><option>Novo cadastro</option><option>Em análise</option><option>Contato</option><option>Triagem</option><option>Aguardando vaga</option><option>Chamado</option><option>Atendendo</option></select><label class="check"><input type="checkbox" required> Confirmo o consentimento para contato e registro.</label><button class="formBtn">Cadastrar na Lista Social</button></form></div><div class="flow"><span>Novo cadastro</span><span>Análise</span><span>Contato</span><span>Triagem</span><span>Aguardando vaga</span><span>Chamado</span><span>Atendendo</span></div><div id="waitList"></div></div>
-<div id="aac" class="modulePanel"><h3>💙 Equoluz AAC — interessados e contratos</h3><p>Cadastros particulares ficam separados da frente social. Para cada cliente ativo, registre a frequência semanal e o valor mensal fechado em contrato.</p><div class="flow"><span>Novo interesse</span><span>Contato</span><span>Pré-cadastro</span><span>Definição da modalidade</span><span>Contrato</span><span>Cliente ativo</span></div><div class="card"><h3>Clientes AAC</h3><p>Fluxo: interesse → pré-cadastro → contrato → cliente ativo. O cadastro abaixo é separado do Instituto Social.</p><div id="aacClientList"></div></div><div class="card"><h3>Adicionar cliente/contrato AAC</h3><form onsubmit="addAacContractForm(event)"><select id="aacContractClient" onchange="fillAacContractClient()"><option value="">Vincular a um pré-cadastro existente (opcional)</option></select><div class="formGrid2"><input id="aacContractName" required placeholder="Nome do participante"><input id="aacContractBirth" type="date" placeholder="Data de nascimento"></div><div class="formGrid2"><input id="aacContractResponsible" required placeholder="Nome do responsável"><input id="aacContractPhone" placeholder="WhatsApp"></div><div class="formGrid2"><input id="aacContractFrequency" type="number" min="1" step="1" required placeholder="Frequência semanal (ex.: 1)"><input id="aacContractValue" type="number" min="0" step="0.01" required placeholder="Valor mensal contratado (R$)"></div><div class="formGrid2"><input id="aacContractStart" type="date" placeholder="Início do contrato"><input id="aacContractEnd" type="date" placeholder="Fim do contrato (opcional)"></div><div class="formGrid2"><select id="aacContractModality"><option>Atividades Assistidas com Cavalos</option><option>Musicoterapia</option><option>Reflexologia Podal</option><option>Neuropsicólogo/psicólogo</option></select><select id="aacContractStatus"><option value="Ativo">Ativo</option><option value="Inativo">Inativo</option></select></div><textarea id="aacContractNotes" placeholder="Observações do contrato"></textarea><button class="formBtn">Salvar contrato AAC</button></form></div><div class="fin-grid"><div class="fin-card"><span>Clientes AAC ativos</span><b id="aacActiveCount">0</b></div><div class="fin-card"><span>Valor mensal contratado</span><b id="aacContractTotal">R$ 0,00</b></div></div><div id="aacContractList"></div><div class="card" style="margin-top:18px"><h3>📝 Atendimento e evolução AAC</h3><p>Registre cada atendimento realizado para o cliente AAC. O histórico fica vinculado ao cliente e permanece separado dos atendimentos sociais do Instituto.</p><form onsubmit="addAacSession(event)"><div class="formGrid2"><input id="aacSessionDate" type="date" required><select id="aacSessionClient" required><option value="">Selecione o cliente AAC</option></select></div><div class="formGrid2"><input id="aacSessionProfessional" required placeholder="Profissional responsável"><select id="aacSessionHorse"><option value="">Cavalo não definido</option><option>Boneca</option><option>Babaloo</option></select></div><input id="aacSessionActivity" required placeholder="Atividade / modalidade realizada"><textarea id="aacSessionEvolution" required placeholder="Relato do atendimento, participação, resposta e evolução"></textarea><textarea id="aacSessionNotes" placeholder="Observações adicionais"></textarea><button class="formBtn">Registrar atendimento AAC</button></form><div id="aacSessionList" style="margin-top:18px"></div></div><hr style="margin:25px 0;border:0;border-top:1px solid var(--line)"><p><b>Modalidades disponíveis:</b> Atividades Assistidas com Cavalos · Musicoterapia · Reflexologia Podal · Neuropsicólogo/psicólogo.</p><div id="aacList"></div></div>
-<div id="agenda" class="modulePanel"><h3>📅 Agenda de atendimentos</h3><p>Organize os atendimentos do Instituto e da AAC, vinculando participante, profissional, cavalo, data, horário e situação.</p><div class="card"><h3>Novo agendamento</h3><form onsubmit="addAgenda(event)"><div class="formGrid2"><input id="agendaDate" type="date" required><input id="agendaTime" type="time" required></div><div class="formGrid2"><select id="agendaFront" required><option value="Instituto Equoluz">Instituto Equoluz</option><option value="Equoluz AAC">Equoluz AAC</option></select><select id="agendaPerson" required><option value="">Selecione o participante</option></select></div><div class="formGrid2"><select id="agendaProfessional" required><option value="">Selecione o profissional</option></select><select id="agendaHorse"><option value="">Cavalo não definido</option><option value="Boneca">Boneca</option><option value="Babaloo">Babaloo</option></select></div><div class="formGrid2"><input id="agendaType" required placeholder="Atendimento / modalidade"><select id="agendaStatus" required><option value="Agendado">Agendado</option><option value="Realizado">Realizado</option><option value="Cancelado">Cancelado</option><option value="Falta">Falta</option></select></div><textarea id="agendaNotes" placeholder="Observações do atendimento"></textarea><button class="formBtn">Salvar agendamento</button></form></div><div class="card" style="margin-top:16px"><h3>Visualização</h3><div class="formGrid2"><select id="agendaFilterPeriod" onchange="renderAgenda()"><option value="all">Todos os atendimentos</option><option value="day">Dia selecionado</option><option value="week">Semana da data selecionada</option></select><input id="agendaFilterDate" type="date" onchange="renderAgenda()"></div></div><div id="agendaList" style="margin-top:18px"></div></div>
-<div id="financeiro" data-finance-only class="modulePanel"><h3>💰 Financeiro — Instituto Equoluz Social</h3><p>Área exclusiva para Administrador e Diretor Financeiro. Registre entradas e saídas do Instituto Social. O AAC permanece separado.</p><div class="fin-grid"><div class="fin-card"><span>Entradas</span><b id="finEntradas" class="fin-positive">R$ 0,00</b></div><div class="fin-card"><span>Saídas</span><b id="finSaidas" class="fin-negative">R$ 0,00</b></div><div class="fin-card"><span>Saldo em caixa</span><b id="finSaldo">R$ 0,00</b></div></div><div class="card"><h3>Novo lançamento</h3><form onsubmit="addFinanceForm(event)"><div class="formGrid2"><select id="finKind" required><option value="entrada">Entrada</option><option value="saida">Saída</option></select><input id="finValue" type="number" min="0.01" step="0.01" required placeholder="Valor (R$)"></div><div class="formGrid2"><select id="finCategory" required><option>Doação</option><option>Patrocínio</option><option>Evento</option><option>Campanha</option><option>Alimentação dos cavalos</option><option>Veterinário/medicamentos</option><option>Materiais</option><option>Transporte</option><option>Manutenção</option><option>Outras</option></select><input id="finDate" type="date" required></div><textarea id="finDescription" placeholder="Descrição / referência do lançamento"></textarea><button class="formBtn">Salvar lançamento</button></form></div><div id="financeList"></div></div>
-<div id="relatorios" class="modulePanel"><h3>📊 Relatórios e acompanhamento</h3><p>Consulte os atendimentos por criança, sessão, profissional, cavalo ou período. Os relatórios do Instituto e da AAC permanecem separados.</p><div class="grid"><div class="card"><h3 id="rChildren">0</h3><p>Crianças cadastradas</p></div><div class="card"><h3 id="rSessions">0</h3><p>Sessões sociais</p></div><div class="card"><h3 id="rAgenda">0</h3><p>Itens na agenda</p></div></div><div class="card" style="margin-top:18px"><h3>🔎 Gerar relatório</h3><div class="formGrid2"><label>Frente<select id="reportScope" onchange="populateReportFilters()"><option value="social">Instituto Equoluz — Social</option><option value="aac">Equoluz AAC</option></select></label><label>Tipo de relatório<select id="reportType"><option value="sessions">Sessões detalhadas</option><option value="participant">Resumo por criança/participante</option><option value="professional">Resumo por profissional</option><option value="horse">Resumo por cavalo</option></select></label></div><div class="formGrid2"><label>Participante / criança<select id="reportPerson"><option value="">Todos</option></select></label><label>Profissional<select id="reportProfessional"><option value="">Todos</option></select></label></div><div class="formGrid2"><label>Cavalo<select id="reportHorse"><option value="">Todos</option><option>Boneca</option><option>Babaloo</option></select></label><label>Data inicial<input id="reportStart" type="date"></label></div><div class="formGrid2"><label>Data final<input id="reportEnd" type="date"></label><div></div></div><div class="actions"><button class="formBtn" type="button" onclick="generateReport()">Gerar relatório</button><button class="secondary" type="button" onclick="printReportOnly()">🖨️ Imprimir somente o relatório</button></div><div id="reportResult" style="margin-top:18px"><div class="empty">Escolha os filtros e clique em “Gerar relatório”.</div></div></div>
-<div class="card" style="margin-top:18px"><h3>📥 Exportações</h3><p>Exporte somente os dados correspondentes à frente e aos filtros selecionados. Os arquivos são gerados neste navegador.</p><div class="actions"><button class="secondary" type="button" onclick="v21ExportFilteredExcel()">📊 Excel</button><button class="secondary" type="button" onclick="v21ExportFilteredPdf()">📕 PDF</button><button class="secondary" type="button" onclick="v21ExportFilteredCsv()">📄 CSV</button><button class="secondary" type="button" onclick="v21ExportSocialWaitingExcel()">📋 Lista social Excel</button><button class="secondary" type="button" onclick="v21ExportAacExcel()">💙 AAC Excel</button><button class="secondary" type="button" onclick="v21ExportFinanceExcel()">💰 Financeiro Excel</button></div><div class="mini-note" style="margin-top:10px">O exportador respeita a separação entre Instituto Equoluz e Equoluz AAC. O arquivo JSON completo do sistema continua disponível somente no Gerenciador do Site para o Administrador.</div></div></div>
-<div id="equipe" class="modulePanel"><h3>👥 Profissionais, usuários e permissões</h3><p>Cadastre cada profissional e defina exatamente quais áreas ele poderá acessar no sistema.</p><div class="roleGrid"><div class="role"><h4>Administrador</h4><ul><li>Acesso geral</li><li>Usuários e permissões</li><li>Cadastros e relatórios</li><li>Gerenciador do Site</li><li>Auditoria</li></ul></div><div class="role"><h4>Profissional</h4><ul><li>Acesso somente às áreas autorizadas</li><li>Registro de sessões e evolução</li><li>Sem configurações administrativas</li></ul></div></div><form onsubmit="addProfessional(event)" style="margin-top:18px"><div class="formGrid2"><input id="proName" required placeholder="Nome do profissional"><input id="proEmail" type="email" required placeholder="E-mail"></div><div class="formGrid2"><select id="proRole"><option value="Profissional">Profissional</option><option value="Diretor Financeiro">Diretor Financeiro</option><option value="Administrador">Administrador</option></select><input id="proPhone" placeholder="WhatsApp"></div><div class="mini-note" style="margin:8px 0 12px">Senha inicial do usuário: <b>123456</b>. No primeiro acesso, o usuário deverá criar uma nova senha.</div><div class="permBox"><label><input type="checkbox" name="perm" value="cadastro"> Crianças/cadastros</label><label><input type="checkbox" name="perm" value="sessoes"> Sessões e evolução</label><label><input type="checkbox" name="perm" value="espera"> Lista social</label><label><input type="checkbox" name="perm" value="aac"> AAC</label><label><input type="checkbox" name="perm" value="agenda"> Agenda</label><label><input type="checkbox" name="perm" value="cavalos"> Cavalos</label><label><input type="checkbox" name="perm" value="relatorios"> Relatórios</label><label><input type="checkbox" name="perm" value="financeiro"> Financeiro Social</label><label><input type="checkbox" name="perm" value="config"> Gerenciador do Site</label></div><button class="formBtn">Cadastrar profissional</button></form><div id="proList" style="margin-top:18px"></div></div>
-<div id="cavalos" class="modulePanel"><h3>🐎 Cavalos e cuidados veterinários</h3><p>Registre vacinas, vermífugos e outras aplicações separadamente para cada égua, incluindo a data realizada e a próxima aplicação.</p><div class="horseGrid"><div class="horseCard"><h4>Boneca</h4><p style="font:13px Arial;color:var(--muted)">Égua marrom escura, sem faixa branca no rosto.</p><span class="status">Em preparação</span><div class="horseCare"><form onsubmit="addHorseCare(event,'boneca')"><div class="careRow"><label>Tipo<select id="careType-boneca"><option>Vacina</option><option>Vermífugo</option><option>Outro cuidado</option></select></label><label>Nome da vacina/produto<input id="careProduct-boneca" placeholder="Ex.: V8, antirrábica, vermífugo"></label><label>Data aplicada<input id="careDate-boneca" type="date" required></label><label>Próxima aplicação<input id="careNext-boneca" type="date"></label><label>Médico-veterinário<input id="careVet-boneca" placeholder="Nome do veterinário"></label><button class="smallBtn">Adicionar</button></div></form><div id="careList-boneca"></div></div></div><div class="horseCard"><h4>Babaloo</h4><p style="font:13px Arial;color:var(--muted)">Égua castanha/tostada com faixa branca larga no rosto.</p><span class="status">Em preparação</span><div class="horseCare"><form onsubmit="addHorseCare(event,'babaloo')"><div class="careRow"><label>Tipo<select id="careType-babaloo"><option>Vacina</option><option>Vermífugo</option><option>Outro cuidado</option></select></label><label>Nome da vacina/produto<input id="careProduct-babaloo" placeholder="Ex.: V8, antirrábica, vermífugo"></label><label>Data aplicada<input id="careDate-babaloo" type="date" required></label><label>Próxima aplicação<input id="careNext-babaloo" type="date"></label><label>Médico-veterinário<input id="careVet-babaloo" placeholder="Nome do veterinário"></label><button class="smallBtn">Adicionar</button></div></form><div id="careList-babaloo"></div></div></div></div></div>
-<div id="auditoria" data-admin-only class="modulePanel"><h3>Auditoria</h3><p>Principais ações registradas nesta demonstração.</p><div id="auditList"></div></div>
-<div id="config" data-admin-only class="modulePanel"><h3>⚙️ Gerenciador do Site</h3><p>Agora você pode testar as alterações diretamente no protótipo. As mudanças ficam salvas neste navegador e aparecem no site público desta demonstração.</p><div class="siteEditor"><div class="card"><h3>✏️ Textos institucionais</h3><div class="editRow"><label>Título principal<input id="siteTitle" value="Dois caminhos. Um mesmo propósito."></label><label>Texto principal<textarea id="siteLead">O Equoluz une uma frente social, gratuita e voluntária, a uma frente particular de Atividades Assistidas com Cavalos.</textarea></label></div><button class="formBtn" type="button" onclick="saveSiteText()">Salvar textos</button></div><div class="card"><h3>📱 Contatos</h3><div class="editRow"><label>WhatsApp<input id="siteWhatsapp" placeholder="WhatsApp do Equoluz"></label><label>E-mail<input id="siteEmail" value="equoluzterapia.joinville@gmail.com"></label></div><div class="editRow"><label>Instagram<input id="siteInstagram" placeholder="@equoluz"></label><label>Horário de atendimento<input id="siteHours" placeholder="Ex.: domingos quinzenais"></label></div><button class="formBtn" type="button" onclick="saveSiteContact()">Salvar contatos</button></div><div class="card"><h3>🖼️ Imagens</h3><p>Selecione uma imagem do seu aparelho para substituir a imagem correspondente no protótipo.</p><div class="editRow"><label>Foto da Boneca<input type="file" accept="image/*" onchange="loadSiteImage(event,'boneca')"><img id="previewBoneca" class="previewImg"></label><label>Foto da Babaloo<input type="file" accept="image/*" onchange="loadSiteImage(event,'babaloo')"><img id="previewBabaloo" class="previewImg"></label></div><div class="editRow"><label>Logo<input type="file" accept="image/*" onchange="loadSiteImage(event,'logo')"><img id="previewLogo" class="previewImg"></label><label>Imagem de capa<input type="file" accept="image/*" onchange="loadSiteImage(event,'capa')"><img id="previewCapa" class="previewImg"></label></div><button class="formBtn" type="button" onclick="saveSiteImages()">Salvar imagens</button></div><div class="card"><h3>🎨 Identidade da marca</h3><div class="editRow"><label>Cor principal<input id="sitePink" value="#e86b9b"></label><label>Cor secundária<input id="siteBlue" value="#4f8fc9"></label></div><button class="formBtn" type="button" onclick="saveBrand()">Salvar identidade</button></div><div class="card"><h3>🔐 Dados e backups</h3><p><b>Instituto:</b> lista social, crianças, responsáveis, sessões e documentos.</p><p><b>AAC:</b> interessados, clientes, modalidades, agenda e atendimentos particulares.</p><p><b>Compartilhado:</b> usuários, permissões, cavalos, cuidados e configurações.</p><div class="actions"><button class="secondary" onclick="exportCsv()">Exportar cadastros CSV</button><button class="secondary" onclick="exportData()">Exportar JSON</button><button class="secondary" onclick="clearDemo()">Limpar dados demonstrativos</button></div></div></div></div>
-</section>
-<footer><div class="footerInner"><strong>Equoluz</strong><span>Instituto Equoluz · frente social e gratuita</span><span>Equoluz Atividade Assistida com Cavalos Ltda. – AAC · frente particular</span><span>Joinville/SC</span></div></footer>
-<div class="modal" id="securityModal" style="display:none"><div class="modalBox"><h2 id="securityTitle">Segurança da conta</h2><p id="securityHint" style="font:13px Arial;color:var(--muted)">Altere sua senha sempre que precisar.</p><form onsubmit="changePassword(event)"><input id="currentPassword" required placeholder="Senha atual" type="password"><input id="newPassword" required minlength="6" placeholder="Nova senha" type="password"><input id="confirmPassword" required minlength="6" placeholder="Confirmar nova senha" type="password"><button class="formBtn">Alterar senha</button><button id="securityCancel" type="button" onclick="closeSecurity()" style="background:transparent;color:var(--blue);border:0;padding:10px;cursor:pointer">Cancelar</button></form></div></div>
-<div class="modal" id="modal"><div class="modalBox"><h2>Área profissional</h2><p style="font:13px Arial;color:var(--muted)">Acesso demonstrativo do protótipo. O sistema real terá autenticação e permissões.</p><input placeholder="E-mail"><input placeholder="Senha" type="password"><button onclick="login()">Entrar</button><button onclick="closeLogin()" style="background:transparent;color:var(--blue)">Cancelar</button></div></div>
-<script>
-const KEY='equoluz_v18';
-const DEFAULT_STATE={children:[],sessions:[],social:[],aac:[],aacClients:[],aacContracts:[],agenda:[],professionals:[],audit:[],horses:[{id:'boneca',name:'Boneca',status:'Em preparação'},{id:'babaloo',name:'Babaloo',status:'Em preparação'}]};
-function readJson(key,fallback){try{const raw=localStorage.getItem(key);return raw?JSON.parse(raw):fallback}catch(e){return fallback}}
-let state=readJson(KEY,null);
-if(!state){state=readJson('equoluz_v7',null)||readJson('equoluz_sistema_v13',null)||JSON.parse(JSON.stringify(DEFAULT_STATE));}
-Object.keys(DEFAULT_STATE).forEach(k=>{if(!Array.isArray(DEFAULT_STATE[k])) return;if(!Array.isArray(state[k])) state[k]=[]});
-if(!Array.isArray(state.horses)||!state.horses.length) state.horses=JSON.parse(JSON.stringify(DEFAULT_STATE.horses));
-localStorage.setItem(KEY,JSON.stringify(state));
-state.aacClients=Array.isArray(state.aacClients)?state.aacClients:[];
-state.aacContracts=Array.isArray(state.aacContracts)?state.aacContracts:[];
-(function migrateAacData(){
-  try {
-    const oldClients=JSON.parse(localStorage.getItem('equoluz_aac_clients_v18')||'[]');
-    const oldContracts=JSON.parse(localStorage.getItem('equoluz_aac_contracts_v13')||'[]');
-    if(!state.aacClients.length && Array.isArray(oldClients) && oldClients.length) state.aacClients=oldClients;
-    if(!state.aacContracts.length && Array.isArray(oldContracts) && oldContracts.length) state.aacContracts=oldContracts;
-    localStorage.setItem(KEY,JSON.stringify(state));
-  } catch(e) {}
-})();
-function save(action='Atualização do sistema'){state.audit.push({id:Date.now(),date:new Date().toISOString(),action});localStorage.setItem(KEY,JSON.stringify(state));}
-const V8_USERS={admin:{name:'Administrador Equoluz',role:'admin'},professional:{name:'Profissional Equoluz',role:'professional'},finance:{name:'Diretor Financeiro',role:'finance'}};
-function openLogin(){const g=document.getElementById('loginGate');if(!g)return;g.classList.remove('hidden');g.classList.add('login-open');g.style.removeProperty('display');g.style.setProperty('display','grid','important');const email=document.getElementById('loginEmail');if(email){setTimeout(()=>email.focus(),50)}}
-function closeLogin(){const g=document.getElementById('loginGate');if(g){g.classList.remove('login-open');g.classList.add('hidden')}}
-
-async function login(e){
-  if(e) e.preventDefault();
-
-  const emailEl = document.getElementById('loginEmail');
-  const passEl = document.getElementById('loginPass');
-
-  if(!emailEl || !passEl){
-    alert('Campos de login não encontrados. Recarregue a página.');
-    return;
-  }
-
-  const email = emailEl.value.trim().toLowerCase();
-  const pass = passEl.value;
-
-  if(!window.equoluzSupabase){
-    alert('Conexão com o Supabase não carregada.');
-    return;
-  }
-
-  const {data,error} = await equoluzSupabase.auth.signInWithPassword({
-    email,
-    password: pass
-  });
-
-  if(error){
-    alert('Não foi possível entrar: ' + error.message);
-    return;
-  }
-
-  try{
-    const session = await loadRealProfile(data.user);
-
-    sessionStorage.setItem(
-      'equoluz_session',
-      JSON.stringify(session)
-    );
-
-    await syncChildrenFromSupabase();
-
-   applySession();
-
-if(typeof showDashboard === 'function'){
-  showDashboard();
-}
-
-    if(typeof addAudit === 'function'){
-      addAudit('Login Supabase realizado · ' + session.email);
-    }
-
-    if(session.forceChange){
-      setTimeout(() => openSecurity(true),150);
-    }
-
-  }catch(err){
-
-    await equoluzSupabase.auth.signOut();
-
-    alert(
-      'Login autenticado, mas o perfil do sistema não está disponível: ' +
-      err.message
-    );
-  }
-}
-
-  const email=emailEl.value.trim().toLowerCase();
-  const pass=passEl.value;
-
-  if(!email || !pass){
-    alert('Digite seu e-mail e sua senha.');
-    return;
-  }
-
-  if(!window.equoluzSupabase){
-    alert('Conexão com o Supabase não carregada.');
-    console.error('equoluzSupabase não está disponível.');
-    return;
-  }
-
-  try{
-    console.log('Iniciando login:', email);
-
-    const {data,error}=await equoluzSupabase.auth.signInWithPassword({
-      email:email,
-      password:pass
-    });
-
-    if(error){
-      console.error('Erro Supabase:',error);
-      alert('Não foi possível entrar: '+error.message);
-      return;
-    }
-
-    console.log('Autenticação realizada:',data.user?.email);
-
-    const session=await loadRealProfile(data.user);
-
-    sessionStorage.setItem(
-      'equoluz_session',
-      JSON.stringify(session)
-    );
-
-    await syncChildrenFromSupabase();
-
-    applySession();
-    showDashboard();
-
-    if(typeof addAudit==='function'){
-      addAudit('Login Supabase realizado · '+session.email);
-    }
-
-    if(session.forceChange){
-      setTimeout(()=>openSecurity(true),150);
-    }
-
-  }catch(err){
-    console.error('Erro completo no login:',err);
-
-    try{
-      await equoluzSupabase.auth.signOut();
-    }catch(signoutErr){
-      console.error('Erro ao sair:',signoutErr);
-    }
-
-    alert(
-      'Login autenticado, mas ocorreu um erro ao carregar o perfil: '+
-      (err.message||err)
-    );
-  }
-}
-```
-
-function logout(){sessionStorage.removeItem('equoluz_session');document.getElementById('dashboard').style.display='none';document.getElementById('public').style.display='block';document.getElementById('loginGate').style.setProperty('display','none','important');window.scrollTo(0,0);}
-function applySession(){const raw=sessionStorage.getItem('equoluz_session');if(!raw){document.getElementById('loginGate').style.setProperty('display','none','important');document.getElementById('dashboard').style.display='none';document.getElementById('public').style.display='block';return}const u=JSON.parse(raw);document.getElementById('loginGate').classList.add('hidden');document.getElementById('loginGate').style.setProperty('display','none','important');document.getElementById('public').style.display='none';const b=document.getElementById('sessionBadge');if(b)b.textContent=u.name+' · '+(u.role==='admin'?'Administrador':u.role==='finance'?'Diretor Financeiro':'Profissional');const perms=new Set(u.permissions||[]);document.querySelectorAll('.moduleGrid .moduleBtn').forEach(el=>{const mod=el.dataset.module;let visible=false;if(u.role==='admin')visible=true;else if(u.role==='finance')visible=(mod==='cavalos'||mod==='financeiro');else visible=perms.has(mod);el.style.display=visible?'':'none';});document.querySelectorAll('[data-admin-only]').forEach(el=>el.style.display=u.role==='admin'?'':'none');document.querySelectorAll('[data-finance-only]').forEach(el=>el.style.display=(u.role==='admin'||u.role==='finance')?'':'none');document.querySelectorAll('[data-finance-visible]').forEach(el=>el.style.display=(u.role==='admin'||u.role==='finance')?'':'none');document.querySelectorAll('.modulePanel').forEach(el=>{const mod=el.id;let allowed=false;if(u.role==='admin')allowed=true;else if(u.role==='finance')allowed=(mod==='cavalos'||mod==='financeiro');else allowed=perms.has(mod);el.dataset.allowed=allowed?'1':'0';});}
-function guardRole(){const raw=sessionStorage.getItem('equoluz_session');if(!raw)return null;return JSON.parse(raw).role}
-function canAccessModule(id){const raw=sessionStorage.getItem('equoluz_session');if(!raw)return false;const u=JSON.parse(raw);if(u.role==='admin')return true;if(u.role==='finance')return id==='cavalos'||id==='financeiro';return (u.permissions||[]).includes(id);}
-function showDashboard(){document.getElementById('loginGate').style.setProperty('display','none','important');document.getElementById('public').style.display='none';document.getElementById('dashboard').style.display='block';render();window.scrollTo(0,0)}
-function closeDashboard(){logout()}
-function panel(id){if(!canAccessModule(id)){alert('Você não possui permissão para acessar esta área.');return}document.querySelectorAll('.modulePanel').forEach(x=>x.classList.remove('active'));const target=document.getElementById(id);if(!target)return;target.classList.add('active');render()}
-function esc(v){return String(v||'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]))}
-function money(v){return new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'}).format(Number(v)||0)}
-function submitForm(e,id,type){e.preventDefault();const form=e.target;const data=Object.fromEntries(new FormData(form).entries());data.id=Date.now();if(type==='aac'){data.interesses=[...form.querySelectorAll('input[name="interesse"]:checked')].map(x=>x.value);data.status='Novo interesse';state.aac.push(data)}else{data.status='Novo cadastro';data.etapa='Novo cadastro';state.social.push(data)};save(type==='aac'?'Novo interesse AAC recebido':'Novo cadastro social recebido');document.getElementById(id).style.display='block';form.reset();render()}
-async function addChild(e){ return addChildReal(e); }
-function addSession(e){e.preventDefault();const child=state.children.find(x=>String(x.id)===String(sessionChild.value));if(!child){alert('Selecione uma criança cadastrada.');return}state.sessions.push({id:Date.now(),date:sessionDate.value,childId:child.id,child:child.name,professional:sessionProfessional.value.trim(),horse:sessionHorse.value.trim(),activity:sessionActivity.value.trim(),evolution:sessionEvolution.value.trim()});save('Sessão registrada: '+child.name);e.target.reset();render();alert('Sessão registrada com sucesso.')}
-function updateSocialStatus(id,status){const item=state.social.find(x=>x.id===id);if(!item)return;item.status=status;item.etapa=status;save('Status da lista social alterado: '+status);render()}
-function promoteSocialToChild(id){const item=state.social.find(x=>x.id===id);if(!item)return;const childName=item.crianca||item['Nome da criança']||'';if(!childName){alert('Este cadastro não possui o nome da criança.');return}const exists=state.children.some(x=>String(x.name).toLowerCase()===String(childName).toLowerCase());if(exists){alert('Esta criança já está cadastrada.');return}const child={id:Date.now(),name:childName,birth:item.nascimento||'',guardian:item.responsavel||'',phone:item.whatsapp||'',status:'Ativa',entry:new Date().toISOString().slice(0,10),notes:item.observacoes||''};state.children.push(child);item.status='Atendendo';item.etapa='Atendendo';save('Cadastro social convertido em criança ativa: '+child.name);render();alert('Cadastro convertido em criança ativa.')}
-function addAgenda(e){e.preventDefault();const person=agendaPerson.value.trim();const professional=agendaProfessional.value.trim();if(!person||!professional){alert('Selecione participante e profissional.');return}state.agenda.push({id:Date.now(),date:agendaDate.value,time:agendaTime.value,front:agendaFront.value,person,professional,horse:agendaHorse.value,type:agendaType.value,status:agendaStatus.value,notes:agendaNotes.value.trim()});save('Agendamento criado: '+person);e.target.reset();render();renderAgenda();alert('Agendamento salvo com sucesso.')}
-function removeItem(type,id){state[type]=state[type].filter(x=>x.id!==id);save('Registro excluído: '+type)}
-function updateStatus(type,id,status){const item=state[type].find(x=>x.id===id);if(!item)return;item.status=status;save('Status alterado: '+type+' → '+status)}
-function addProfessional(e){e.preventDefault();const email=proEmail.value.trim().toLowerCase();if(state.professionals.some(x=>String(x.email||'').toLowerCase()===email)){alert('Já existe um usuário cadastrado com este e-mail.');return}const role=proRole.value;let perms=[...e.target.querySelectorAll('input[name=perm]:checked')].map(x=>x.value);if(role==='Administrador')perms=['cadastro','sessoes','espera','aac','agenda','relatorios','equipe','cavalos','financeiro','config','auditoria'];if(role==='Diretor Financeiro')perms=['cavalos','financeiro'];state.professionals.push({id:Date.now(),name:proName.value.trim(),email,phone:proPhone.value.trim(),role,permissions:perms,password:'123456',forceChange:true,active:true});save('Usuário cadastrado com senha inicial e permissões');e.target.reset();render();alert('Usuário cadastrado. A senha inicial é 123456 e deverá ser alterada no primeiro acesso.')} 
-function syncEditRolePermissions(){const role=document.getElementById('editProRole').value;const box=document.getElementById('editPermBox');const checks=[...box.querySelectorAll('input[name=editPerm]')];if(role==='Administrador'){checks.forEach(c=>c.checked=true);checks.forEach(c=>c.disabled=true)}else if(role==='Diretor Financeiro'){checks.forEach(c=>{c.checked=(c.value==='cavalos'||c.value==='financeiro');c.disabled=true})}else{checks.forEach(c=>c.disabled=false)}}
-function editProfessional(id){const x=state.professionals.find(p=>p.id===id);if(!x)return;document.getElementById('editProId').value=x.id;document.getElementById('editProName').value=x.name||'';document.getElementById('editProEmail').value=x.email||'';document.getElementById('editProPhone').value=x.phone||'';document.getElementById('editProRole').value=x.role||'Profissional';[...document.querySelectorAll('#editPermBox input[name=editPerm]')].forEach(c=>{c.checked=(x.permissions||[]).includes(c.value)});syncEditRolePermissions();const m=document.getElementById('professionalEditModal');m.style.setProperty('display','grid','important')}
-function closeProfessionalEdit(){document.getElementById('professionalEditModal').style.setProperty('display','none','important')}
-function saveProfessionalEdit(e){e.preventDefault();const id=Number(document.getElementById('editProId').value);const x=state.professionals.find(p=>p.id===id);if(!x)return;const email=document.getElementById('editProEmail').value.trim().toLowerCase();if(state.professionals.some(p=>p.id!==id&&String(p.email||'').toLowerCase()===email)){alert('Já existe outro usuário com este e-mail.');return}const role=document.getElementById('editProRole').value;x.name=document.getElementById('editProName').value.trim();x.email=email;x.phone=document.getElementById('editProPhone').value.trim();x.role=role;x.permissions=role==='Administrador'?['cadastro','sessoes','espera','aac','agenda','relatorios','equipe','cavalos','financeiro','config','auditoria']:role==='Diretor Financeiro'?['cavalos','financeiro']:[...document.querySelectorAll('#editPermBox input[name=editPerm]:checked')].map(c=>c.value);save('Permissões/dados do usuário atualizados: '+x.name);closeProfessionalEdit();render();alert('Usuário atualizado com sucesso.')}
-function changePassword(e,force){e.preventDefault();const raw=sessionStorage.getItem('equoluz_session');if(!raw){alert('Faça login novamente.');return}const u=JSON.parse(raw);const current=document.getElementById('currentPassword').value;const next=document.getElementById('newPassword').value;const confirm=document.getElementById('confirmPassword').value;if(next.length<6){alert('A nova senha deve ter pelo menos 6 caracteres.');return}if(next!==confirm){alert('A confirmação da nova senha não confere.');return}let saved=state.professionals.find(x=>String(x.email||'').toLowerCase()===String(u.email).toLowerCase());if(saved){if(current!==saved.password){alert('Senha atual incorreta.');return}saved.password=next;saved.forceChange=false}else{if(current!=='123456'){alert('Senha atual incorreta.');return}if(u.email!=='admin@equoluz.local'&&u.email!=='financeiro@equoluz.local'&&u.email!=='profissional@equoluz.local'){alert('Usuário de demonstração não encontrado.');return}state.demoPasswords=state.demoPasswords||{};state.demoPasswords[u.email]=next}u.forceChange=false;sessionStorage.setItem('equoluz_session',JSON.stringify(u));save('Senha alterada: '+u.email);closeSecurity();e.target.reset();alert('Senha alterada com sucesso.');}
-function openSecurity(force=false){const raw=sessionStorage.getItem('equoluz_session');if(!raw)return;const u=JSON.parse(raw);const modal=document.getElementById('securityModal');if(!modal)return;modal.style.display='flex';document.getElementById('securityTitle').textContent=force?'Primeiro acesso · crie sua senha':'Segurança da conta';document.getElementById('securityHint').textContent=force?'Por segurança, altere a senha inicial antes de continuar.':'Altere sua senha sempre que precisar.';document.getElementById('currentPassword').value='';document.getElementById('newPassword').value='';document.getElementById('confirmPassword').value='';if(force){const cancel=document.getElementById('securityCancel');if(cancel)cancel.style.display='none';}else{const cancel=document.getElementById('securityCancel');if(cancel)cancel.style.display='inline-block';}document.getElementById('newPassword').focus()}
-function closeSecurity(){const m=document.getElementById('securityModal');if(m)m.style.display='none';const raw=sessionStorage.getItem('equoluz_session');if(raw){const u=JSON.parse(raw);if(u.forceChange)setTimeout(()=>openSecurity(true),50)}}
-
-function addHorseCare(e,horseId){e.preventDefault();const h=state.horses.find(x=>x.id===horseId);if(!h)return;if(!h.cares)h.cares=[];const type=document.getElementById('careType-'+horseId).value;const product=document.getElementById('careProduct-'+horseId).value;const date=document.getElementById('careDate-'+horseId).value;const next=document.getElementById('careNext-'+horseId).value;const vet=document.getElementById('careVet-'+horseId).value;h.cares.push({id:Date.now(),type,product,date,next,vet});save('Cuidado veterinário registrado: '+h.name+' · '+type);e.target.reset();render()}
-function removeHorseCare(horseId,id){const h=state.horses.find(x=>x.id===horseId);if(!h)return;h.cares=(h.cares||[]).filter(x=>x.id!==id);save('Cuidado veterinário excluído: '+h.name);render()}
-function getAacSessions(){
-  if(!Array.isArray(state.aacSessions)) state.aacSessions=[];
-  return state.aacSessions;
-}
-function renderAacSessions(){
-  const date=document.getElementById('aacSessionDate'); if(date && !date.value) date.value=new Date().toISOString().slice(0,10);
-  const clients=getAacClients().filter(x=>x.status==='Ativo' || x.contractId);
-  const sel=document.getElementById('aacSessionClient');
-  if(sel){const current=sel.value;sel.innerHTML='<option value="">Selecione o cliente AAC</option>'+clients.map(x=>`<option value="${x.id}">${esc(x.name)}</option>`).join('');if(current)sel.value=current;}
-  const list=document.getElementById('aacSessionList');
-  if(!list)return;
-  const sessions=getAacSessions().slice().reverse();
-  list.innerHTML=sessions.length?sessions.map(x=>`<div class="record"><button class="danger" onclick="removeAacSession(${x.id})">Excluir</button><b>${esc(x.date)} · ${esc(x.clientName)}</b><div class="mini">Profissional: ${esc(x.professional)} · Cavalo: ${esc(x.horse||'não informado')} · ${esc(x.activity)}</div><div>${esc(x.evolution)}</div>${x.notes?`<div class="mini">Observações: ${esc(x.notes)}</div>`:''}</div>`).join(''):'<div class="empty">Nenhum atendimento AAC registrado.</div>';
-}
-function addAacSession(e){
-  e.preventDefault();
-  const clientId=Number(document.getElementById('aacSessionClient').value||0);
-  const client=getAacClients().find(x=>Number(x.id)===clientId);
-  if(!client){alert('Selecione um cliente AAC.');return;}
-  if(client.status!=='Ativo'){alert('Somente clientes AAC ativos podem receber registro de atendimento.');return;}
-  const session={id:Date.now(),clientId:client.id,clientName:client.name,date:document.getElementById('aacSessionDate').value,professional:document.getElementById('aacSessionProfessional').value.trim(),horse:document.getElementById('aacSessionHorse').value,activity:document.getElementById('aacSessionActivity').value.trim(),evolution:document.getElementById('aacSessionEvolution').value.trim(),notes:document.getElementById('aacSessionNotes').value.trim(),createdAt:new Date().toISOString()};
-  if(!session.professional||!session.activity||!session.evolution){alert('Preencha profissional, atividade e evolução.');return;}
-  getAacSessions().push(session);
-  state.audit=Array.isArray(state.audit)?state.audit:[];state.audit.push({id:Date.now()+1,date:new Date().toISOString(),action:'Atendimento AAC registrado: '+client.name});
-  localStorage.setItem(KEY,JSON.stringify(state));
-  e.target.reset();
-  document.getElementById('aacSessionDate').value=new Date().toISOString().slice(0,10);
-  renderAacSessions();
-  alert('Atendimento AAC registrado com sucesso.');
-}
-function removeAacSession(id){state.aacSessions=getAacSessions().filter(x=>String(x.id)!==String(id));localStorage.setItem(KEY,JSON.stringify(state));renderAacSessions();}
-
-function getAacClients(){
-  if(!Array.isArray(state.aacClients)) state.aacClients=[];
-  return state.aacClients;
-}
-function persistAacData(action){
-  state.aacClients=Array.isArray(state.aacClients)?state.aacClients:[];
-  state.aacContracts=Array.isArray(state.aacContracts)?state.aacContracts:[];
-  state.audit=Array.isArray(state.audit)?state.audit:[];
-  state.audit.push({id:Date.now(),date:new Date().toISOString(),action:action||'Atualização AAC'});
-  const snapshot=JSON.stringify(state);
-  localStorage.setItem(KEY,snapshot);
-  localStorage.setItem('equoluz_aac_clients_v18',JSON.stringify(state.aacClients));
-  localStorage.setItem('equoluz_aac_contracts_v18',JSON.stringify(state.aacContracts));
-  return snapshot;
-}
-function saveAacClients(list){state.aacClients=Array.isArray(list)?list:[];persistAacData('Dados de clientes AAC atualizados')}
-function convertAacInterest(id){const item=state.aac.find(x=>x.id===id);if(!item)return;const clients=getAacClients();const name=item['Nome do participante']||'Participante';if(clients.some(x=>String(x.name).toLowerCase()===String(name).toLowerCase())){panel('aac');alert('Este interessado já possui um cadastro AAC.');return}clients.push({id:Date.now(),name,responsible:item['Nome do responsável']||'',phone:item.WhatsApp||'',email:item.Email||'',interests:item.interesses||[],status:'Pré-cadastro',sourceInterestId:id,created:new Date().toISOString().slice(0,10),notes:item.Observações||''});saveAacClients(clients);item.status='Pré-cadastro';save('Interessado AAC convertido em pré-cadastro: '+name);panel('aac');render();alert('Interessado convertido em pré-cadastro AAC. Agora finalize os dados e o contrato.')}
-function updateAacClient(id,field,value){const clients=getAacClients();const c=clients.find(x=>x.id===id);if(!c)return;c[field]=value;saveAacClients(clients);save('Cadastro AAC atualizado: '+c.name);render()}
-function removeAacClient(id){saveAacClients(getAacClients().filter(x=>x.id!==id));save('Cadastro AAC excluído');render()}
-
-function getAacContracts(){
-  if(!Array.isArray(state.aacContracts)) state.aacContracts=[];
-  return state.aacContracts;
-}
-function updateAacDashboard(){
-  const contracts=getAacContracts();
-  const active=contracts.filter(x=>String(x.status||'')==='Ativo');
-  const total=active.reduce((sum,x)=>sum+(Number(x.value)||0),0);
-  const count=document.getElementById('mAacActive');
-  const revenue=document.getElementById('mAacRevenue');
-  const innerCount=document.getElementById('aacActiveCount');
-  const innerTotal=document.getElementById('aacContractTotal');
-  if(count) count.textContent=String(active.length);
-  if(revenue) revenue.textContent=money(total);
-  if(innerCount) innerCount.textContent=String(active.length);
-  if(innerTotal) innerTotal.textContent=money(total);
-  return {contracts,active,total};
-}
-function renderAacUI(){
-  const clients=getAacClients();
-  const contracts=getAacContracts();
-  const list=document.getElementById('aacClientList');
-  if(list){
-    list.innerHTML=clients.length?clients.slice().reverse().map(x=>`<div class="record"><button class="danger" onclick="removeAacClient(${x.id})">Excluir</button><b>${esc(x.name)}</b><div class="mini">Responsável: ${esc(x.responsible||'')} · WhatsApp: ${esc(x.phone||'')} · Status: <b>${esc(x.status||'Pré-cadastro')}</b></div><div class="mini">Modalidade: ${esc(x.modality||((x.interests||[]).join(' · ')||'não definida'))} · ${x.frequency?esc(x.frequency)+'x/semana · ':''}${x.value?money(x.value)+'/mês':''}</div><div>${esc(x.notes||'')}</div></div>`).join(''):'<div class="empty">Nenhum cliente AAC cadastrado.</div>';
-  }
-  const cl=document.getElementById('aacContractList');
-  if(cl){cl.innerHTML=contracts.length?contracts.slice().reverse().map(x=>`<div class="record"><button class="danger" onclick="removeAacContract(${x.id})">Excluir</button><b>${esc(x.child)}</b><div class="mini">Responsável: ${esc(x.responsible||'')} · WhatsApp: ${esc(x.phone||'')} · ${esc(x.frequency)}x por semana · ${money(x.value)}/mês · ${esc(x.status)}</div><div>${esc(x.notes||'')}</div></div>`).join(''):'<div class="empty">Nenhum contrato AAC cadastrado.</div>'}
-  const sel=document.getElementById('aacContractClient');
-  if(sel){const cv=sel.value;sel.innerHTML='<option value="">Vincular a um pré-cadastro existente (opcional)</option>'+clients.filter(x=>!x.contractId||x.status==='Pré-cadastro').map(x=>`<option value="${x.id}">${esc(x.name)} · ${esc(x.status||'Pré-cadastro')}</option>`).join('');if(cv)sel.value=cv;}
-  updateAacDashboard();
-  renderAacSessions();
-}
-function addAacContractForm(e){
-  e.preventDefault();
-  const form=e.target;
-  try{
-    const name=document.getElementById('aacContractName').value.trim();
-    const responsible=document.getElementById('aacContractResponsible').value.trim();
-    const frequency=Number(document.getElementById('aacContractFrequency').value||0);
-    const value=Number(document.getElementById('aacContractValue').value||0);
-    const status=document.getElementById('aacContractStatus').value;
-    if(!name||!responsible||frequency<1||value<0){alert('Preencha nome, responsável, frequência e valor.');return;}
-    const clientSelect=document.getElementById('aacContractClient');
-    const selectedId=clientSelect && clientSelect.value ? String(clientSelect.value) : '';
-    const clients=getAacClients();
-    let client=selectedId?clients.find(x=>String(x.id)===selectedId):clients.find(x=>String(x.name||'').trim().toLowerCase()===name.toLowerCase());
-    if(!client){client={id:Date.now()+1,name,responsible,phone:'',status:'Pré-cadastro',created:new Date().toISOString().slice(0,10),interests:[],notes:''};clients.push(client)}
-    const contractId=Date.now();
-    const contract={id:contractId,clientId:client.id,child:name,birth:document.getElementById('aacContractBirth').value||'',responsible,phone:document.getElementById('aacContractPhone').value.trim(),frequency,value,status,start:document.getElementById('aacContractStart').value||'',end:document.getElementById('aacContractEnd').value||'',modality:document.getElementById('aacContractModality').value,notes:document.getElementById('aacContractNotes').value.trim(),createdAt:new Date().toISOString()};
-    const oldContractId=client.contractId;
-    if(oldContractId) state.aacContracts=getAacContracts().filter(x=>String(x.id)!==String(oldContractId));
-    client.contractId=contractId;
-    client.status=status==='Ativo'?'Ativo':'Inativo';
-    client.frequency=frequency;
-    client.value=value;
-    client.modality=contract.modality;
-    client.responsible=responsible;
-    client.phone=contract.phone;
-    client.birth=contract.birth;
-    client.notes=contract.notes;
-    state.aacClients=clients;
-    state.aacContracts=getAacContracts();
-    state.aacContracts.push(contract);
-    state.audit=Array.isArray(state.audit)?state.audit:[];
-    state.audit.push({id:Date.now()+2,date:new Date().toISOString(),action:'Contrato AAC cadastrado: '+name});
-    localStorage.setItem(KEY,JSON.stringify(state));
-    localStorage.setItem('equoluz_aac_clients_v18',JSON.stringify(state.aacClients));
-    localStorage.setItem('equoluz_aac_contracts_v18',JSON.stringify(state.aacContracts));
-    form.reset();
-    renderAacUI();
-    // Atualiza apenas os indicadores necessários, sem executar o render geral do sistema.
-    const dash=updateAacDashboard();
-    alert('Cliente e contrato AAC cadastrados com sucesso.\n\nClientes ativos: '+dash.active.length+'\nValor mensal contratado: '+money(dash.total));
-  }catch(err){
-    console.error('Erro ao salvar contrato AAC:',err);
-    alert('O cadastro não foi concluído. Verifique o console para detalhes.');
-  }
-}
-function fillAacContractClient(){const id=Number(document.getElementById('aacContractClient').value||0);const c=getAacClients().find(x=>x.id===id);if(!c)return;document.getElementById('aacContractName').value=c.name||'';document.getElementById('aacContractResponsible').value=c.responsible||'';document.getElementById('aacContractPhone').value=c.phone||'';if(c.email){}document.getElementById('aacContractNotes').value=c.notes||''}
-function removeAacContract(id){state.aacContracts=getAacContracts().filter(x=>String(x.id)!==String(id));const client=state.aacClients.find(x=>String(x.contractId)===String(id));if(client){client.contractId=null;client.status='Pré-cadastro';client.frequency=null;client.value=null;client.modality=null}persistAacData('Contrato AAC excluído');updateAacDashboard();render()}
-function addFinanceForm(e){e.preventDefault();equoluzFinance.add({kind:finKind.value,value:Number(finValue.value),category:finCategory.value,description:finDescription.value,date:finDate.value});save('Lançamento financeiro social registrado');e.target.reset();finDate.value=new Date().toISOString().slice(0,10);render()}
-function saveSiteText(){state.site=state.site||{};state.site.title=siteTitle.value;state.site.lead=siteLead.value;save('Textos do site alterados');applySiteSettings();alert('Textos salvos no protótipo.')}
-function saveSiteContact(){state.site=state.site||{};state.site.whatsapp=siteWhatsapp.value;state.site.email=siteEmail.value;state.site.instagram=siteInstagram.value;state.site.hours=siteHours.value;save('Contatos do site alterados');alert('Contatos salvos no protótipo.')}
-function loadSiteImage(e,key){const f=e.target.files[0];if(!f)return;const reader=new FileReader();reader.onload=()=>{state.site=state.site||{};state.site.images=state.site.images||{};state.site.images[key]=reader.result;const img=document.getElementById('preview'+key.charAt(0).toUpperCase()+key.slice(1));if(img){img.src=reader.result;img.style.display='block'}};reader.readAsDataURL(f)}
-function saveSiteImages(){save('Imagens do site alteradas');applySiteSettings();alert('Imagens salvas no protótipo.')}
-function saveBrand(){state.site=state.site||{};state.site.pink=sitePink.value;state.site.blue=siteBlue.value;save('Identidade visual alterada');document.documentElement.style.setProperty('--pink',state.site.pink);document.documentElement.style.setProperty('--blue',state.site.blue);alert('Identidade visual salva no protótipo.')}
-function applySiteSettings(){const st=state.site||{};if(st.title)document.querySelector('#public h1').innerHTML=esc(st.title).replace(/\n/g,'<br>');if(st.lead)document.querySelector('#public .lead').innerHTML=esc(st.lead);if(st.pink)document.documentElement.style.setProperty('--pink',st.pink);if(st.blue)document.documentElement.style.setProperty('--blue',st.blue);if(st.images){const capa=st.images.capa;if(capa){const v=document.querySelector('.heroVisual');v.style.backgroundImage='linear-gradient(#0002,#0002),url("'+capa+'")';v.style.backgroundSize='cover';v.style.backgroundPosition='center'}const logo=st.images.logo; if(logo){document.querySelectorAll('.logoMark').forEach(x=>{x.style.backgroundImage='url("'+logo+'")';x.style.backgroundSize='cover';x.textContent=''})}}}
-function clearDemo(){if(confirm('Apagar todos os dados demonstrativos deste navegador?')){localStorage.removeItem(KEY);location.reload()}}
-function exportCsv(){const rows=[['Tipo','Nome','Status'],...state.social.map(x=>['Instituto',x['Nome da criança']||'',x.status||'Novo cadastro']),...state.aac.map(x=>['AAC',x['Nome do participante']||'',x.status||'Novo interesse'])];const csv=rows.map(r=>r.map(v=>'"'+String(v).replaceAll('"','""')+'"').join(';')).join('\n');const blob=new Blob([csv],{type:'text/csv;charset=utf-8'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='equoluz-cadastros-v11.csv';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
-
-function populateAgendaFields(){const ps=document.getElementById('agendaPerson'), pr=document.getElementById('agendaProfessional');if(!ps||!pr)return;const pv=ps.value, rv=pr.value;const children=state.children.filter(x=>(x.status||'Ativa')!=='Encerrada').map(x=>({id:'child-'+x.id,name:x.name,front:'Instituto Equoluz'}));const contracts=getAacContracts().filter(x=>x.status==='Ativo').map(x=>({id:'aac-'+x.id,name:x.child,front:'Equoluz AAC'}));ps.innerHTML='<option value="">Selecione o participante</option>'+children.concat(contracts).map(x=>`<option value="${esc(x.name)}">${esc(x.name)} · ${esc(x.front)}</option>`).join('');if(pv)ps.value=pv;const names=state.professionals.filter(x=>x.role!=='Diretor Financeiro').map(x=>x.name);if(!names.includes('Profissional de demonstração'))names.push('Profissional de demonstração');pr.innerHTML='<option value="">Selecione o profissional</option>'+names.map(n=>`<option value="${esc(n)}">${esc(n)}</option>`).join('');if(rv)pr.value=rv;if(document.getElementById('agendaFilterDate')&&!document.getElementById('agendaFilterDate').value)document.getElementById('agendaFilterDate').value=new Date().toISOString().slice(0,10)}
-function renderAgenda(){const list=document.getElementById('agendaList');if(!list)return;populateAgendaFields();const period=document.getElementById('agendaFilterPeriod')?.value||'all', fd=document.getElementById('agendaFilterDate')?.value||'';let rows=state.agenda.slice().sort((a,b)=>(a.date+a.time).localeCompare(b.date+b.time));if(period==='day'&&fd)rows=rows.filter(x=>x.date===fd);if(period==='week'&&fd){const d=new Date(fd+'T12:00:00');const day=d.getDay();const diff=(day+6)%7;const start=new Date(d);start.setDate(d.getDate()-diff);const end=new Date(start);end.setDate(start.getDate()+6);const iso=n=>n.toISOString().slice(0,10);rows=rows.filter(x=>x.date>=iso(start)&&x.date<=iso(end))}list.innerHTML=rows.length?rows.map(x=>`<div class="record"><button class="danger" onclick="removeItem('agenda',${x.id});renderAgenda()">Excluir</button><b>${esc(x.date)} · ${esc(x.time)} · ${esc(x.person)}</b><div class="mini">${esc(x.front||'Instituto Equoluz')} · ${esc(x.type)} · Profissional: ${esc(x.professional)}</div><div class="mini">Cavalo: ${esc(x.horse||'não definido')} · Situação: <b>${esc(x.status||'Agendado')}</b></div>${x.notes?`<div>${esc(x.notes)}</div>`:''}</div>`).join(''):'<div class="empty">Nenhum atendimento encontrado para o filtro selecionado.</div>'}
-
-function reportAllRows(){
-  const social=(Array.isArray(state.sessions)?state.sessions:[]).map(x=>({
-    id:x.id,scope:'social',date:x.date||'',person:x.child||'',professional:x.professional||'',horse:x.horse||'',activity:x.activity||'',evolution:x.evolution||'',notes:x.notes||''
-  }));
-  const aac=(typeof getAacSessions==='function'?getAacSessions():[]).map(x=>({
-    id:x.id,scope:'aac',date:x.date||'',person:x.clientName||'',professional:x.professional||'',horse:x.horse||'',activity:x.activity||'',evolution:x.evolution||'',notes:x.notes||''
-  }));
-  return social.concat(aac);
-}
-function populateReportFilters(){
-  const scope=document.getElementById('reportScope')?.value||'social';
-  const ps=document.getElementById('reportPerson'), pp=document.getElementById('reportProfessional');
-  if(!ps||!pp)return;
-  const rows=reportAllRows().filter(x=>x.scope===scope);
-  const oldP=ps.value,oldR=pp.value;
-  let people=[];
-  if(scope==='social'){
-    people=(Array.isArray(state.children)?state.children:[]).map(x=>x.name||'').filter(Boolean);
-  }else{
-    people=getAacClients().map(x=>x.name||'').filter(Boolean);
-  }
-  people=people.concat(rows.map(x=>x.person).filter(Boolean));
-  people=[...new Set(people)].sort((a,b)=>a.localeCompare(b,'pt-BR'));
-  let pros=(Array.isArray(state.professionals)?state.professionals:[])
-    .filter(x=>x.role!=='Diretor Financeiro')
-    .map(x=>x.name||'').filter(Boolean);
-  pros=pros.concat(rows.map(x=>x.professional).filter(Boolean));
-  pros=[...new Set(pros)].sort((a,b)=>a.localeCompare(b,'pt-BR'));
-  ps.innerHTML='<option value="">Todos</option>'+people.map(x=>`<option value="${esc(x)}">${esc(x)}</option>`).join('');
-  pp.innerHTML='<option value="">Todos</option>'+pros.map(x=>`<option value="${esc(x)}">${esc(x)}</option>`).join('');
-  if(people.includes(oldP))ps.value=oldP;if(pros.includes(oldR))pp.value=oldR;
-}
-function printReportOnly(){
-  const result=document.getElementById('reportResult');
-  if(!result || !result.innerText.trim() || result.innerText.includes('Escolha os filtros')){
-    alert('Gere o relatório antes de imprimir.');
-    return;
-  }
-  window.print();
-}
-
-function generateReport(){
-  const result=document.getElementById('reportResult');if(!result)return;
-  const scope=document.getElementById('reportScope')?.value||'social';
-  const type=document.getElementById('reportType')?.value||'sessions';
-  const person=document.getElementById('reportPerson')?.value||'';
-  const professional=document.getElementById('reportProfessional')?.value||'';
-  const horse=document.getElementById('reportHorse')?.value||'';
-  const start=document.getElementById('reportStart')?.value||'';
-  const end=document.getElementById('reportEnd')?.value||'';
-  let rows=reportAllRows().filter(x=>x.scope===scope);
-  if(person)rows=rows.filter(x=>x.person===person);
-  if(professional)rows=rows.filter(x=>x.professional===professional);
-  if(horse)rows=rows.filter(x=>x.horse===horse);
-  if(start)rows=rows.filter(x=>x.date>=start);
-  if(end)rows=rows.filter(x=>x.date<=end);
-  rows.sort((a,b)=>(b.date||'').localeCompare(a.date||''));
-  const front=scope==='social'?'Instituto Equoluz — Social':'Equoluz AAC';
-  const title=type==='sessions'?'Relatório de sessões':type==='participant'?'Resumo por criança/participante':type==='professional'?'Resumo por profissional':'Resumo por cavalo';
-  let html=`<div class="card" style="background:#f8fbff"><h3>${title}</h3><div class="mini-note">${front} · ${rows.length} atendimento(s) encontrado(s)</div>`;
-  if(!rows.length){html+='<div class="empty" style="margin-top:14px">Nenhum atendimento encontrado com os filtros selecionados.</div></div>';result.innerHTML=html;return;}
-  if(type==='sessions'){
-    html+=`<div style="overflow:auto;margin-top:14px"><table style="width:100%;border-collapse:collapse;font:13px Arial"><thead><tr><th style="text-align:left;padding:8px;border-bottom:1px solid var(--line)">Data</th><th style="text-align:left;padding:8px;border-bottom:1px solid var(--line)">Criança/participante</th><th style="text-align:left;padding:8px;border-bottom:1px solid var(--line)">Profissional</th><th style="text-align:left;padding:8px;border-bottom:1px solid var(--line)">Cavalo</th><th style="text-align:left;padding:8px;border-bottom:1px solid var(--line)">Atividade</th><th style="text-align:left;padding:8px;border-bottom:1px solid var(--line)">Evolução</th></tr></thead><tbody>`;
-    html+=rows.map(x=>`<tr><td style="padding:8px;border-bottom:1px solid var(--line)">${esc(x.date)}</td><td style="padding:8px;border-bottom:1px solid var(--line)">${esc(x.person)}</td><td style="padding:8px;border-bottom:1px solid var(--line)">${esc(x.professional)}</td><td style="padding:8px;border-bottom:1px solid var(--line)">${esc(x.horse||'Não informado')}</td><td style="padding:8px;border-bottom:1px solid var(--line)">${esc(x.activity)}</td><td style="padding:8px;border-bottom:1px solid var(--line)">${esc(x.evolution)}${x.notes?`<div class="mini-note">Obs.: ${esc(x.notes)}</div>`:''}</td></tr>`).join('');
-    html+='</tbody></table></div>';
-  }else{
-    const key=type==='participant'?'person':type==='professional'?'professional':'horse';
-    const groups={};rows.forEach(x=>{const k=x[key]||'Não informado';groups[k]=(groups[k]||0)+1});
-    const ordered=Object.entries(groups).sort((a,b)=>a[0].localeCompare(b[0],'pt-BR'));
-    html+=`<div style="overflow:auto;margin-top:14px"><table style="width:100%;border-collapse:collapse;font:14px Arial"><thead><tr><th style="text-align:left;padding:8px;border-bottom:1px solid var(--line)">${type==='participant'?'Criança/participante':type==='professional'?'Profissional':'Cavalo'}</th><th style="text-align:left;padding:8px;border-bottom:1px solid var(--line)">Atendimentos</th></tr></thead><tbody>`;
-    html+=ordered.map(([k,v])=>`<tr><td style="padding:8px;border-bottom:1px solid var(--line)">${esc(k)}</td><td style="padding:8px;border-bottom:1px solid var(--line)">${v}</td></tr>`).join('');
-    html+='</tbody></table></div>';
-  }
-  html+='</div>';result.innerHTML=html;
-}
-function v21ExportFilteredRows(){const scope=document.getElementById('reportScope')?.value||'social';const person=document.getElementById('reportPerson')?.value||'';const professional=document.getElementById('reportProfessional')?.value||'';const horse=document.getElementById('reportHorse')?.value||'';const start=document.getElementById('reportStart')?.value||'';const end=document.getElementById('reportEnd')?.value||'';let rows=reportAllRows().filter(x=>x.scope===scope);if(person)rows=rows.filter(x=>x.person===person);if(professional)rows=rows.filter(x=>x.professional===professional);if(horse)rows=rows.filter(x=>x.horse===horse);if(start)rows=rows.filter(x=>x.date>=start);if(end)rows=rows.filter(x=>x.date<=end);rows.sort((a,b)=>(b.date||'').localeCompare(a.date||''));return {scope,rows};}
-function v21ExcelHtml(title,headers,rows){const escx=v=>String(v??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');return '<html><head><meta charset="UTF-8"></head><body><h2>'+escx(title)+'</h2><table border="1"><thead><tr>'+headers.map(h=>'<th>'+escx(h)+'</th>').join('')+'</tr></thead><tbody>'+rows.map(r=>'<tr>'+r.map(v=>'<td>'+escx(v)+'</td>').join('')+'</tr>').join('')+'</tbody></table></body></html>';}
-function v21DownloadExcel(name,title,headers,rows){const html='\ufeff'+v21ExcelHtml(title,headers,rows);v21Download(name,html,'application/vnd.ms-excel;charset=utf-8');}
-function v21ExportFilteredExcel(){const q=v21ExportFilteredRows();const rows=q.rows.map(x=>[q.scope==='social'?'Instituto Equoluz':'Equoluz AAC',x.date,x.person,x.professional,x.horse||'',x.activity,x.evolution,x.notes||'']);v21DownloadExcel('equoluz-relatorio.xls','Relatório Equoluz',['Frente','Data','Participante','Profissional','Cavalo','Atividade','Evolução','Observações'],rows);}
-function v21ExportFilteredPdf(){const result=document.getElementById('reportResult');if(!result||!result.innerText.trim()||result.innerText.includes('Escolha os filtros')){generateReport();}setTimeout(()=>{const r=document.getElementById('reportResult');if(!r||!r.innerText.trim()){alert('Gere o relatório antes de exportar para PDF.');return}window.print();},80);}
-function v21ExportSocialWaitingExcel(){const rows=Array.isArray(state.social)?state.social:[];v21DownloadExcel('equoluz-lista-social.xls','Lista Social Equoluz',['Criança','Responsável','WhatsApp','E-mail','Nascimento','Localidade','Status','Etapa','Observações'],rows.map(x=>[x.crianca||'',x.responsavel||'',x.whatsapp||'',x.email||'',x.nascimento||'',x.localidade||'',x.status||'',x.etapa||'',x.observacoes||'']));}
-function v21ExportAacExcel(){const clients=typeof getAacClients==='function'?getAacClients():[];const contracts=Array.isArray(state.aacContracts)?state.aacContracts:[];v21DownloadExcel('equoluz-aac-cadastros.xls','Cadastros AAC Equoluz',['Participante','Responsável','WhatsApp','Status','Modalidade','Frequência semanal','Valor mensal','Início','Fim','Observações'],clients.map(c=>{const ct=contracts.find(x=>String(x.clientId||'')===String(c.id)||String(x.child||'').toLowerCase()===String(c.name||'').toLowerCase());return[c.name||'',c.responsible||'',c.phone||'',c.status||'',c.modality||((c.interests||[]).join(' · ')),c.frequency||ct?.frequency||'',c.value||ct?.value||'',c.start||ct?.start||'',ct?.end||'',c.notes||ct?.notes||'']}));}
-function v21ExportFinanceExcel(){const u=JSON.parse(sessionStorage.getItem('equoluz_session')||'{}');if(u.role!=='admin'&&u.role!=='finance'){alert('A exportação do Financeiro Social é restrita ao Administrador e ao Diretor Financeiro.');return}const records=typeof equoluzFinance!=='undefined'&&Array.isArray(equoluzFinance.records)?equoluzFinance.records:[];v21DownloadExcel('equoluz-financeiro-social.xls','Financeiro Social Equoluz',['Tipo','Valor','Categoria','Data','Descrição'],records.map(x=>[x.kind==='entrada'?'Entrada':'Saída',x.value,x.category||'',x.date||'',x.description||'']));}
-function v21Download(name,content,type='text/csv;charset=utf-8'){const blob=new Blob([content],{type});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
-function v21Csv(rows){return rows.map(r=>r.map(v=>{const x=String(v??'').replaceAll('"','""').replace(/\r?\n/g,' ');return '"'+x+'"'}).join(';')).join('\n')}
-function v21ExportFilteredCsv(){const scope=document.getElementById('reportScope')?.value||'social';const person=document.getElementById('reportPerson')?.value||'';const professional=document.getElementById('reportProfessional')?.value||'';const horse=document.getElementById('reportHorse')?.value||'';const start=document.getElementById('reportStart')?.value||'';const end=document.getElementById('reportEnd')?.value||'';let rows=reportAllRows().filter(x=>x.scope===scope);if(person)rows=rows.filter(x=>x.person===person);if(professional)rows=rows.filter(x=>x.professional===professional);if(horse)rows=rows.filter(x=>x.horse===horse);if(start)rows=rows.filter(x=>x.date>=start);if(end)rows=rows.filter(x=>x.date<=end);rows.sort((a,b)=>(b.date||'').localeCompare(a.date||''));const data=[['Frente','Data','Participante','Profissional','Cavalo','Atividade','Evolução','Observações'],...rows.map(x=>[scope==='social'?'Instituto Equoluz':'Equoluz AAC',x.date,x.person,x.professional,x.horse||'',x.activity,x.evolution,x.notes||''])];v21Download('equoluz-relatorio-filtrado.csv','\ufeff'+v21Csv(data));}
-function v21ExportSocialWaitingCsv(){const rows=Array.isArray(state.social)?state.social:[];const data=[['Criança','Responsável','WhatsApp','E-mail','Nascimento','Localidade','Status','Etapa','Observações'],...rows.map(x=>[x.crianca||'',x.responsavel||'',x.whatsapp||'',x.email||'',x.nascimento||'',x.localidade||'',x.status||'',x.etapa||'',x.observacoes||''])];v21Download('equoluz-lista-social.csv','\ufeff'+v21Csv(data));}
-function v21ExportAacCsv(){const clients=typeof getAacClients==='function'?getAacClients():[];const contracts=Array.isArray(state.aacContracts)?state.aacContracts:[];const data=[['Participante','Responsável','WhatsApp','Status','Modalidade','Frequência semanal','Valor mensal','Início','Fim','Observações'],...clients.map(c=>{const ct=contracts.find(x=>String(x.clientId||'')===String(c.id)||String(x.child||'').toLowerCase()===String(c.name||'').toLowerCase());return[c.name||'',c.responsible||'',c.phone||'',c.status||'',c.modality||((c.interests||[]).join(' · ')),c.frequency||ct?.frequency||'',c.value||ct?.value||'',c.start||ct?.start||'',ct?.end||'',c.notes||ct?.notes||'']})];v21Download('equoluz-aac-cadastros.csv','\ufeff'+v21Csv(data));}
-function v21ExportFinanceCsv(){const u=JSON.parse(sessionStorage.getItem('equoluz_session')||'{}');if(u.role!=='admin'&&u.role!=='finance'){alert('A exportação do Financeiro Social é restrita ao Administrador e ao Diretor Financeiro.');return}const records=typeof equoluzFinance!=='undefined'&&Array.isArray(equoluzFinance.records)?equoluzFinance.records:[];const data=[['Tipo','Valor','Categoria','Data','Descrição'],...records.map(x=>[x.kind==='entrada'?'Entrada':'Saída',x.value,x.category||'',x.date||'',x.description||''])];v21Download('equoluz-financeiro-social.csv','\ufeff'+v21Csv(data));}
-function initReports(){
-  const s=document.getElementById('reportStart'),e=document.getElementById('reportEnd');
-  if(s&&!s.value)s.value='';if(e&&!e.value)e.value='';populateReportFilters();
-}
-
-function render(){
- const activeChildren=state.children.filter(x=>(x.status||'Ativa')==='Ativa');document.getElementById("mActive").textContent=activeChildren.length;document.getElementById("mWait").textContent=state.social.filter(x=>x.status!=='Atendendo'&&x.status!=='Encerrado').length;document.getElementById("mAac").textContent=state.aac.length;
- document.getElementById("rChildren").textContent=state.children.length;document.getElementById("rSessions").textContent=state.sessions.length;document.getElementById("rAgenda").textContent=state.agenda.length;
- document.getElementById("childList").innerHTML=state.children.length?state.children.map(x=>`<div class="record"><button class="danger" onclick="removeChildReal('${x.id}')">Excluir</button><b>${esc(x.name)}</b><div class="mini">Nascimento: ${esc(x.birth)} · Responsável: ${esc(x.guardian)} · WhatsApp: ${esc(x.phone)}</div><div class="mini">Situação: <b>${esc(x.status||'Ativa')}</b> · Entrada: ${esc(x.entry||'não informada')}</div><div>${esc(x.notes)}</div></div>`).join(''):'<div class="empty">Nenhuma criança cadastrada.</div>';
- const childSelect=document.getElementById('sessionChild');if(childSelect){const current=childSelect.value;childSelect.innerHTML='<option value="">Selecione a criança</option>'+state.children.filter(x=>(x.status||'Ativa')!=='Encerrada').map(x=>`<option value="${x.id}">${esc(x.name)} · ${esc(x.status||'Ativa')}</option>`).join('');if(current)childSelect.value=current}
- document.getElementById("sessionList").innerHTML=state.sessions.length?state.sessions.slice().reverse().map(x=>`<div class="record"><button class="danger" onclick="removeItem('sessions',${x.id})">Excluir</button><b>${esc(x.date)} · ${esc(x.child)}</b><div class="mini">${esc(x.professional)} · Cavalo: ${esc(x.horse||'não informado')} · ${esc(x.activity)}</div><div>${esc(x.evolution)}</div></div>`).join(''):'<div class="empty">Nenhuma sessão registrada.</div>';
- document.getElementById("waitList").innerHTML=state.social.length?state.social.slice().reverse().map(x=>`<div class="record"><b>${esc(x.crianca||'Família cadastrada')}</b><div class="mini">Responsável: ${esc(x.responsavel||'')} · WhatsApp: ${esc(x.whatsapp||'')} · ${esc(x.email||'')}</div><div class="mini">Nascimento: ${esc(x.nascimento||'não informado')} · ${esc(x.localidade||'')}</div><div style="margin:9px 0"><select onchange="updateSocialStatus(${x.id},this.value)"><option ${x.status==='Novo cadastro'?'selected':''}>Novo cadastro</option><option ${x.status==='Em análise'?'selected':''}>Em análise</option><option ${x.status==='Contato'?'selected':''}>Contato</option><option ${x.status==='Triagem'?'selected':''}>Triagem</option><option ${x.status==='Aguardando vaga'?'selected':''}>Aguardando vaga</option><option ${x.status==='Chamado'?'selected':''}>Chamado</option><option ${x.status==='Atendendo'?'selected':''}>Atendendo</option><option ${x.status==='Encerrado'?'selected':''}>Encerrado</option></select></div><div>${esc(x.observacoes||'')}</div> <div class="actions">   <button class="smallBtn" onclick="editSocialReal(${x.id})">Editar</button>   ${x.status!=='Atendendo'&&x.status!=='Encerrado'     ?`<button class="smallBtn" onclick="promoteSocialToChild(${x.id})">Converter em criança ativa</button>`     :''} </div> </div>)}</div> <div class="actions">   <button class="smallBtn" onclick="editSocialReal(${x.id})">Editar</button>   ${x.status!=='Atendendo'&&x.status!=='Encerrado'     ?`<button class="smallBtn" onclick="promoteSocialToChild(${x.id})">Converter em criança ativa</button>`     :''} </div> </div>`).join(''):'<div class="empty">Nenhum cadastro social recebido.</div>';
- document.getElementById("aacList").innerHTML=state.aac.length?state.aac.slice().reverse().map(x=>`<div class="record"><b>${esc(x['Nome do participante']||'Participante')}</b><div class="mini">Responsável: ${esc(x['Nome do responsável']||'')} · WhatsApp: ${esc(x.WhatsApp||'')}</div><div>${esc((x.interesses||[]).join(' · ')||'Nenhuma modalidade marcada')}</div><span class="status">${esc(x.status||'Novo interesse')}</span> ${x.status==='Novo interesse'?`<button class="smallBtn" onclick="convertAacInterest(${x.id})">Converter em pré-cadastro</button>`:''}</div>`).join(''):'<div class="empty">Nenhum interesse AAC recebido.</div>';const aacClients=getAacClients();document.getElementById('aacClientList').innerHTML=aacClients.length?aacClients.slice().reverse().map(x=>`<div class="record"><button class="danger" onclick="removeAacClient(${x.id})">Excluir</button><b>${esc(x.name)}</b><div class="mini">Responsável: ${esc(x.responsible||'')} · WhatsApp: ${esc(x.phone||'')} · Status: <b>${esc(x.status||'Pré-cadastro')}</b></div><div class="mini">Modalidade: ${esc(x.modality||((x.interests||[]).join(' · ')||'não definida'))} · ${x.frequency?esc(x.frequency)+'x/semana · ':''}${x.value?money(x.value)+'/mês':''}</div><div>${esc(x.notes||'')}</div></div>`).join(''):'<div class="empty">Nenhum cliente AAC cadastrado.</div>';const clientSelect=document.getElementById('aacContractClient');if(clientSelect){const cv=clientSelect.value;clientSelect.innerHTML='<option value="">Vincular a um pré-cadastro existente (opcional)</option>'+aacClients.filter(x=>!x.contractId||x.status==='Pré-cadastro').map(x=>`<option value="${x.id}">${esc(x.name)} · ${esc(x.status||'Pré-cadastro')}</option>`).join('');if(cv)clientSelect.value=cv;}
- document.getElementById("proList").innerHTML=state.professionals.length?state.professionals.map(x=>`<div class="record"><button class="danger" onclick="removeItem('professionals',${x.id})">Excluir</button> <button class="smallBtn" onclick="editProfessional(${x.id})">Editar</button><b>${esc(x.name)}</b><div class="mini">${esc(x.email)} · ${esc(x.phone||'')} · ${esc(x.role)} · ${x.active===false?'Bloqueado':'Ativo'}</div><div>Permissões: ${esc((x.permissions||[]).join(' · ')||'nenhuma')}</div></div>`).join(''):'<div class="empty">Nenhum usuário adicional cadastrado.</div>';
- renderAacSessions();const aacDash=updateAacDashboard();const contracts=aacDash.contracts;const activeContracts=aacDash.active;const aacTotal=aacDash.total;document.getElementById('aacContractList').innerHTML=contracts.length?contracts.slice().reverse().map(x=>`<div class="record"><button class="danger" onclick="removeAacContract(${x.id})">Excluir</button><b>${esc(x.child)}</b><div class="mini">Responsável: ${esc(x.responsible||'')} · WhatsApp: ${esc(x.phone||'')} · ${esc(x.frequency)}x por semana · ${money(x.value)}/mês · ${esc(x.status)}</div><div>${esc(x.notes||'')}</div></div>`).join(''):'<div class="empty">Nenhum contrato AAC cadastrado.</div>';
- const financeObj=(typeof equoluzFinance!=='undefined'&&equoluzFinance)?equoluzFinance:{records:[],totals:()=>({e:0,s:0,saldo:0})};const ft=financeObj.totals();document.getElementById('finEntradas').textContent=money(ft.e);document.getElementById('finSaidas').textContent=money(ft.s);document.getElementById('finSaldo').textContent=money(ft.saldo);document.getElementById('financeList').innerHTML=financeObj.records.length?financeObj.records.slice().reverse().map(x=>`<div class="record"><b>${esc(x.date)} · ${x.kind==='entrada'?'Entrada':'Saída'} · ${money(x.value)}</b><div class="mini">${esc(x.category)} · ${esc(x.description||'')}</div></div>`).join(''):'<div class="empty">Nenhum lançamento financeiro.</div>';
- ['boneca','babaloo'].forEach(hid=>{const h=state.horses.find(x=>x.id===hid);const el=document.getElementById('careList-'+hid);if(el&&h){el.innerHTML=(h.cares||[]).length?h.cares.slice().reverse().map(c=>`<div class="careItem"><span><b>${esc(c.type)}</b> · ${esc(c.product||'Produto não informado')} · Aplicado: ${esc(c.date)} · Próxima: ${esc(c.next||'não informada')} · Veterinário: ${esc(c.vet||'não informado')}</span><button class="smallBtn" onclick="removeHorseCare('${hid}',${c.id})">Excluir</button></div>`).join(''):'<div class="empty" style="margin-top:10px">Nenhum cuidado registrado.</div>'}});
-document.getElementById("auditList").innerHTML=state.audit.length?state.audit.slice().reverse().slice(0,30).map(x=>`<div class="record"><b>${esc(new Date(x.date).toLocaleString('pt-BR'))}</b><div class="mini">${esc(x.action)}</div></div>`).join(''):'<div class="empty">Nenhuma ação registrada.</div>';
- renderAgenda();
-}
-function exportData(){const blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='equoluz-dados-v11.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
-render();
-initReports();
-applySiteSettings();
-</script>
-
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Equoluz — Dois caminhos. Um mesmo propósito.</title>
+<meta name="description" content="Equoluz — projeto social, Equoluz Voluntário e Atividades Assistidas com Cavalos.">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
-.fin-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin:12px 0}.fin-card{padding:16px;border:1px solid var(--border,#ddd);border-radius:14px;background:var(--surface,#fff)}.fin-card b{font-size:1.2rem}.fin-positive{color:#16794c}.fin-negative{color:#b33}.mini-note{font-size:.82rem;opacity:.72}
-
-@media print{body *{visibility:hidden!important}#reportResult,#reportResult *{visibility:visible!important}#reportResult{position:absolute!important;left:0!important;top:0!important;width:100%!important;background:#fff!important}#reportResult .card{box-shadow:none!important;border:0!important;margin:0!important}#reportResult table{width:100%!important;font-size:10pt!important}#reportResult th,#reportResult td{padding:5px!important} @page{size:A4 landscape;margin:12mm}}
+:root{--green:#315b46;--green2:#4f795f;--gold:#c49a55;--cream:#faf7f0;--ink:#243128;--muted:#66736a;--white:#fff;--line:#dfe5df;--danger:#a33b3b}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;font-family:Arial,Helvetica,sans-serif;color:var(--ink);background:var(--cream);line-height:1.55}
+header{position:sticky;top:0;z-index:20;background:rgba(250,247,240,.97);border-bottom:1px solid var(--line);backdrop-filter:blur(8px)}
+.nav{max-width:1180px;margin:auto;display:flex;align-items:center;gap:18px;padding:12px 20px}.brand{font-weight:800;color:var(--green);font-size:22px;margin-right:auto}.nav button{border:0;background:none;color:var(--ink);cursor:pointer;font-weight:600;padding:8px}.nav .loginBtn{background:var(--green);color:#fff;border-radius:9px}
+main{max-width:1180px;margin:auto}.hero{padding:90px 20px 70px;display:grid;grid-template-columns:1.15fr .85fr;gap:45px;align-items:center}.eyebrow{color:var(--gold);font-weight:800;text-transform:uppercase;letter-spacing:1.5px}.hero h1{font-size:clamp(40px,6vw,70px);line-height:1.02;margin:14px 0}.hero p{font-size:19px;color:var(--muted);max-width:680px}.heroCard{background:#fff;border:1px solid var(--line);border-radius:24px;padding:30px;box-shadow:0 12px 40px rgba(49,91,70,.08)}.heroCard h3{margin-top:0;color:var(--green)}
+section{padding:65px 20px}.sectionTitle{font-size:36px;margin:0 0 12px;color:var(--green)}.lead{color:var(--muted);max-width:800px}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}.card{background:#fff;border:1px solid var(--line);border-radius:18px;padding:24px}.card h3{color:var(--green);margin-top:0}.badge{display:inline-block;background:#edf3ed;color:var(--green);border-radius:999px;padding:5px 10px;font-size:12px;font-weight:700}
+.actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:25px}button.primary,button.secondary{border:0;border-radius:10px;padding:12px 18px;font-weight:700;cursor:pointer}button.primary{background:var(--green);color:#fff}button.secondary{background:#e9efe9;color:var(--green)}
+form{display:grid;gap:13px}.formGrid{display:grid;grid-template-columns:1fr 1fr;gap:13px}label{font-weight:700;font-size:14px}input,select,textarea{width:100%;padding:12px;border:1px solid #ccd6ce;border-radius:9px;background:#fff;font:inherit}textarea{min-height:100px;resize:vertical}.notice{padding:13px;border-radius:9px;background:#eef4ee;color:var(--green)}.error{background:#fbeeee;color:var(--danger)}
+footer{padding:40px 20px;background:#22392d;color:#fff;margin-top:30px}.footerInner{max-width:1180px;margin:auto}
+.loginGate{display:none;position:fixed;inset:0;background:rgba(20,30,24,.7);z-index:100;align-items:center;justify-content:center;padding:20px}.loginGate.open{display:flex}.loginBox{width:min(440px,100%);background:#fff;border-radius:18px;padding:28px;box-shadow:0 20px 80px rgba(0,0,0,.25)}.close{float:right;border:0;background:none;font-size:24px;cursor:pointer}
+.dash{display:none;background:#eef3ee;border-top:1px solid var(--line)}.dash.open{display:block}.dashTop{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:20px}.dashTop h2{margin-right:auto;color:var(--green)}.panelNav{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:20px}.panelNav button{border:1px solid var(--line);background:#fff;border-radius:9px;padding:9px 12px;cursor:pointer}.panel{display:none;background:#fff;border:1px solid var(--line);border-radius:16px;padding:24px}.panel.active{display:block}.tableWrap{overflow:auto}table{width:100%;border-collapse:collapse}th,td{padding:10px;border-bottom:1px solid var(--line);text-align:left;white-space:nowrap}.small{font-size:13px;color:var(--muted)}
+.hidden{display:none!important}
+@media(max-width:800px){.hero{grid-template-columns:1fr;padding-top:55px}.grid{grid-template-columns:1fr}.formGrid{grid-template-columns:1fr}.nav{overflow:auto}.nav button{white-space:nowrap}.hero h1{font-size:46px}}
 </style>
+</head>
+<body>
+<header>
+<nav class="nav">
+<div class="brand">EQUOLUZ</div>
+<button onclick="go('projeto')">O projeto</button>
+<button onclick="go('instituto')">Instituto</button>
+<button onclick="go('aac')">AAC</button>
+<button onclick="go('ajudar')">Como ajudar</button>
+<button onclick="go('inscricoes')">Inscrições</button>
+<button class="loginBtn" onclick="openLogin()">Área profissional</button>
+</nav>
+</header>
 
-
-<div id="professionalEditModal" class="loginGate" style="display:none!important;z-index:9999"><div class="loginBox" style="max-width:720px"><button class="close" onclick="closeProfessionalEdit()">×</button><h2>Editar profissional</h2><p>O Administrador pode alterar dados, função e permissões deste usuário.</p><form onsubmit="saveProfessionalEdit(event)"><input type="hidden" id="editProId"><div class="formGrid2"><input id="editProName" required placeholder="Nome"><input id="editProEmail" type="email" required placeholder="E-mail"></div><div class="formGrid2"><select id="editProRole" onchange="syncEditRolePermissions()"><option value="Profissional">Profissional</option><option value="Diretor Financeiro">Diretor Financeiro</option><option value="Administrador">Administrador</option></select><input id="editProPhone" placeholder="WhatsApp"></div><div class="mini-note" style="margin:8px 0 12px">Administrador: acesso total. Diretor Financeiro: somente Cavalos + Financeiro Social. Profissional: permissões escolhidas abaixo.</div><div id="editPermBox" class="permBox"><label><input type="checkbox" name="editPerm" value="cadastro"> Crianças/cadastros</label><label><input type="checkbox" name="editPerm" value="sessoes"> Sessões e evolução</label><label><input type="checkbox" name="editPerm" value="espera"> Lista social</label><label><input type="checkbox" name="editPerm" value="aac"> AAC</label><label><input type="checkbox" name="editPerm" value="agenda"> Agenda</label><label><input type="checkbox" name="editPerm" value="cavalos"> Cavalos</label><label><input type="checkbox" name="editPerm" value="relatorios"> Relatórios</label><label><input type="checkbox" name="editPerm" value="financeiro"> Financeiro Social</label><label><input type="checkbox" name="editPerm" value="config"> Gerenciador do Site</label></div><div style="display:flex;gap:10px;justify-content:flex-end;margin-top:16px"><button type="button" class="secondary" onclick="closeProfessionalEdit()">Cancelar</button><button class="formBtn">Salvar alterações</button></div></form></div></div>
-
-<!-- V22: preparação para produção -->
-<section id="v22Audit" class="module" style="display:none">
-  <div class="card">
-    <h2>🔎 V22 — Auditoria e preparação para produção</h2>
-    <p>Checklist interno para validar o sistema antes da conexão com banco de dados real.</p>
-    <div id="v22AuditList"></div>
-  </div>
+<main>
+<section class="hero" id="inicio">
+<div>
+<div class="eyebrow">Projeto Equoluz</div>
+<h1>Dois caminhos.<br>Um mesmo propósito.</h1>
+<p>Um projeto que une cuidado, cavalos, profissionais, voluntários e comunidade para ampliar oportunidades de desenvolvimento e acolhimento.</p>
+<div class="actions">
+<button class="primary" onclick="go('projeto')">Conheça o Equoluz</button>
+<button class="secondary" onclick="go('inscricoes')">Quero participar</button>
+</div>
+</div>
+<div class="heroCard">
+<span class="badge">Equoluz Voluntário</span>
+<h3>Atendimento gratuito durante 12 meses</h3>
+<p>Atendimento social para crianças com TEA em situação de vulnerabilidade ou extrema vulnerabilidade, com apoio às famílias.</p>
+<hr>
+<span class="badge">Equoluz AAC</span>
+<h3>Atividades Assistidas com Cavalos</h3>
+<p>Atendimento particular em espaço próprio, com profissionais e propostas individualizadas.</p>
+</div>
 </section>
+
+<section id="projeto">
+<h2 class="sectionTitle">O Projeto</h2>
+<p class="lead">O Equoluz nasceu de uma experiência transformadora com uma criança autista e do desejo de tornar o contato com cavalos uma oportunidade acessível para quem mais precisa.</p>
+<div class="grid">
+<div class="card"><h3>Equoluz Voluntário</h3><p>Frente social gratuita, realizada por equipe voluntária, com prioridade para famílias em vulnerabilidade.</p></div>
+<div class="card"><h3>Atendimento familiar</h3><p>O cuidado não se limita à criança: a proposta também busca acolher e orientar a família.</p></div>
+<div class="card"><h3>12 meses</h3><p>O programa social prevê atendimento gratuito durante 12 meses para os participantes selecionados.</p></div>
+</div>
+</section>
+
+<section id="instituto">
+<h2 class="sectionTitle">Instituto Equoluz</h2>
+<p class="lead">Estrutura institucional destinada a organizar projetos sociais, voluntariado, parcerias, captação de recursos e gestão profissional.</p>
+<div class="grid">
+<div class="card"><h3>Missão</h3><p>Ampliar acesso a experiências assistidas por cavalos e ações de inclusão social.</p></div>
+<div class="card"><h3>Transparência</h3><p>Organização de atendimentos, equipe, projetos, recursos e resultados.</p></div>
+<div class="card"><h3>Parcerias</h3><p>Empresas, profissionais, voluntários e apoiadores podem participar da construção do projeto.</p></div>
+</div>
+</section>
+
+<section id="aac">
+<h2 class="sectionTitle">Equoluz AAC</h2>
+<p class="lead">Atividades Assistidas com Cavalos para quem busca uma experiência estruturada, com agenda própria e possibilidade de acompanhamento por profissionais parceiros.</p>
+<div class="grid">
+<div class="card"><h3>Atividades</h3><p>Vivências e atividades planejadas com cavalos, respeitando objetivos, perfil e segurança de cada participante.</p></div>
+<div class="card"><h3>Profissionais</h3><p>Espaço para profissionais cadastrados atuarem em parceria com o Equoluz.</p></div>
+<div class="card"><h3>Agendamento</h3><p>Solicite seu cadastro de interesse e a equipe entrará em contato para os próximos passos.</p></div>
+</div>
+</section>
+
+<section id="ajudar">
+<h2 class="sectionTitle">Como ajudar</h2>
+<div class="grid">
+<div class="card"><h3>Seja apoiador</h3><p>Empresas e pessoas podem contribuir com recursos, materiais, alimentação dos cavalos ou serviços.</p></div>
+<div class="card"><h3>Seja voluntário</h3><p>Profissionais e voluntários podem integrar as ações do Equoluz conforme necessidade e disponibilidade.</p></div>
+<div class="card"><h3>Ajude os cavalos</h3><p>Boneca e Babaloo fazem parte da história do Equoluz e precisam de alimentação, cuidados veterinários e treinamento.</p></div>
+</div>
+</section>
+
+<section id="inscricoes">
+<h2 class="sectionTitle">Inscrições e interesse</h2>
+<div class="grid">
+<div class="card">
+<h3>Lista social — Equoluz Voluntário</h3>
+<form id="socialForm">
+<div class="formGrid"><div><label>Nome da criança</label><input name="child_name" required></div><div><label>Data de nascimento</label><input name="birth_date" type="date"></div></div>
+<div class="formGrid"><div><label>Nome do responsável</label><input name="responsible_name" required></div><div><label>Telefone</label><input name="phone" required></div></div>
+<label>Observações</label><textarea name="notes"></textarea>
+<button class="primary">Enviar interesse</button>
+<div id="socialMsg"></div>
+</form>
+</div>
+<div class="card">
+<h3>Interesse em AAC</h3>
+<form id="aacForm">
+<div class="formGrid"><div><label>Nome do interessado</label><input name="name" required></div><div><label>Telefone</label><input name="phone" required></div></div>
+<label>E-mail</label><input name="email" type="email">
+<label>Mensagem</label><textarea name="message"></textarea>
+<button class="primary">Enviar interesse</button>
+<div id="aacMsg"></div>
+</form>
+</div>
+</div>
+</section>
+
+<section class="dash" id="dashboard">
+<div class="dashTop">
+<h2>Área profissional</h2>
+<span id="userInfo" class="small"></span>
+<button class="secondary" onclick="logout()">Sair</button>
+</div>
+<div class="panelNav" id="panelNav">
+<button onclick="panel('cadastro')">Cadastro</button>
+<button onclick="panel('sessoes')">Sessões</button>
+<button onclick="panel('social')">Lista Social</button>
+<button onclick="panel('aacPanel')">AAC</button>
+<button onclick="panel('agenda')">Agenda</button>
+<button onclick="panel('relatorios')">Relatórios</button>
+<button onclick="panel('equipe')">Equipe</button>
+<button onclick="panel('cavalos')">Cavalos</button>
+<button onclick="panel('financeiro')">Financeiro</button>
+<button onclick="panel('config')">Configurações</button>
+<button onclick="panel('auditoria')">Auditoria</button>
+</div>
+
+<div class="panel" id="p-cadastro">
+<h3>Cadastro de criança</h3>
+<form id="childForm">
+<div class="formGrid"><div><label>Nome</label><input name="name" required></div><div><label>Data de nascimento</label><input name="birth_date" type="date"></div></div>
+<div class="formGrid"><div><label>Responsável</label><input name="responsible"></div><div><label>Telefone</label><input name="phone"></div></div>
+<label>Observações</label><textarea name="notes"></textarea>
+<button class="primary">Salvar cadastro</button><div id="childMsg"></div>
+</form>
+</div>
+
+<div class="panel" id="p-sessoes">
+<h3>Registro de sessão</h3>
+<form id="sessionForm">
+<div class="formGrid"><div><label>Criança</label><input name="child" required></div><div><label>Data</label><input name="date" type="date" required></div></div>
+<div class="formGrid"><div><label>Profissional</label><input name="professional"></div><div><label>Cavalo</label><select name="horse"><option>Boneca</option><option>Babaloo</option></select></div></div>
+<label>Relatório da sessão</label><textarea name="report" required></textarea>
+<button class="primary">Salvar sessão</button><div id="sessionMsg"></div>
+</form>
+</div>
+
+<div class="panel" id="p-social"><h3>Lista Social</h3><div class="tableWrap"><table><thead><tr><th>Criança</th><th>Responsável</th><th>Telefone</th><th>Status</th></tr></thead><tbody id="socialTable"></tbody></table></div></div>
+<div class="panel" id="p-aacPanel"><h3>Interesses AAC</h3><div class="tableWrap"><table><thead><tr><th>Nome</th><th>Telefone</th><th>E-mail</th><th>Mensagem</th></tr></thead><tbody id="aacTable"></tbody></table></div></div>
+
+<div class="panel" id="p-agenda">
+<h3>Agenda</h3>
+<form id="agendaForm"><div class="formGrid"><div><label>Data</label><input name="date" type="date" required></div><div><label>Horário</label><input name="time" type="time" required></div></div><div class="formGrid"><div><label>Criança/cliente</label><input name="client" required></div><div><label>Profissional</label><input name="professional"></div></div><button class="primary">Adicionar</button></form><div id="agendaList"></div>
+</div>
+
+<div class="panel" id="p-relatorios"><h3>Relatórios</h3><p class="small">Os registros de sessões ficam disponíveis para consulta e organização da equipe. A exportação pode ser conectada ao banco de dados conforme a estrutura definitiva.</p><div id="reportList"></div></div>
+<div class="panel" id="p-equipe"><h3>Equipe</h3><p>Área para organização de profissionais, voluntários, funções e permissões.</p><div id="teamList"></div></div>
+<div class="panel" id="p-cavalos"><h3>Cavalos</h3><div class="grid"><div class="card"><h3>Boneca</h3><p>Égua marrom escura, sem faixa branca no rosto.</p></div><div class="card"><h3>Babaloo</h3><p>Égua castanha/tostada, com faixa branca larga no rosto.</p></div></div></div>
+
+<div class="panel" id="p-financeiro"><h3>Financeiro</h3><form id="financeForm"><div class="formGrid"><div><label>Descrição</label><input name="description" required></div><div><label>Valor (R$)</label><input name="value" type="number" step="0.01" required></div></div><select name="type"><option value="entrada">Entrada</option><option value="saida">Saída</option></select><button class="primary">Registrar</button></form><div id="financeList"></div></div>
+
+<div class="panel" id="p-config"><h3>Configurações</h3><form id="passwordForm"><label>Nova senha</label><input type="password" name="password" minlength="6" required><button class="primary">Alterar senha</button><div id="passwordMsg"></div></form></div>
+<div class="panel" id="p-auditoria"><h3>Auditoria</h3><div id="auditList"></div></div>
+</section>
+</main>
+
+<footer><div class="footerInner"><strong>Projeto Equoluz</strong><p>Joinville/SC · Cuidado, inclusão e oportunidades através da conexão com os cavalos.</p></div></footer>
+
+<div class="loginGate" id="loginGate">
+<div class="loginBox">
+<button class="close" onclick="closeLogin()">×</button>
+<h2>Área profissional</h2>
+<p class="small">Entre com o usuário autorizado pela equipe do Equoluz.</p>
+<form id="loginForm"><label>E-mail</label><input name="email" type="email" required><label>Senha</label><input name="password" type="password" required><button class="primary">Entrar</button><div id="loginMsg"></div></form>
+</div>
+</div>
+
 <script>
-(function(){
- const items=[
- ['Instituto Equoluz','Crianças, lista social, sessões e evolução'],
- ['Equoluz AAC','Interessados, clientes, contratos, agenda e atendimentos'],
- ['Profissionais','Perfis, ativação e permissões individuais'],
- ['Cavalos','Cadastro e histórico veterinário individual'],
- ['Financeiro Social','Entradas, saídas e saldo'],
- ['Relatórios','Filtros por participante, sessão, profissional, cavalo e período'],
- ['Exportações','Excel/CSV e impressão/PDF'],
- ['Segurança','Preparar migração de senhas e controle de acesso'],
- ['Banco de dados','Mapear entidades e relacionamentos para produção'],
- ['Backup e LGPD','Preparar rotinas e controles para dados reais']
- ];
- const el=document.getElementById('v22AuditList');
- if(el) el.innerHTML=items.map((x,i)=>`<div style="padding:12px;border-bottom:1px solid #ddd"><b>${i+1}. ${x[0]}</b><div>${x[1]}</div><span>⏳ Preparado para validação</span></div>`).join('');
-})();
-</script>
-</body></html><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script>
-/* EQUOLUZ V25 — conexão real com Supabase Auth + PostgreSQL (RLS).
-   A chave usada no navegador é a Publishable Key. A Secret/Service Role nunca deve
-   ser colocada neste arquivo. O acesso aos dados é protegido pelas políticas RLS. */
-window.EQUOLUZ_BACKEND = {
-  version: '25',
-  provider: 'supabase',
-  configured: true,
-  mode: 'supabase',
-  url: 'https://rtlagyivmvqlknlafqls.supabase.co',
-  publishableKey: 'sb_publishable_83FgjuV7gQEB8AExC2VhRw_HwsJRl2o'
+const SB_URL='https://rtlagyivmvqlknlafqls.supabase.co';
+const SB_KEY='sb_publishable_83FgjuV7gQEB8AExC2VhRw_HwsJRl2o';
+const sb=window.supabase.createClient(SB_URL,SB_KEY);
+let currentUser=null,currentProfile=null;
+const state={
+sessions:JSON.parse(localStorage.getItem('equoluz_sessions')||'[]'),
+agenda:JSON.parse(localStorage.getItem('equoluz_agenda')||'[]'),
+finance:JSON.parse(localStorage.getItem('equoluz_finance')||'[]'),
+audit:JSON.parse(localStorage.getItem('equoluz_audit')||'[]')
 };
 
-window.equoluzSupabase = window.supabase.createClient(
-  window.EQUOLUZ_BACKEND.url,
-  window.EQUOLUZ_BACKEND.publishableKey
-);
+function go(id){document.getElementById(id)?.scrollIntoView({behavior:'smooth'});}
+function openLogin(){document.getElementById('loginGate').classList.add('open');}
+function closeLogin(){document.getElementById('loginGate').classList.remove('open');}
+function msg(id,text,error=false){const e=document.getElementById(id);if(e){e.className=error?'notice error':'notice';e.textContent=text;}}
+function addAudit(action){state.audit.unshift({date:new Date().toLocaleString('pt-BR'),user:currentUser?.email||'público',action});localStorage.setItem('equoluz_audit',JSON.stringify(state.audit));}
 
-
-async function syncChildrenFromSupabase(){
-  if(!window.equoluzSupabase) return;
-
-  const {data: rows,error}=await equoluzSupabase
-    .from('children')
-    .select('id,name,birth_date,city,neighborhood,diagnosis_condition,age,notes,created_at,updated_at')
-    .order('created_at',{ascending:false});
-
-  if(error) throw error;
-
-  // Verifica se cada criança ainda está apenas na lista social.
-  // Somente cadastros com status "Atendendo" aparecem como crianças ativas.
-  const {data: waitRows,error:waitError}=await equoluzSupabase
-    .from('social_waitlist')
-    .select('child_id,status');
-
-  if(waitError) throw waitError;
-
-  const waitStatus=new Map(
-    (waitRows||[])
-      .filter(x=>x.child_id)
-      .map(x=>[String(x.child_id),String(x.status||'')])
-  );
-
-  const activeRows=(rows||[]).filter(x=>{
-    const socialStatus=waitStatus.get(String(x.id));
-
-    // Se não existe na lista social, continua sendo uma criança ativa.
-    // Se existe, só aparece como ativa depois de ser convertida para "Atendendo".
-    return socialStatus===undefined || socialStatus==='Atendendo';
-  });
-
-  const ids=activeRows.map(x=>x.id);
-
-  let links=[];
-  let respMap={};
-
-  if(ids.length){
-    const {data: lr,error:le}=await equoluzSupabase
-      .from('child_responsibles')
-      .select('child_id,responsible_id')
-      .in('child_id',ids);
-
-    if(le) throw le;
-
-    links=lr||[];
-
-    const rids=[
-      ...new Set(
-        links
-          .map(x=>x.responsible_id)
-          .filter(Boolean)
-      )
-    ];
-
-    if(rids.length){
-      const {data: rr,error:re}=await equoluzSupabase
-        .from('responsibles')
-        .select('id,name,phone,email')
-        .in('id',rids);
-
-      if(re) throw re;
-
-      (rr||[]).forEach(r=>{
-        respMap[r.id]=r;
-      });
-    }
-  }
-
-  state.children=activeRows.map(x=>{
-    const link=links.find(
-      l=>String(l.child_id)===String(x.id)
-    );
-
-    const r=link ? respMap[link.responsible_id] : null;
-
-    return {
-      id:x.id,
-      name:x.name||'',
-      birth:x.birth_date||'',
-      guardian:r?.name||'',
-      phone:r?.phone||'',
-      status:'Ativa',
-      entry:(x.created_at||'').slice(0,10),
-      notes:x.notes||'',
-      city:x.city||'',
-      neighborhood:x.neighborhood||'',
-      diagnosis:x.diagnosis_condition||'',
-      age:x.age??''
-    };
-  });
-
-  render();
+async function loadProfile(user){
+currentUser=user;
+const {data:profile}=await sb.from('profiles').select('*').eq('id',user.id).maybeSingle();
+currentProfile=profile||{full_name:user.email,role:'professional'};
+document.getElementById('userInfo').textContent=currentProfile.full_name||user.email;
+document.getElementById('dashboard').classList.add('open');
+closeLogin();go('dashboard');addAudit('Login realizado');
+syncAll();panel('cadastro');
 }
+async function logout(){addAudit('Logout');await sb.auth.signOut();currentUser=null;currentProfile=null;document.getElementById('dashboard').classList.remove('open');go('inicio');}
+function panel(id){
+document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+document.getElementById('p-'+id)?.classList.add('active');
+if(id==='social')syncSocial();if(id==='aacPanel')syncAac();if(id==='relatorios')renderReports();if(id==='agenda')renderAgenda();if(id==='financeiro')renderFinance();if(id==='auditoria')renderAudit();if(id==='equipe')renderTeam();
 }
-
-async function addChildReal(e){
-  e.preventDefault();
-  if(!window.equoluzSupabase){ alert('Conexão com o Supabase não carregada.'); return; }
-  const name=childName.value.trim(), birth=childBirth.value, guardian=childGuardian.value.trim(), phone=childPhone.value.trim();
-  if(!name){alert('Informe o nome da criança.');return;}
-  try{
-    let responsibleId=null;
-    if(guardian){
-      const {data:r,error:re}=await equoluzSupabase.from('responsibles').insert({name:guardian,phone,email:null}).select('id').single();
-      if(re) throw re;
-      responsibleId=r.id;
-    }
-    const {data:child,error:ce}=await equoluzSupabase.from('children').insert({
-      name,birth_date:birth||null,city:null,neighborhood:null,diagnosis_condition:null,
-      age:null,notes:childNotes.value.trim()
-    }).select('id,name,birth_date,notes,created_at').single();
-    if(ce) throw ce;
-    if(responsibleId){
-      const {error:cr}=await equoluzSupabase.from('child_responsibles').insert({child_id:child.id,responsible_id:responsibleId});
-      if(cr) throw cr;
-    }
-    await syncChildrenFromSupabase();
-    e.target.reset();
-    alert('Criança cadastrada no banco do Equoluz com sucesso.');
-  }catch(err){
-    alert('Não foi possível salvar a criança: '+(err.message||err));
-  }
+async function syncSocial(){
+let {data,error}=await sb.from('social_waitlist').select('*').order('created_at',{ascending:false});
+if(error)data=[];
+document.getElementById('socialTable').innerHTML=(data||[]).map(x=>`<tr><td>${esc(x.child_name||x.name||'')}</td><td>${esc(x.responsible_name||x.responsible||'')}</td><td>${esc(x.phone||'')}</td><td>${esc(x.status||'Aguardando')}</td></tr>`).join('')||'<tr><td colspan="4">Nenhum cadastro encontrado.</td></tr>';
 }
-
-async function removeChildReal(id){
-
-  if(!window.equoluzSupabase) return;
-
-  if(!confirm(
-    'Excluir este cadastro de criança? Esta ação não poderá ser desfeita.'
-  )){
-    return;
-  }
-
-  try{
-
-    // Primeiro verifica se existem sessões registradas.
-    const {data:sessions,error:se}=await equoluzSupabase
-      .from('sessions')
-      .select('id')
-      .eq('child_id',id)
-      .limit(1);
-
-    if(se) throw se;
-
-    // Se houver histórico, não apagamos a criança.
-    if((sessions||[]).length){
-
-      alert(
-        'Esta criança possui sessões registradas. '+
-        'Para preservar o histórico, o cadastro não pode ser excluído.'
-      );
-
-      return;
-    }
-
-    // Remove eventual vínculo com a lista social.
-    const {error:wr}=await equoluzSupabase
-      .from('social_waitlist')
-      .delete()
-      .eq('child_id',id);
-
-    if(wr) throw wr;
-
-    // Remove o vínculo com o responsável.
-    const {error:cr}=await equoluzSupabase
-      .from('child_responsibles')
-      .delete()
-      .eq('child_id',id);
-
-    if(cr) throw cr;
-
-    // Finalmente remove a criança.
-    const {error:ce}=await equoluzSupabase
-      .from('children')
-      .delete()
-      .eq('id',id);
-
-    if(ce) throw ce;
-
-    await syncChildrenFromSupabase();
-
-    if(typeof syncSocialWaitlistFromSupabase==='function'){
-      await syncSocialWaitlistFromSupabase();
-    }
-
-    alert('Cadastro excluído com sucesso.');
-
-  }catch(err){
-
-    alert(
-      'Não foi possível excluir o cadastro: '+
-      (err.message||err)
-    );
-
-  }
+async function syncAac(){
+let {data,error}=await sb.from('aac_interests').select('*').order('created_at',{ascending:false});
+if(error)data=[];
+document.getElementById('aacTable').innerHTML=(data||[]).map(x=>`<tr><td>${esc(x.name||'')}</td><td>${esc(x.phone||'')}</td><td>${esc(x.email||'')}</td><td>${esc(x.message||'')}</td></tr>`).join('')||'<tr><td colspan="4">Nenhum interesse encontrado.</td></tr>';
 }
+async function syncChildren(){return;}
+async function syncAll(){await syncSocial();await syncAac();renderAgenda();renderReports();renderFinance();renderAudit();renderTeam();}
+function esc(v){return String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));}
 
-async function loadRealProfile(authUser){
-  const { data: profile, error } = await equoluzSupabase
-    .from('profiles').select('id,name,email,role,active,force_change_password')
-    .eq('id', authUser.id).maybeSingle();
-  if(error) throw error;
-  if(!profile || !profile.active) throw new Error('Usuário sem perfil ativo no sistema.');
+document.getElementById('loginForm').onsubmit=async e=>{
+e.preventDefault();msg('loginMsg','Entrando...');
+const f=new FormData(e.target);const {data,error}=await sb.auth.signInWithPassword({email:f.get('email'),password:f.get('password')});
+if(error){msg('loginMsg',error.message,true);return}await loadProfile(data.user);e.target.reset();
+};
 
-  let permissions=[];
-  if(profile.role === 'Administrador') permissions=['cadastro','sessoes','espera','aac','agenda','relatorios','equipe','cavalos','financeiro','config','auditoria'];
-  else if(profile.role === 'Diretor Financeiro') permissions=['cavalos','financeiro'];
-  else if(profile.role === 'Profissional'){
-    const {data: rows,error: pErr}=await equoluzSupabase.from('professional_permissions').select('module').eq('user_id',authUser.id).eq('allowed',true);
-    if(pErr) throw pErr;
-    permissions=(rows||[]).map(x=>x.module);
-  }
-  return {
-    email: profile.email || authUser.email || '',
-    name: profile.name || authUser.email || 'Usuário',
-    role: profile.role === 'Administrador' ? 'admin' : profile.role === 'Diretor Financeiro' ? 'finance' : 'professional',
-    permissions,
-    forceChange: !!profile.force_change_password,
-    authUserId: authUser.id,
-    at: new Date().toISOString()
-  };
-}
+document.getElementById('socialForm').onsubmit=async e=>{
+e.preventDefault();const f=new FormData(e.target);const p=Object.fromEntries(f.entries());msg('socialMsg','Enviando...');
+let {error}=await sb.rpc('submit_social_waitlist',{p_child_name:p.child_name,p_birth_date:p.birth_date||null,p_responsible_name:p.responsible_name,p_phone:p.phone,p_notes:p.notes||null});
+if(error){const r=await sb.from('social_waitlist').insert(p);error=r.error}
+if(error){msg('socialMsg',error.message,true)}else{msg('socialMsg','Interesse enviado com sucesso.');e.target.reset()}
+};
 
-async function login(e){
-  if(e) e.preventDefault();
-  const email=document.getElementById('loginEmail').value.trim().toLowerCase();
-  const pass=document.getElementById('loginPass').value;
-  if(!window.equoluzSupabase){ alert('Conexão com o Supabase não carregada.'); return; }
-  const {data,error}=await equoluzSupabase.auth.signInWithPassword({email,password:pass});
-  if(error){ alert('Não foi possível entrar: '+error.message); return; }
-  try{
-    const session=await loadRealProfile(data.user);
-    sessionStorage.setItem('equoluz_session',JSON.stringify(session));
-    await syncChildrenFromSupabase();
-    applySession(); showDashboard();
-    if(typeof addAudit==='function') addAudit('Login Supabase realizado · '+session.email);
-    if(session.forceChange) setTimeout(()=>openSecurity(true),150);
-  }catch(err){
-    await equoluzSupabase.auth.signOut();
-    alert('Login autenticado, mas o perfil do sistema não está disponível: '+err.message);
-  }
-}
+document.getElementById('aacForm').onsubmit=async e=>{
+e.preventDefault();const f=new FormData(e.target);const p=Object.fromEntries(f.entries());msg('aacMsg','Enviando...');
+let {error}=await sb.rpc('submit_aac_interest',{p_name:p.name,p_phone:p.phone,p_email:p.email||null,p_message:p.message||null});
+if(error){const r=await sb.from('aac_interests').insert(p);error=r.error}
+if(error){msg('aacMsg',error.message,true)}else{msg('aacMsg','Interesse enviado com sucesso.');e.target.reset()}
+};
 
-async function logout(){
-  try{await equoluzSupabase.auth.signOut();}catch(e){}
-  sessionStorage.removeItem('equoluz_session');
-  document.getElementById('dashboard').style.display='none';
-  document.getElementById('public').style.display='block';
-  document.getElementById('loginGate').style.setProperty('display','none','important');
-  window.scrollTo(0,0);
-}
+document.getElementById('childForm').onsubmit=async e=>{
+e.preventDefault();const f=new FormData(e.target);const p=Object.fromEntries(f.entries());const r=await sb.from('children').insert({name:p.name,birth_date:p.birth_date||null,notes:p.notes||null});
+if(r.error){msg('childMsg',r.error.message,true);return}msg('childMsg','Cadastro salvo.');addAudit('Novo cadastro de criança');e.target.reset();
+};
 
-async function bootstrapSupabaseSession(){
-  const {data}=await equoluzSupabase.auth.getSession();
-  if(!data.session) return;
-  try{
-    const session=await loadRealProfile(data.session.user);
-    sessionStorage.setItem('equoluz_session',JSON.stringify(session));
-    await syncChildrenFromSupabase();
-    applySession(); showDashboard();
-  }catch(err){
-    await equoluzSupabase.auth.signOut();
-    sessionStorage.removeItem('equoluz_session');
-    console.warn('Sessão Supabase sem perfil válido:',err.message);
-  }
-}
+document.getElementById('sessionForm').onsubmit=e=>{
+e.preventDefault();const p=Object.fromEntries(new FormData(e.target).entries());state.sessions.unshift({...p,created_at:new Date().toISOString()});localStorage.setItem('equoluz_sessions',JSON.stringify(state.sessions));msg('sessionMsg','Sessão registrada.');addAudit('Sessão registrada');e.target.reset();
+};
 
-// Mantém a sessão sincronizada quando o Supabase renovar ou encerrar o acesso.
-equoluzSupabase.auth.onAuthStateChange((event, session)=>{
-  if(event === 'SIGNED_OUT'){
-    sessionStorage.removeItem('equoluz_session');
-    if(typeof logout === 'function') {
-      document.getElementById('dashboard').style.display='none';
-      document.getElementById('public').style.display='block';
-    }
-  }
-});
+document.getElementById('agendaForm').onsubmit=e=>{
+e.preventDefault();state.agenda.push({...Object.fromEntries(new FormData(e.target).entries()),created_at:new Date().toISOString()});localStorage.setItem('equoluz_agenda',JSON.stringify(state.agenda));e.target.reset();renderAgenda();addAudit('Item adicionado à agenda');
+};
+function renderAgenda(){const el=document.getElementById('agendaList');if(!el)return;el.innerHTML=state.agenda.map(x=>`<div class="card" style="margin-top:10px"><strong>${esc(x.date)} ${esc(x.time)}</strong> — ${esc(x.client)}<br><span class="small">${esc(x.professional||'')}</span></div>`).join('')||'<p class="small">Agenda vazia.</p>'}
+function renderReports(){const el=document.getElementById('reportList');if(!el)return;el.innerHTML=state.sessions.map(x=>`<div class="card" style="margin-top:10px"><strong>${esc(x.child)}</strong> — ${esc(x.date)}<br>${esc(x.report)}<br><span class="small">${esc(x.professional||'')} · ${esc(x.horse||'')}</span></div>`).join('')||'<p class="small">Nenhuma sessão registrada.</p>'}
+document.getElementById('financeForm').onsubmit=e=>{e.preventDefault();const p=Object.fromEntries(new FormData(e.target).entries());state.finance.unshift({...p,value:Number(p.value),created_at:new Date().toISOString()});localStorage.setItem('equoluz_finance',JSON.stringify(state.finance));e.target.reset();renderFinance();addAudit('Lançamento financeiro')};
+function renderFinance(){const el=document.getElementById('financeList');if(!el)return;el.innerHTML=state.finance.map(x=>`<div class="card" style="margin-top:10px"><strong>${esc(x.type)}</strong> · R$ ${Number(x.value).toFixed(2)}<br>${esc(x.description)}</div>`).join('')||'<p class="small">Nenhum lançamento.</p>'}
+function renderAudit(){const el=document.getElementById('auditList');if(!el)return;el.innerHTML=state.audit.map(x=>`<div class="card" style="margin-top:8px"><strong>${esc(x.date)}</strong> — ${esc(x.user)}<br>${esc(x.action)}</div>`).join('')||'<p class="small">Nenhum evento.</p>'}
+function renderTeam(){const el=document.getElementById('teamList');if(el)el.innerHTML='<p class="small">A equipe e as permissões podem ser administradas pelas tabelas de perfis e permissões do Supabase.</p>'}
 
-window.addEventListener('DOMContentLoaded',()=>{
-  // Remove qualquer sessão local antiga do protótipo; o acesso oficial depende do Supabase.
-  sessionStorage.removeItem('equoluz_session');
-  bootstrapSupabaseSession();
-});
+document.getElementById('passwordForm').onsubmit=async e=>{
+e.preventDefault();const p=new FormData(e.target).get('password');const {error}=await sb.auth.updateUser({password:p});msg('passwordMsg',error?error.message:'Senha alterada com sucesso.',!!error);if(!error)e.target.reset();
+};
+
+sb.auth.onAuthStateChange((event,session)=>{if(session?.user&&!currentUser)loadProfile(session.user);});
+window.addEventListener('load',async()=>{const {data}=await sb.auth.getSession();if(data.session)await loadProfile(data.session.user);});
 </script>
 </body>
-<script>
-/* EQUOLUZ V26 — Lista Social conectada ao Supabase. */
-async function syncSocialWaitlistFromSupabase(){
-  if(!window.equoluzSupabase) return;
-  const {data,error}=await equoluzSupabase
-    .from('social_waitlist')
-    .select('id,child_id,responsible_id,status,source,prior_horse_experience,important_needs,consent_lgpd,created_at,updated_at')
-    .order('created_at',{ascending:false});
-  if(error) throw error;
-  const rows=data||[];
-  const childIds=[...new Set(rows.map(x=>x.child_id).filter(Boolean))];
-  const respIds=[...new Set(rows.map(x=>x.responsible_id).filter(Boolean))];
-  let children=[],responsibles=[];
-  if(childIds.length){
-    const r=await equoluzSupabase.from('children').select('id,name,birth_date,city,neighborhood,diagnosis_condition,age,notes').in('id',childIds);
-    if(r.error) throw r.error; children=r.data||[];
-  }
-  if(respIds.length){
-    const r=await equoluzSupabase.from('responsibles').select('id,name,phone,email').in('id',respIds);
-    if(r.error) throw r.error; responsibles=r.data||[];
-  }
-  const cm=Object.fromEntries(children.map(x=>[x.id,x]));
-  const rm=Object.fromEntries(responsibles.map(x=>[x.id,x]));
-  state.social=rows.map(x=>{
-    const c=cm[x.child_id]||{}, r=rm[x.responsible_id]||{};
-    return {
-      id:x.id, crianca:c.name||'', responsavel:r.name||'', whatsapp:r.phone||'', email:r.email||'',
-      nascimento:c.birth_date||'', localidade:[c.city,c.neighborhood].filter(Boolean).join(' / '),
-      faixa:c.age!=null?String(c.age):'', observacoes:c.notes||x.important_needs||'',
-      status:x.status||'Novo cadastro', etapa:x.status||'Novo cadastro', source:x.source||'',
-      horseExperience:x.prior_horse_experience||'', consent:x.consent_lgpd===true,
-      childId:x.child_id, responsibleId:x.responsible_id, createdAt:x.created_at
-    };
-  });
-  render();
-}
-
-async function submitSocialPublic(form){
-  const fd=new FormData(form);
-  const payload={
-    responsible_name:String(fd.get('responsavel')||'').trim(),
-    phone:String(fd.get('whatsapp')||'').trim(),
-    email:String(fd.get('email')||'').trim()||null,
-    child_name:String(fd.get('crianca')||'').trim(),
-    birth_date:String(fd.get('nascimento')||'')||null,
-    city:(String(fd.get('localidade')||'').split('/')[0]||'').trim()||null,
-    neighborhood:(String(fd.get('localidade')||'').split('/').slice(1).join('/').trim()||null),
-    age:null,
-    diagnosis_condition:null,
-    notes:String(fd.get('observacoes')||'').trim()||null,
-    prior_horse_experience:null,
-    important_needs:String(fd.get('observacoes')||'').trim()||null,
-    source:'Site institucional',
-    consent_lgpd:true,
-    status:'Novo cadastro'
-  };
-  if(!payload.responsible_name||!payload.phone||!payload.child_name||!payload.birth_date){
-    alert('Preencha os campos obrigatórios.'); return;
-  }
-  if(!window.equoluzSupabase){ alert('Conexão com o Supabase não carregada.'); return; }
-  const {error}=await equoluzSupabase.rpc('submit_social_waitlist',payload);
-  if(error){
-    alert('Não foi possível enviar o cadastro: '+(error.message||error));
-    return;
-  }
-  form.reset();
-  const ok=document.getElementById('socialSuccess'); if(ok) ok.style.display='block';
-}
-
-async function addSocialWaitlistInternal(e){
-  e.preventDefault();
-  if(!window.equoluzSupabase){alert('Conexão com o Supabase não carregada.');return;}
-  const fd=new FormData(e.target);
-  const payload={
-    responsible_name:String(fd.get('responsavel')||'').trim(),
-    phone:String(fd.get('whatsapp')||'').trim(),
-    email:String(fd.get('email')||'').trim()||null,
-    child_name:String(fd.get('crianca')||'').trim(),
-    birth_date:String(fd.get('nascimento')||'')||null,
-    city:(String(fd.get('localidade')||'').split('/')[0]||'').trim()||null,
-    neighborhood:(String(fd.get('localidade')||'').split('/').slice(1).join('/').trim()||null),
-    age:null,
-    diagnosis_condition:String(fd.get('diagnostico')||'').trim()||null,
-    notes:String(fd.get('necessidades')||'').trim()||null,
-    prior_horse_experience:String(fd.get('experiencia')||'').trim()||null,
-    important_needs:String(fd.get('necessidades')||'').trim()||null,
-    source:'Área profissional',
-    consent_lgpd:true,
-    status:String(fd.get('status')||'Novo cadastro')
-  };
-  if(!payload.responsible_name||!payload.phone||!payload.child_name||!payload.birth_date){alert('Preencha os campos obrigatórios.');return;}
-  const {error}=await equoluzSupabase.rpc('submit_social_waitlist',payload);
-  if(error){alert('Não foi possível cadastrar: '+(error.message||error));return;}
-  e.target.reset();
-  await syncSocialWaitlistFromSupabase();
-  alert('Cadastro incluído na Lista Social.');
-}
-
-async function updateSocialStatusReal(id,status){
-  if(!window.equoluzSupabase) return;
-  const {error}=await equoluzSupabase.from('social_waitlist').update({status,updated_at:new Date().toISOString()}).eq('id',id);
-  if(error){alert('Não foi possível atualizar o status: '+error.message);return;}
-  await syncSocialWaitlistFromSupabase();
-}
-
-async function promoteSocialToChildReal(id){
-  const item=(state.social||[]).find(
-    x=>String(x.id)===String(id)
-  );
-
-  if(!item){
-    alert('Cadastro não encontrado.');
-    return;
-  }
-
-  // O cadastro social já deve possuir uma criança vinculada.
-  // Não criamos outra criança para evitar duplicidade.
-  if(!item.childId){
-    alert('Este cadastro social não possui uma criança vinculada no banco.');
-    return;
-  }
-
-  if(!confirm(
-    'Converter este cadastro da Lista Social em criança ativa?'
-  )){
-    return;
-  }
-
-  try{
-
-    // Atualiza a criança que já existe no banco.
-    const {error:ce}=await equoluzSupabase
-      .from('children')
-      .update({
-        name:item.crianca,
-        birth_date:item.nascimento||null,
-        notes:item.observacoes||null
-      })
-      .eq('id',item.childId);
-
-    if(ce) throw ce;
-
-    // Agora sim o cadastro passa a ser considerado ativo.
-    const {error:we}=await equoluzSupabase
-      .from('social_waitlist')
-      .update({
-        status:'Atendendo',
-        updated_at:new Date().toISOString()
-      })
-      .eq('id',id);
-
-    if(we) throw we;
-
-    await syncChildrenFromSupabase();
-    await syncSocialWaitlistFromSupabase();
-
-    alert('Cadastro convertido em criança ativa.');
-
-  }catch(err){
-
-    alert(
-      'Não foi possível converter: '+
-      (err.message||err)
-    );
-
-  }
-}
-
-async function editSocialReal(id){
-
-  const item=(state.social||[]).find(
-    x=>String(x.id)===String(id)
-  );
-
-  if(!item){
-    alert('Cadastro não encontrado.');
-    return;
-  }
-
-  if(!item.childId){
-    alert('Este cadastro não possui uma criança vinculada no banco.');
-    return;
-  }
-
-  const nome=prompt(
-    'Nome da criança:',
-    item.crianca||''
-  );
-
-  if(nome===null) return;
-
-  const resp=prompt(
-    'Nome do responsável:',
-    item.responsavel||''
-  );
-
-  if(resp===null) return;
-
-  const phone=prompt(
-    'WhatsApp:',
-    item.whatsapp||''
-  );
-
-  if(phone===null) return;
-
-  const email=prompt(
-    'E-mail:',
-    item.email||''
-  );
-
-  if(email===null) return;
-
-  const nascimento=prompt(
-    'Data de nascimento (AAAA-MM-DD):',
-    item.nascimento||''
-  );
-
-  if(nascimento===null) return;
-
-  const local=prompt(
-    'Cidade / bairro:',
-    item.localidade||''
-  );
-
-  if(local===null) return;
-
-  const obs=prompt(
-    'Observações:',
-    item.observacoes||''
-  );
-
-  if(obs===null) return;
-
-  try{
-
-    const parts=String(local).split('/');
-
-    const city=
-      (parts.shift()||'').trim()||null;
-
-    const neighborhood=
-      parts.join('/').trim()||null;
-
-    // Atualiza os dados da criança.
-    const {error:ce}=await equoluzSupabase
-      .from('children')
-      .update({
-        name:nome.trim(),
-        birth_date:nascimento||null,
-        city,
-        neighborhood,
-        notes:obs.trim()||null
-      })
-      .eq('id',item.childId);
-
-    if(ce) throw ce;
-
-    // Atualiza os dados do responsável.
-    if(item.responsibleId){
-
-      const {error:re}=await equoluzSupabase
-        .from('responsibles')
-        .update({
-          name:resp.trim(),
-          phone:phone.trim(),
-          email:email.trim()||null
-        })
-        .eq('id',item.responsibleId);
-
-      if(re) throw re;
-    }
-
-    // Atualiza as observações do cadastro social.
-    const {error:we}=await equoluzSupabase
-      .from('social_waitlist')
-      .update({
-        important_needs:obs.trim()||null,
-        updated_at:new Date().toISOString()
-      })
-      .eq('id',id);
-
-    if(we) throw we;
-
-    await syncSocialWaitlistFromSupabase();
-    await syncChildrenFromSupabase();
-
-    alert('Cadastro da Lista Social atualizado.');
-
-  }catch(err){
-
-    alert(
-      'Não foi possível editar: '+
-      (err.message||err)
-    );
-
-  }
-}const _oldSubmitForm=window.submitForm;
-window.submitForm=async function(e,successId,type){
-  if(type==='social'){
-    e.preventDefault();
-    await submitSocialPublic(e.target);
-    return;
-  }
-  if(typeof _oldSubmitForm==='function') return _oldSubmitForm(e,successId,type);
-};
-
-const _oldRender=window.render;
-window.render=function(){
-  if(typeof _oldRender==='function') _oldRender();
-  const session=JSON.parse(sessionStorage.getItem('equoluz_session')||'null');
-  if(session && session.role==='admin' && window.equoluzSupabase) {
-    // Mantém a lista interna sincronizada com o banco sem alterar o restante do painel.
-    syncSocialWaitlistFromSupabase().catch(err=>console.warn('Lista Social Supabase:',err.message));
-  }
-};
-
-const _oldUpdateSocialStatus=window.updateSocialStatus;
-window.updateSocialStatus=function(id,status){
-  if(window.equoluzSupabase) return updateSocialStatusReal(id,status);
-  if(typeof _oldUpdateSocialStatus==='function') return _oldUpdateSocialStatus(id,status);
-};
-const _oldPromote=window.promoteSocialToChild;
-window.promoteSocialToChild=function(id){
-  if(window.equoluzSupabase) return promoteSocialToChildReal(id);
-  if(typeof _oldPromote==='function') return _oldPromote(id);
-};
-
-const _oldBootstrap=window.bootstrapSupabaseSession;
-window.bootstrapSupabaseSession=async function(){
-  if(typeof _oldBootstrap==='function') await _oldBootstrap();
-  if(sessionStorage.getItem('equoluz_session')) await syncSocialWaitlistFromSupabase().catch(()=>{});
-};
-</script>
-
-<script>
-/* EQUOLUZ V27 — Interessados AAC conectados ao Supabase. */
-async function syncAacInterestsFromSupabase(){
-  if(!window.equoluzSupabase) return;
-  const {data,error}=await equoluzSupabase
-    .from('aac_interests')
-    .select('id,participant_name,responsible_name,phone,email,age,city,preferred_schedule,modalities,observations,privacy_accepted,status,created_at,updated_at')
-    .order('created_at',{ascending:false});
-  if(error) throw error;
-  state.aac=(data||[]).map(x=>({
-    id:x.id,
-    'Nome do participante':x.participant_name||'',
-    'Nome do responsável':x.responsible_name||'',
-    'WhatsApp':x.phone||'',
-    'Email':x.email||'',
-    'Idade':x.age??'',
-    'Cidade':x.city||'',
-    'Melhor período':x.preferred_schedule||'',
-    interesses:Array.isArray(x.modalities)?x.modalities:[],
-    'Observações':x.observations||'',
-    status:x.status||'Novo interesse',
-    createdAt:x.created_at,
-    updatedAt:x.updated_at,
-    privacyAccepted:x.privacy_accepted===true
-  }));
-  render();
-}
-
-async function submitAacPublic(form){
-  const fd=new FormData(form);
-  const modalities=[...form.querySelectorAll('input[name="interesse"]:checked')].map(x=>x.value);
-  const payload={
-    responsible_name:String(fd.get('responsavel')||'').trim(),
-    phone:String(fd.get('whatsapp')||'').trim(),
-    email:String(fd.get('email')||'').trim()||null,
-    participant_name:String(fd.get('participante')||'').trim(),
-    age:fd.get('idade')?Number(fd.get('idade')):null,
-    city:String(fd.get('cidade')||'').trim()||null,
-    preferred_schedule:String(fd.get('periodo')||'').trim()||null,
-    modalities,
-    observations:String(fd.get('observacoes')||'').trim()||null,
-    privacy_accepted:true
-  };
-  if(!payload.responsible_name||!payload.phone||!payload.participant_name){alert('Preencha os campos obrigatórios.');return;}
-  if(!modalities.length){alert('Selecione pelo menos uma modalidade de interesse.');return;}
-  if(!window.equoluzSupabase){alert('Conexão com o Supabase não carregada.');return;}
-  const {error}=await equoluzSupabase.rpc('submit_aac_interest',payload);
-  if(error){alert('Não foi possível registrar o interesse: '+(error.message||error));return;}
-  form.reset();
-  const ok=document.getElementById('aacSuccess'); if(ok) ok.style.display='block';
-}
-
-async function updateAacInterestStatusReal(id,status){
-  if(!window.equoluzSupabase) return;
-  const {error}=await equoluzSupabase.from('aac_interests').update({status,updated_at:new Date().toISOString()}).eq('id',id);
-  if(error){alert('Não foi possível atualizar o status: '+error.message);return;}
-  await syncAacInterestsFromSupabase();
-}
-
-const _v27OldSubmitForm=window.submitForm;
-window.submitForm=async function(e,successId,type){
-  if(type==='aac'){
-    e.preventDefault();
-    await submitAacPublic(e.target);
-    return;
-  }
-  if(typeof _v27OldSubmitForm==='function') return _v27OldSubmitForm(e,successId,type);
-};
-
-function v27RenderAacInterests(){
-  const box=document.getElementById('aacList');
-  if(!box) return;
-  const session=JSON.parse(sessionStorage.getItem('equoluz_session')||'null');
-  if(!session) return;
-  const canSee=session.role==='admin'||session.role==='professional'&&(session.permissions||[]).includes('aac');
-  if(!canSee){box.innerHTML='<div class="empty">Acesso aos interessados AAC não autorizado para este perfil.</div>';return;}
-  const rows=Array.isArray(state.aac)?state.aac:[];
-  box.innerHTML='<div class="card" style="margin-top:18px"><h3>📥 Interessados AAC</h3><p>Interesses recebidos pelo formulário público, separados da Lista Social do Instituto.</p>'+(
-    rows.length?rows.map(x=>`<div class="record"><button class="danger" onclick="updateAacInterestStatusReal('${String(x.id).replace(/'/g,"\\'")}','Contato')">Marcar contato</button><b>${esc(x['Nome do participante']||'')}</b><div class="mini">Responsável: ${esc(x['Nome do responsável']||'')} · WhatsApp: ${esc(x.WhatsApp||'')} · Status: <b>${esc(x.status||'Novo interesse')}</b></div><div class="mini">Interesses: ${esc((x.interesses||[]).join(' · '))} · ${esc(x['Cidade']||'')}</div>${x['Melhor período']?`<div class="mini">Período: ${esc(x['Melhor período'])}</div>`:''}${x['Observações']?`<div>${esc(x['Observações'])}</div>`:''}</div>`).join(''):'<div class="empty">Nenhum interessado AAC cadastrado.</div>'
-  )+'</div>';
-}
-
-const _v27OldRender=window.render;
-window.render=function(){
-  if(typeof _v27OldRender==='function') _v27OldRender();
-  v27RenderAacInterests();
-};
-
-const _v27OldBootstrap=window.bootstrapSupabaseSession;
-window.bootstrapSupabaseSession=async function(){
-  if(typeof _v27OldBootstrap==='function') await _v27OldBootstrap();
-  if(sessionStorage.getItem('equoluz_session')) await syncAacInterestsFromSupabase().catch(err=>console.warn('AAC Supabase:',err.message));
-};
-
-window.addEventListener('DOMContentLoaded',()=>{
-  setTimeout(()=>{
-    if(sessionStorage.getItem('equoluz_session')) syncAacInterestsFromSupabase().catch(err=>console.warn('AAC Supabase:',err.message));
-  },700);
-});
-</script>
 </html>
