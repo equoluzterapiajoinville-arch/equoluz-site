@@ -439,34 +439,80 @@ window.equoluzSupabase = window.supabase.createClient(
 
 async function syncChildrenFromSupabase(){
   if(!window.equoluzSupabase) return;
+
   const {data: rows,error}=await equoluzSupabase
     .from('children')
     .select('id,name,birth_date,city,neighborhood,diagnosis_condition,age,notes,created_at,updated_at')
     .order('created_at',{ascending:false});
+
   if(error) throw error;
 
-  const ids=(rows||[]).map(x=>x.id);
+  // Verifica se cada criança ainda está apenas na lista social.
+  // Somente cadastros com status "Atendendo" aparecem como crianças ativas.
+  const {data: waitRows,error:waitError}=await equoluzSupabase
+    .from('social_waitlist')
+    .select('child_id,status');
+
+  if(waitError) throw waitError;
+
+  const waitStatus=new Map(
+    (waitRows||[])
+      .filter(x=>x.child_id)
+      .map(x=>[String(x.child_id),String(x.status||'')])
+  );
+
+  const activeRows=(rows||[]).filter(x=>{
+    const socialStatus=waitStatus.get(String(x.id));
+
+    // Se não existe na lista social, continua sendo uma criança ativa.
+    // Se existe, só aparece como ativa depois de ser convertida para "Atendendo".
+    return socialStatus===undefined || socialStatus==='Atendendo';
+  });
+
+  const ids=activeRows.map(x=>x.id);
+
   let links=[];
   let respMap={};
+
   if(ids.length){
     const {data: lr,error:le}=await equoluzSupabase
       .from('child_responsibles')
       .select('child_id,responsible_id')
       .in('child_id',ids);
+
     if(le) throw le;
+
     links=lr||[];
-    const rids=[...new Set(links.map(x=>x.responsible_id).filter(Boolean))];
+
+    const rids=[
+      ...new Set(
+        links
+          .map(x=>x.responsible_id)
+          .filter(Boolean)
+      )
+    ];
+
     if(rids.length){
       const {data: rr,error:re}=await equoluzSupabase
-        .from('responsibles').select('id,name,phone,email').in('id',rids);
+        .from('responsibles')
+        .select('id,name,phone,email')
+        .in('id',rids);
+
       if(re) throw re;
-      (rr||[]).forEach(r=>{respMap[r.id]=r;});
+
+      (rr||[]).forEach(r=>{
+        respMap[r.id]=r;
+      });
     }
   }
 
-  state.children=(rows||[]).map(x=>{
-    const link=links.find(l=>String(l.child_id)===String(x.id));
+  state.children=activeRows.map(x=>{
+    const link=links.find(
+      l=>String(l.child_id)===String(x.id)
+    );
+
     const r=link ? respMap[link.responsible_id] : null;
+
     return {
       id:x.id,
       name:x.name||'',
@@ -482,7 +528,9 @@ async function syncChildrenFromSupabase(){
       age:x.age??''
     };
   });
+
   render();
+}
 }
 
 async function addChildReal(e){
