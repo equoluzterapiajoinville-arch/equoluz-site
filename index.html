@@ -767,23 +767,66 @@ async function updateSocialStatusReal(id,status){
 }
 
 async function promoteSocialToChildReal(id){
-  const item=(state.social||[]).find(x=>String(x.id)===String(id));
-  if(!item){alert('Cadastro não encontrado.');return;}
-  if(!confirm('Converter este cadastro da Lista Social em criança ativa?')) return;
+  const item=(state.social||[]).find(
+    x=>String(x.id)===String(id)
+  );
+
+  if(!item){
+    alert('Cadastro não encontrado.');
+    return;
+  }
+
+  // O cadastro social já deve possuir uma criança vinculada.
+  // Não criamos outra criança para evitar duplicidade.
+  if(!item.childId){
+    alert('Este cadastro social não possui uma criança vinculada no banco.');
+    return;
+  }
+
+  if(!confirm(
+    'Converter este cadastro da Lista Social em criança ativa?'
+  )){
+    return;
+  }
+
   try{
-    const {data:c,error:ce}=await equoluzSupabase.from('children').insert({
-      name:item.crianca,birth_date:item.nascimento||null,city:null,neighborhood:null,
-      diagnosis_condition:null,age:null,notes:item.observacoes||null
-    }).select('id').single();
+
+    // Atualiza a criança que já existe no banco.
+    const {error:ce}=await equoluzSupabase
+      .from('children')
+      .update({
+        name:item.crianca,
+        birth_date:item.nascimento||null,
+        notes:item.observacoes||null
+      })
+      .eq('id',item.childId);
+
     if(ce) throw ce;
-    const {error:cr}=await equoluzSupabase.from('child_responsibles').insert({child_id:c.id,responsible_id:item.responsibleId});
-    if(cr) throw cr;
-    const {error:we}=await equoluzSupabase.from('social_waitlist').update({status:'Atendendo',updated_at:new Date().toISOString()}).eq('id',id);
+
+    // Agora sim o cadastro passa a ser considerado ativo.
+    const {error:we}=await equoluzSupabase
+      .from('social_waitlist')
+      .update({
+        status:'Atendendo',
+        updated_at:new Date().toISOString()
+      })
+      .eq('id',id);
+
     if(we) throw we;
+
     await syncChildrenFromSupabase();
     await syncSocialWaitlistFromSupabase();
+
     alert('Cadastro convertido em criança ativa.');
-  }catch(err){alert('Não foi possível converter: '+(err.message||err));}
+
+  }catch(err){
+
+    alert(
+      'Não foi possível converter: '+
+      (err.message||err)
+    );
+
+  }
 }
 
 const _oldSubmitForm=window.submitForm;
