@@ -166,7 +166,7 @@ async function login(e){e.preventDefault();const email=document.getElementById('
 function logout(){sessionStorage.removeItem('equoluz_session');document.getElementById('dashboard').style.display='none';document.getElementById('public').style.display='block';document.getElementById('loginGate').style.setProperty('display','none','important');window.scrollTo(0,0);}
 function applySession(){const raw=sessionStorage.getItem('equoluz_session');if(!raw){document.getElementById('loginGate').style.setProperty('display','none','important');document.getElementById('dashboard').style.display='none';document.getElementById('public').style.display='block';return}const u=JSON.parse(raw);u.permissions=normalizePermissions(u.permissions);sessionStorage.setItem('equoluz_session',JSON.stringify(u));const dashLine=document.getElementById('dashUserLine');if(dashLine)dashLine.textContent='Olá, '+(u.name||'equipe')+' · '+(u.role==='admin'?'Administrador':u.role==='finance'?'Diretor Financeiro':'Profissional')+' · gestão do Equoluz.';document.getElementById('loginGate').classList.add('hidden');document.getElementById('loginGate').style.setProperty('display','none','important');document.getElementById('public').style.display='none';const b=document.getElementById('sessionBadge');if(b)b.textContent=u.name+' · '+(u.role==='admin'?'Administrador':u.role==='finance'?'Diretor Financeiro':'Profissional');const perms=new Set(u.permissions||[]);document.querySelectorAll('.moduleGrid .moduleBtn').forEach(el=>{const mod=el.dataset.module;let visible=false;if(u.role==='admin')visible=true;else if(u.role==='finance')visible=(mod==='cavalos'||mod==='financeiro');else visible=perms.has(mod);el.style.display=visible?'':'none';});document.querySelectorAll('[data-admin-only]').forEach(el=>el.style.display=u.role==='admin'?'':'none');document.querySelectorAll('[data-finance-only]').forEach(el=>el.style.display=(u.role==='admin'||u.role==='finance')?'':'none');document.querySelectorAll('[data-finance-visible]').forEach(el=>el.style.display=(u.role==='admin'||u.role==='finance')?'':'none');document.querySelectorAll('.modulePanel').forEach(el=>{const mod=el.id;let allowed=false;if(u.role==='admin')allowed=true;else if(u.role==='finance')allowed=(mod==='cavalos'||mod==='financeiro');else allowed=perms.has(mod);el.dataset.allowed=allowed?'1':'0';});}
 function guardRole(){const raw=sessionStorage.getItem('equoluz_session');if(!raw)return null;return JSON.parse(raw).role}
-function canAccessModule(id){const raw=sessionStorage.getItem('equoluz_session');if(!raw)return false;const u=JSON.parse(raw);if(u.role==='admin')return true;if(u.role==='finance')return id==='cavalos'||id==='financeiro';const perms=normalizePermissions(u.permissions);return perms.includes(normalizePermission(id));}
+function canAccessModule(id){const raw=sessionStorage.getItem('equoluz_session');if(!raw)return false;const u=JSON.parse(raw);if(u.role==='admin')return true;if(u.role==='finance')return id==='espera'||id==='cavalos'||id==='financeiro';const perms=normalizePermissions(u.permissions);return perms.includes(normalizePermission(id));}
 function showDashboard(){document.getElementById('loginGate').style.setProperty('display','none','important');document.getElementById('public').style.display='none';document.getElementById('dashboard').style.display='block';render();window.scrollTo(0,0)}
 function closeDashboard(){logout()}
 function panel(id){if(!canAccessModule(id)){alert('Você não possui permissão para acessar esta área.');return}document.querySelectorAll('.modulePanel').forEach(x=>x.classList.remove('active'));const target=document.getElementById(id);if(!target)return;target.classList.add('active');render()}
@@ -180,7 +180,7 @@ function promoteSocialToChild(id){const item=state.social.find(x=>x.id===id);if(
 function addAgenda(e){e.preventDefault();const person=agendaPerson.value.trim();const professional=agendaProfessional.value.trim();if(!person||!professional){alert('Selecione participante e profissional.');return}state.agenda.push({id:Date.now(),date:agendaDate.value,time:agendaTime.value,front:agendaFront.value,person,professional,horse:agendaHorse.value,type:agendaType.value,status:agendaStatus.value,notes:agendaNotes.value.trim()});save('Agendamento criado: '+person);e.target.reset();render();renderAgenda();alert('Agendamento salvo com sucesso.')}
 function removeItem(type,id){state[type]=state[type].filter(x=>x.id!==id);save('Registro excluído: '+type)}
 function updateStatus(type,id,status){const item=state[type].find(x=>x.id===id);if(!item)return;item.status=status;save('Status alterado: '+type+' → '+status)}
-function addProfessional(e){e.preventDefault();const email=proEmail.value.trim().toLowerCase();if(state.professionals.some(x=>String(x.email||'').toLowerCase()===email)){alert('Já existe um usuário cadastrado com este e-mail.');return}const role=proRole.value;let perms=[...e.target.querySelectorAll('input[name=perm]:checked')].map(x=>x.value);if(role==='Administrador')perms=['cadastro','sessoes','espera','aac','agenda','relatorios','equipe','cavalos','financeiro','config','auditoria'];if(role==='Diretor Financeiro')perms=['cavalos','financeiro'];state.professionals.push({id:Date.now(),name:proName.value.trim(),email,phone:proPhone.value.trim(),role,permissions:perms,password:'123456',forceChange:true,active:true});save('Usuário cadastrado com senha inicial e permissões');e.target.reset();render();alert('Usuário cadastrado. A senha inicial é 123456 e deverá ser alterada no primeiro acesso.')} 
+function addProfessional(e){e.preventDefault();const email=proEmail.value.trim().toLowerCase();if(state.professionals.some(x=>String(x.email||'').toLowerCase()===email)){alert('Já existe um usuário cadastrado com este e-mail.');return}const role=proRole.value;let perms=[...e.target.querySelectorAll('input[name=perm]:checked')].map(x=>x.value);if(role==='Administrador')perms=['cadastro','sessoes','espera','aac','agenda','relatorios','equipe','cavalos','financeiro','config','auditoria'];if(role==='Diretor Financeiro')perms=['espera','cavalos','financeiro'];state.professionals.push({id:Date.now(),name:proName.value.trim(),email,phone:proPhone.value.trim(),role,permissions:perms,password:'123456',forceChange:true,active:true});save('Usuário cadastrado com senha inicial e permissões');e.target.reset();render();alert('Usuário cadastrado. A senha inicial é 123456 e deverá ser alterada no primeiro acesso.')} 
 function syncEditRolePermissions(){const role=document.getElementById('editProRole').value;const box=document.getElementById('editPermBox');const checks=[...box.querySelectorAll('input[name=editPerm]')];if(role==='Administrador'){checks.forEach(c=>c.checked=true);checks.forEach(c=>c.disabled=true)}else if(role==='Diretor Financeiro'){checks.forEach(c=>{c.checked=(c.value==='cavalos'||c.value==='financeiro');c.disabled=true})}else{checks.forEach(c=>c.disabled=false)}}
 function editProfessional(id){const x=state.professionals.find(p=>p.id===id);if(!x)return;document.getElementById('editProId').value=x.id;document.getElementById('editProName').value=x.name||'';document.getElementById('editProEmail').value=x.email||'';document.getElementById('editProPhone').value=x.phone||'';document.getElementById('editProRole').value=x.role||'Profissional';[...document.querySelectorAll('#editPermBox input[name=editPerm]')].forEach(c=>{c.checked=(x.permissions||[]).includes(c.value)});syncEditRolePermissions();const m=document.getElementById('professionalEditModal');m.style.setProperty('display','grid','important')}
 function closeProfessionalEdit(){document.getElementById('professionalEditModal').style.setProperty('display','none','important')}
@@ -601,7 +601,7 @@ loadSiteSettingsFromSupabase();
     if(!profile||!profile.active) throw new Error('Usuário sem perfil ativo no sistema.');
     let permissions=[];
     if(profile.role==='Administrador') permissions=ALL_PERMS.slice();
-    else if(profile.role==='Diretor Financeiro') permissions=['cavalos','financeiro'];
+    else if(profile.role==='Diretor Financeiro') permissions=['espera','cavalos','financeiro'];
     else if(profile.role==='Profissional'){
       permissions=await readProfessionalPermissions(authUser.id);
       if(!permissions.length) permissions=BASIC_PRO_PERMS.slice();
@@ -621,7 +621,7 @@ loadSiteSettingsFromSupabase();
     const u=sessionObj();
     if(!u)return false;
     if(u.role==='admin')return true;
-    if(u.role==='finance')return id==='cavalos'||id==='financeiro';
+    if(u.role==='finance')return id==='espera'||id==='cavalos'||id==='financeiro';
     return normalizePermissions(u.permissions).includes(normalizePermission(id));
   }
   window.canAccessModule=access;
@@ -737,7 +737,7 @@ loadSiteSettingsFromSupabase();
     const role=document.getElementById('proRole').value;
     let perms=[...e.target.querySelectorAll('input[name=perm]:checked')].map(x=>normalizePermission(x.value));
     if(role==='Administrador')perms=ALL_PERMS.slice();
-    if(role==='Diretor Financeiro')perms=['cavalos','financeiro'];
+    if(role==='Diretor Financeiro')perms=['espera','cavalos','financeiro'];
     if(!email||!name){alert('Preencha nome e e-mail.');return;}
     // O navegador não pode criar usuários Auth sem fluxo administrativo seguro.
     // Mantemos o cadastro local como compatibilidade, mas as permissões do usuário Auth
@@ -1731,93 +1731,5 @@ function go(target){
       const st=document.getElementById('centralStatus');if(st)st.innerHTML='<span class="statusDot" style="background:#56a477"></span> Supabase configurado como banco central.';
     },1200);
   });
-})();
-</script>
-
-<script>
-/* EQUOLUZ V31 — indicadores do Dashboard sincronizados com o banco central.
-   Não altera o layout. Apenas recalcula os números a partir do Supabase/state atual. */
-(function(){
-  let metricTimer=null;
-  let metricBusy=false;
-
-  function setText(id,value){const el=document.getElementById(id);if(el)el.textContent=String(value);}
-  function brl(value){try{return new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'}).format(Number(value)||0)}catch(e){return 'R$ 0,00'}}
-
-  async function refreshDashboardMetrics(){
-    if(metricBusy)return;
-    metricBusy=true;
-    try{
-      /* Fallback imediato: usa o estado que já está na tela. */
-      const children=Array.isArray(window.state?.children)?window.state.children:[];
-      const activeChildren=children.filter(x=>String(x.status||'Ativa')!=='Encerrada');
-      const social=Array.isArray(window.state?.social)?window.state.social:[];
-      const aac=Array.isArray(window.state?.aac)?window.state.aac:[];
-      const contracts=Array.isArray(window.state?.aacContracts)?window.state.aacContracts:[];
-      let activeContracts=contracts.filter(x=>String(x.status||'')==='Ativo');
-      let revenue=activeContracts.reduce((s,x)=>s+(Number(x.value)||0),0);
-
-      setText('mActive',activeChildren.length);
-      setText('mWait',social.filter(x=>!['Atendendo','Encerrado','Em atendimento'].includes(String(x.status||''))).length);
-      setText('mAac',aac.length);
-      setText('mAacActive',activeContracts.length);
-      setText('mAacRevenue',brl(revenue));
-      setText('rChildren',children.length);
-      setText('rSessions',Array.isArray(window.state?.sessions)?window.state.sessions.length:0);
-      setText('rAgenda',Array.isArray(window.state?.agenda)?window.state.agenda.length:0);
-
-      /* Fonte oficial: Supabase. Isso garante que o número não dependa do cache do navegador. */
-      if(!window.equoluzSupabase || !sessionStorage.getItem('equoluz_session')) return;
-
-      const [childrenQ,socialQ,aacQ]=await Promise.all([
-        equoluzSupabase.from('children').select('id',{count:'exact',head:true}),
-        equoluzSupabase.from('social_waitlist').select('id,status',{count:'exact'}),
-        equoluzSupabase.from('aac_interests').select('id',{count:'exact',head:true})
-      ]);
-
-      if(!childrenQ.error){
-        const total=Number(childrenQ.count||0);
-        setText('mActive',total);
-        setText('rChildren',total);
-      }
-      if(!socialQ.error){
-        const rows=socialQ.data||[];
-        const waiting=rows.filter(x=>!['Atendendo','Encerrado','Em atendimento'].includes(String(x.status||''))).length;
-        setText('mWait',waiting);
-      }
-      if(!aacQ.error) setText('mAac',Number(aacQ.count||0));
-
-      /* Contratos AAC continuam no estado central porque essa parte do sistema usa o snapshot central. */
-      const latestContracts=Array.isArray(window.state?.aacContracts)?window.state.aacContracts:[];
-      activeContracts=latestContracts.filter(x=>String(x.status||'')==='Ativo');
-      revenue=activeContracts.reduce((s,x)=>s+(Number(x.value)||0),0);
-      setText('mAacActive',activeContracts.length);
-      setText('mAacRevenue',brl(revenue));
-    }catch(err){
-      console.warn('Equoluz · indicadores do Dashboard:',err.message||err);
-    }finally{metricBusy=false;}
-  }
-
-  function queueMetrics(){
-    clearTimeout(metricTimer);
-    metricTimer=setTimeout(()=>refreshDashboardMetrics(),120);
-  }
-
-  window.refreshDashboardMetrics=refreshDashboardMetrics;
-
-  /* O render pode ser chamado por vários módulos; o contador é atualizado sem chamar render novamente. */
-  const previousRender=window.render;
-  window.render=function(){
-    if(typeof previousRender==='function')previousRender();
-    queueMetrics();
-  };
-
-  const previousShow=window.showDashboard;
-  window.showDashboard=function(){
-    if(typeof previousShow==='function')previousShow();
-    setTimeout(refreshDashboardMetrics,80);
-  };
-
-  document.addEventListener('DOMContentLoaded',()=>setTimeout(refreshDashboardMetrics,500));
 })();
 </script>
