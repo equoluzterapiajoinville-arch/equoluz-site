@@ -984,12 +984,10 @@ window.submitForm=async function(e,successId,type){
 
 const _oldRender=window.render;
 window.render=function(){
+  // IMPORTANTE: render() não pode chamar syncSocialWaitlistFromSupabase().
+  // A sincronização chama render() novamente e isso criava um loop infinito,
+  // fazendo a tela piscar/tremer e impedindo qualquer clique nos botões.
   if(typeof _oldRender==='function') _oldRender();
-  const session=JSON.parse(sessionStorage.getItem('equoluz_session')||'null');
-  if(session && session.role==='admin' && window.equoluzSupabase) {
-    // Mantém a lista interna sincronizada com o banco sem alterar o restante do painel.
-    syncSocialWaitlistFromSupabase().catch(err=>console.warn('Lista Social Supabase:',err.message));
-  }
 };
 
 const _oldUpdateSocialStatus=window.updateSocialStatus;
