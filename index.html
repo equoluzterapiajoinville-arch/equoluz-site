@@ -1106,55 +1106,79 @@ window.addEventListener('DOMContentLoaded',()=>{
 })();
 </script>
 <script>
-/* EQUOLUZ V31 — Indicadores do Dashboard sempre sincronizados com o Supabase. */
+/* EQUOLUZ V31 CORRIGIDO — Indicadores compartilhados pelo estado central */
 (function(){
-  let metricTimer=null;
+
   async function refreshDashboardMetrics(){
     try{
-      if(!window.equoluzSupabase) return;
-      const session=JSON.parse(sessionStorage.getItem('equoluz_session')||'null');
-      if(!session) return;
+      const raw = sessionStorage.getItem('equoluz_session');
+      if(!raw) return;
 
-      const [childrenRes,socialRes,aacRes]=await Promise.all([
-        equoluzSupabase.from('children').select('id',{count:'exact',head:true}),
-        equoluzSupabase.from('social_waitlist').select('id,status'),
-        equoluzSupabase.from('aac_interests').select('id',{count:'exact',head:true})
-      ]);
-
-      if(!childrenRes.error){
-        const el=document.getElementById('mActive');
-        if(el) el.textContent=String(childrenRes.count||0);
-      }
-      if(!socialRes.error){
-        const waiting=(socialRes.data||[]).filter(x=>x.status!=='Atendendo'&&x.status!=='Encerrado').length;
-        const el=document.getElementById('mWait');
-        if(el) el.textContent=String(waiting);
-      }
-      if(!aacRes.error){
-        const el=document.getElementById('mAac');
-        if(el) el.textContent=String(aacRes.count||0);
+      /*
+       * Todos os perfis usam o mesmo estado central.
+       * Não consultar diretamente children/social_waitlist/aac_interests
+       * aqui, pois o RLS pode devolver números diferentes por usuário.
+       */
+      if(
+        window.equoluzCentral &&
+        typeof window.equoluzCentral.load === 'function'
+      ){
+        await window.equoluzCentral.load().catch(function(err){
+          console.warn('Equoluz · estado central:', err);
+        });
       }
 
-      /* Os indicadores particulares ficam no estado central do Supabase. */
-      if(session.role==='admin' && typeof window.equoluzCentral?.refresh==='function'){
-        await window.equoluzCentral.refresh().catch(()=>{});
+      /*
+       * O render calcula os indicadores a partir do estado central.
+       */
+      if(typeof render === 'function'){
+        render();
       }
-      if(typeof window.updateAacDashboard==='function') window.updateAacDashboard();
+
+      /*
+       * Atualiza os indicadores de clientes particulares
+       * somente quando essa função existir.
+       */
+      if(typeof window.updateAacDashboard === 'function'){
+        try{
+          window.updateAacDashboard();
+        }catch(err){}
+      }
+
     }catch(err){
-      console.warn('Equoluz · indicadores:',err.message||err);
+      console.warn(
+        'Equoluz · indicadores compartilhados:',
+        err.message || err
+      );
     }
   }
-  window.refreshDashboardMetrics=refreshDashboardMetrics;
 
-  document.addEventListener('DOMContentLoaded',()=>{
-    setTimeout(()=>{
-      if(sessionStorage.getItem('equoluz_session')) refreshDashboardMetrics();
-    },1200);
-    clearInterval(metricTimer);
-    metricTimer=setInterval(()=>{
-      if(sessionStorage.getItem('equoluz_session') && document.getElementById('dashboard')?.style.display!=='none') refreshDashboardMetrics();
-    },15000);
-  });
+  window.refreshDashboardMetrics = refreshDashboardMetrics;
+
+  /*
+   * Timer único para atualização periódica.
+   */
+  try{
+    if(window.__equoluzMetricTimer){
+      clearInterval(window.__equoluzMetricTimer);
+    }
+  }catch(e){}
+
+  window.__equoluzMetricTimer = setInterval(function(){
+
+    const session = sessionStorage.getItem('equoluz_session');
+    const dashboard = document.getElementById('dashboard');
+
+    if(
+      session &&
+      dashboard &&
+      dashboard.style.display !== 'none'
+    ){
+      refreshDashboardMetrics();
+    }
+
+  },15000);
+
 })();
 </script>
 
