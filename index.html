@@ -838,37 +838,88 @@ async function syncChildrenFromSupabase(){
     };
   });
   render();
-}
-
 async function addChildReal(e){
   e.preventDefault();
-  if(!window.equoluzSupabase){ alert('Conexão com o Supabase não carregada.'); return; }
-  const name=childName.value.trim(), birth=childBirth.value, guardian=childGuardian.value.trim(), phone=childPhone.value.trim();
-  if(!name){alert('Informe o nome da criança.');return;}
+
+  if(!window.equoluzSupabase){
+    alert('Conexão com o Supabase não carregada.');
+    return;
+  }
+
+  const name=childName.value.trim();
+  const birth=childBirth.value;
+  const guardian=childGuardian.value.trim();
+  const phone=childPhone.value.trim();
+
+  if(!name){
+    alert('Informe o nome da criança.');
+    return;
+  }
+
   try{
     let responsibleId=null;
+
     if(guardian){
-      const {data:r,error:re}=await equoluzSupabase.from('responsibles').insert({name:guardian,phone,email:null}).select('id').single();
+      const {data:r,error:re}=await equoluzSupabase
+        .from('responsibles')
+        .insert({
+          name:guardian,
+          phone,
+          email:null
+        })
+        .select('id')
+        .single();
+
       if(re) throw re;
+
       responsibleId=r.id;
     }
-    const {data:child,error:ce}=await equoluzSupabase.from('children').insert({
-      name,birth_date:birth||null,city:null,neighborhood:null,diagnosis_condition:null,
-      age:null,notes:childNotes.value.trim()
-    }).select('id,name,birth_date,notes,created_at').single();
+
+    const {data:child,error:ce}=await equoluzSupabase
+      .from('children')
+      .insert({
+        name,
+        birth_date:birth||null,
+        city:null,
+        neighborhood:null,
+        diagnosis_condition:null,
+        age:null,
+        notes:childNotes.value.trim()
+      })
+      .select('id,name,birth_date,notes,created_at')
+      .single();
+
     if(ce) throw ce;
+
     if(responsibleId){
-      const {error:cr}=await equoluzSupabase.from('child_responsibles').insert({child_id:child.id,responsible_id:responsibleId});
+      const {error:cr}=await equoluzSupabase
+        .from('child_responsibles')
+        .insert({
+          child_id:child.id,
+          responsible_id:responsibleId
+        });
+
       if(cr) throw cr;
     }
+
+    // Recarrega a lista completa do banco.
     await syncChildrenFromSupabase();
+
+    // IMPORTANTE:
+    // Depois de atualizar state.children, grava também
+    // o estado central para que ele não volte para a versão antiga.
+    if(typeof saveCentral==='function'){
+      await saveCentral('Nova criança cadastrada: '+name);
+    }
+
     e.target.reset();
+
     alert('Criança cadastrada no banco do Equoluz com sucesso.');
+
   }catch(err){
     alert('Não foi possível salvar a criança: '+(err.message||err));
   }
 }
-
 async function removeChildReal(id){
   if(!window.equoluzSupabase) return;
   if(!confirm('Excluir este cadastro do banco?')) return;
