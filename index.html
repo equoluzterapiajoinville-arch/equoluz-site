@@ -1317,3 +1317,211 @@ function go(target){
   });
 })();
 </script>
+
+
+<script>
+/* EQUOLUZ — V29: BANCO CENTRAL SUPABASE
+   Mantém o Dashboard/UI atual, mas transforma o Supabase em fonte central dos dados persistentes.
+   localStorage fica apenas como cache/migração de compatibilidade.
+*/
+(function(){
+  const CENTRAL_TABLE='equoluz_app_state';
+  const CENTRAL_ID='main';
+  const CENTRAL_KEYS=['equoluz_v18','equoluz_aac_clients_v18','equoluz_aac_contracts_v18','equoluz_aac_contracts_v13','equoluz_finance_social_v28'];
+  let cloudReady=false;
+  let cloudLoading=false;
+  let saveTimer=null;
+  let lastCloudError='';
+
+  function clone(v){try{return JSON.parse(JSON.stringify(v));}catch(e){return v;}}
+  function uid(){return (crypto&&crypto.randomUUID)?crypto.randomUUID():('xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g,c=>{const r=Math.random()*16|0,v=c==='x'?r:(r&3|8);return v.toString(16)}));}
+  function readLocal(k,fallback){try{const r=localStorage.getItem(k);return r?JSON.parse(r):fallback}catch(e){return fallback}}
+  function financeRows(){return readLocal('equoluz_finance_social_v28',Array.isArray(window.equoluzFinance?.records)?window.equoluzFinance.records:[]);}
+  function snapshot(){
+    const out=clone(state)||{};
+    out.aacClients=Array.isArray(out.aacClients)?out.aacClients:[];
+    out.aacContracts=Array.isArray(out.aacContracts)?out.aacContracts:[];
+    out.aacSessions=Array.isArray(out.aacSessions)?out.aacSessions:[];
+    out.horses=Array.isArray(out.horses)?out.horses:[];
+    out.audit=Array.isArray(out.audit)?out.audit:[];
+    out.financeRecords=financeRows();
+    // Nunca enviar senhas locais para o banco central.
+    out.professionals=(Array.isArray(out.professionals)?out.professionals:[]).map(x=>{const y={...x};delete y.password;return y;});
+    delete out.demoPasswords;
+    return out;
+  }
+  function applySnapshot(payload){
+    if(!payload||typeof payload!=='object')return false;
+    const merged=clone(payload);
+    Object.keys(DEFAULT_STATE).forEach(k=>{
+      if(Array.isArray(DEFAULT_STATE[k]) && !Array.isArray(merged[k])) merged[k]=[];
+    });
+    state=merged;
+    if(!Array.isArray(state.horses)||!state.horses.length)state.horses=clone(DEFAULT_STATE.horses);
+    state.aacClients=Array.isArray(state.aacClients)?state.aacClients:[];
+    state.aacContracts=Array.isArray(state.aacContracts)?state.aacContracts:[];
+    state.aacSessions=Array.isArray(state.aacSessions)?state.aacSessions:[];
+    if(Array.isArray(state.financeRecords)){
+      try{localStorage.setItem('equoluz_finance_social_v28',JSON.stringify(state.financeRecords));}catch(e){}
+      if(window.equoluzFinance)window.equoluzFinance.records=clone(state.financeRecords);
+    }
+    return true;
+  }
+  async function fetchCentral(){
+    if(!window.equoluzSupabase)return {exists:false,payload:null};
+    const {data,error}=await equoluzSupabase.from(CENTRAL_TABLE).select('id,payload,updated_at').eq('id',CENTRAL_ID).maybeSingle();
+    if(error)throw error;
+    return {exists:!!data,payload:data?.payload||null,updatedAt:data?.updated_at||null};
+  }
+  async function saveCentral(reason){
+    if(!window.equoluzSupabase||!cloudReady||cloudLoading)return;
+    const payload=snapshot();
+    const {data:{user}}=await equoluzSupabase.auth.getUser();
+    if(!user)return;
+    const {error}=await equoluzSupabase.from(CENTRAL_TABLE).upsert({id:CENTRAL_ID,payload,updated_by:user.id,updated_at:new Date().toISOString()},{onConflict:'id'});
+    if(error){lastCloudError=error.message||String(error);console.warn('Equoluz · banco central:',lastCloudError);return;}
+    lastCloudError='';
+    window.__equoluzCentralUpdatedAt=new Date().toISOString();
+  }
+  function queueCentralSave(reason){
+    if(!cloudReady||cloudLoading)return;
+    clearTimeout(saveTimer);saveTimer=setTimeout(()=>saveCentral(reason).catch(e=>console.warn('Equoluz · sincronização:',e.message||e)),250);
+  }
+
+  // Captura gravações existentes que ainda usam localStorage.
+  const nativeSet=Storage.prototype.setItem;
+  Storage.prototype.setItem=function(key,value){
+    nativeSet.call(this,key,value);
+    if(this===localStorage && CENTRAL_KEYS.includes(String(key)) && cloudReady && !cloudLoading){queueCentralSave('alteração local detectada');}
+  };
+
+  async function loadCentralForSession(){
+    cloudLoading=true;
+    try{
+      const res=await fetchCentral();
+      if(res.exists && res.payload){
+        applySnapshot(res.payload);
+        try{nativeSet.call(localStorage,KEY,JSON.stringify(state));}catch(e){}
+        cloudReady=true;
+        return {exists:true,migrated:false};
+      }
+      cloudReady=true;
+      return {exists:false,migrated:false};
+    }finally{cloudLoading=false;}
+  }
+
+  async function pushChildrenToRelational(){
+    if(!window.equoluzSupabase||!Array.isArray(state.children))return;
+    const oldToNew={};
+    const rows=[];
+    for(const c of state.children){
+      let id=(typeof c.id==='string'&&c.id.includes('-'))?c.id:uid();
+      oldToNew[String(c.id)]=id;
+      rows.push({id,name:c.name||'',birth_date:c.birth||null,city:null,neighborhood:null,diagnosis_condition:null,age:null,notes:c.notes||null,created_at:c.entry?new Date(c.entry+'T12:00:00').toISOString():new Date().toISOString(),updated_at:new Date().toISOString()});
+    }
+    if(rows.length){
+      const {error}=await equoluzSupabase.from('children').upsert(rows,{onConflict:'id'});if(error)throw error;
+      const links=[];
+      for(const c of state.children){
+        const newId=oldToNew[String(c.id)];
+        if(!newId||!c.guardian)continue;
+        let rid=null;
+        const {data:existing}=await equoluzSupabase.from('responsibles').select('id').eq('phone',c.phone||'').eq('name',c.guardian||'').limit(1);
+        rid=existing?.[0]?.id||null;
+        if(!rid){const {data:r,error:re}=await equoluzSupabase.from('responsibles').insert({name:c.guardian||'',phone:c.phone||'',email:null}).select('id').single();if(re)throw re;rid=r.id;}
+        links.push({child_id:newId,responsible_id:rid});
+      }
+      if(links.length){const {error}=await equoluzSupabase.from('child_responsibles').upsert(links,{onConflict:'child_id,responsible_id'});if(error)console.warn('Equoluz · vínculos de responsáveis:',error.message);}
+    }
+    state.children=state.children.map(c=>({...c,id:oldToNew[String(c.id)]||c.id}));
+    state.sessions=(state.sessions||[]).map(x=>({...x,childId:oldToNew[String(x.childId)]||x.childId}));
+  }
+
+  async function migrateLocalToCentral(){
+    if(!window.equoluzSupabase)throw new Error('Supabase não carregado.');
+    const u=JSON.parse(sessionStorage.getItem('equoluz_session')||'{}');
+    if(u.role!=='admin')throw new Error('Somente o Administrador pode executar a migração inicial.');
+    const current=await fetchCentral();
+    if(current.exists && current.payload && !confirm('Já existe uma base central no Supabase. Deseja SUBSTITUÍ-LA pelos dados deste navegador?'))return;
+    cloudLoading=true;
+    try{
+      // Consolida dados legados antes de enviar.
+      state.financeRecords=financeRows();
+      await pushChildrenToRelational();
+      await saveCentral('migração inicial do navegador');
+      nativeSet.call(localStorage,KEY,JSON.stringify(state));
+      cloudReady=true;
+      render();
+      const el=document.getElementById('centralStatus');if(el)el.innerHTML='<span class="statusDot" style="background:#56a477"></span> Banco central atualizado com os dados deste navegador.';
+      alert('Migração concluída. Os dados deste computador agora estão no Supabase e poderão ser acessados pelos outros dispositivos.');
+    }finally{cloudLoading=false;}
+  }
+
+  async function refreshCentral(){
+    if(!cloudReady)return;
+    cloudLoading=true;
+    try{const res=await fetchCentral();if(res.exists&&res.payload){applySnapshot(res.payload);nativeSet.call(localStorage,KEY,JSON.stringify(state));render();}}
+    finally{cloudLoading=false;}
+  }
+
+  window.equoluzCentral={load:loadCentralForSession,save:saveCentral,migrate:migrateLocalToCentral,refresh:refreshCentral,isReady:()=>cloudReady};
+  window.migrateEquoluzLocalData=migrateLocalToCentral;
+
+  // Sobrescreve o login para carregar a base central antes de abrir o Dashboard.
+  window.login=async function(e){
+    if(e)e.preventDefault();
+    const email=document.getElementById('loginEmail').value.trim().toLowerCase();
+    const pass=document.getElementById('loginPass').value;
+    if(!window.equoluzSupabase){alert('Conexão com o Supabase não carregada.');return;}
+    const {data,error}=await equoluzSupabase.auth.signInWithPassword({email,password:pass});
+    if(error||!data?.user){alert('E-mail ou senha incorretos.');return;}
+    try{
+      const session=await loadRealProfile(data.user);
+      sessionStorage.setItem('equoluz_session',JSON.stringify(session));
+      const central=await loadCentralForSession();
+      // Primeira instalação: se ainda não existe base central e este navegador possui dados, migra automaticamente para o admin.
+      if(!central.exists && session.role==='admin' && ((state.children||[]).length||(state.sessions||[]).length||(state.social||[]).length||(state.aac||[]).length||(state.aacClients||[]).length||(state.agenda||[]).length)){
+        await pushChildrenToRelational();
+        await saveCentral('migração inicial automática');
+      }
+      await syncChildrenFromSupabase();
+      if(typeof syncSocialWaitlistFromSupabase==='function')await syncSocialWaitlistFromSupabase().catch(()=>{});
+      if(typeof syncAacInterestsFromSupabase==='function')await syncAacInterestsFromSupabase().catch(()=>{});
+      applySession();showDashboard();
+      if(session.forceChange)setTimeout(()=>openSecurity(true),150);
+    }catch(err){try{await equoluzSupabase.auth.signOut()}catch(_){}sessionStorage.removeItem('equoluz_session');alert('Não foi possível carregar o sistema: '+(err.message||err));}
+  };
+
+  // Evita que o bootstrap antigo abra o Dashboard antes da carga central.
+  window.bootstrapSupabaseSession=async function(){
+    const {data}=await equoluzSupabase.auth.getSession();if(!data.session)return;
+    try{
+      const session=await loadRealProfile(data.session.user);sessionStorage.setItem('equoluz_session',JSON.stringify(session));
+      await loadCentralForSession();
+      await syncChildrenFromSupabase();
+      if(typeof syncSocialWaitlistFromSupabase==='function')await syncSocialWaitlistFromSupabase().catch(()=>{});
+      if(typeof syncAacInterestsFromSupabase==='function')await syncAacInterestsFromSupabase().catch(()=>{});
+      applySession();showDashboard();
+    }catch(err){console.warn('Sessão Supabase:',err.message||err);}
+  };
+
+  // Atualiza o banco após mudanças locais feitas pelos módulos legados.
+  const oldSave=window.save;
+  window.save=function(action){
+    if(typeof oldSave==='function')oldSave(action);
+    queueCentralSave(action||'Atualização');
+  };
+
+  window.addEventListener('DOMContentLoaded',()=>{
+    setTimeout(()=>{
+      const box=document.getElementById('config');
+      if(box&&!document.getElementById('centralDatabaseCard')){
+        const card=document.createElement('div');card.id='centralDatabaseCard';card.className='card';card.style.marginTop='18px';
+        card.innerHTML='<h3>☁️ Banco central do Equoluz</h3><p>O Supabase é a fonte central dos dados. O navegador mantém apenas uma cópia temporária para compatibilidade.</p><div id="centralStatus" class="backendCard"><span class="statusDot"></span> Aguardando conexão...</div><div class="actions" style="margin-top:12px"><button class="formBtn" type="button" onclick="migrateEquoluzLocalData()">☁️ Migrar dados deste computador</button><button class="secondary" type="button" onclick="equoluzCentral.refresh()">↻ Recarregar do Supabase</button></div><div class="mini-note" style="margin-top:10px">Use a migração uma única vez no computador onde estão os dados atuais. Depois disso, celular e computador consultarão a mesma base.</div>';
+        box.appendChild(card);
+      }
+      const st=document.getElementById('centralStatus');if(st)st.innerHTML='<span class="statusDot" style="background:#56a477"></span> Supabase configurado como banco central.';
+    },1200);
+  });
+})();
+</script>
