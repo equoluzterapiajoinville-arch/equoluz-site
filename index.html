@@ -767,7 +767,28 @@ loadSiteSettingsFromSupabase();
   document.addEventListener('DOMContentLoaded',()=>setTimeout(()=>applySession(),100));
 })();
 </script>
-</body></html><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+/* EQUOLUZ V25 — conexão real com Supabase Auth + PostgreSQL (RLS).
+   A chave usada no navegador é a Publishable Key. A Secret/Service Role nunca deve
+   ser colocada neste arquivo. O acesso aos dados é protegido pelas políticas RLS. */
+window.EQUOLUZ_BACKEND = {
+  version: '25',
+  provider: 'supabase',
+  configured: true,
+  mode: 'supabase',
+  url: 'https://rtlagyivmvqlknlafqls.supabase.co',
+  publishableKey: 'sb_publishable_83FgjuV7gQEB8AExC2VhRw_HwsJRl2o'
+};
+
+window.equoluzSupabase = window.supabase.createClient(
+  window.EQUOLUZ_BACKEND.url,
+  window.EQUOLUZ_BACKEND.publishableKey
+);
+</script>
+
+</body>
+</html>
 <script>
 /* EQUOLUZ V25 — conexão real com Supabase Auth + PostgreSQL (RLS).
    A chave usada no navegador é a Publishable Key. A Secret/Service Role nunca deve
