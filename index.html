@@ -1810,3 +1810,95 @@ function go(target){
   });
 })();
 </script>
+<script>
+/* EQUOLUZ V32.1 — CORREÇÃO DOS INDICADORES POR PERFIL
+   O Dashboard usa o banco central/state.
+   Não sobrescreve os números com consultas sujeitas ao RLS do perfil.
+*/
+(function(){
+
+  async function refreshDashboardMetricsSafe(){
+    try{
+      const raw=sessionStorage.getItem('equoluz_session');
+      if(!raw)return;
+
+      /*
+       * Primeiro garante que o estado central esteja carregado.
+       * O banco central já é compartilhado entre os perfis.
+       */
+      if(window.equoluzCentral &&
+         typeof window.equoluzCentral.load==='function'){
+        await window.equoluzCentral.load().catch(()=>{});
+      }
+
+      /*
+       * Os indicadores passam a ser calculados pelo mesmo estado
+       * usado pelo Dashboard, e não por consultas diretas que podem
+       * sofrer restrições de RLS para determinados perfis.
+       */
+      if(typeof render==='function'){
+        render();
+      }
+
+      /*
+       * Atualiza somente os indicadores particulares pelo estado central,
+       * quando essa função existir.
+       */
+      if(typeof window.updateAacDashboard==='function'){
+        try{
+          window.updateAacDashboard();
+        }catch(e){}
+      }
+
+    }catch(err){
+      console.warn(
+        'Equoluz · indicadores seguros:',
+        err.message || err
+      );
+    }
+  }
+
+  /*
+   * Substitui a rotina V31 que estava consultando diretamente
+   * a tabela children e transformando 9 em 0 para alguns perfis.
+   */
+  window.refreshDashboardMetrics=refreshDashboardMetricsSafe;
+
+  /*
+   * Cancela qualquer timer anterior conhecido.
+   */
+  try{
+    if(window.__equoluzMetricTimer){
+      clearInterval(window.__equoluzMetricTimer);
+    }
+  }catch(e){}
+
+  /*
+   * Atualização periódica usando o estado central.
+   */
+  window.__equoluzMetricTimer=setInterval(function(){
+    const session=sessionStorage.getItem('equoluz_session');
+    const dashboard=document.getElementById('dashboard');
+
+    if(
+      session &&
+      dashboard &&
+      dashboard.style.display!=='none'
+    ){
+      refreshDashboardMetricsSafe();
+    }
+  },15000);
+
+  /*
+   * Atualiza uma vez após o carregamento da página.
+   */
+  document.addEventListener('DOMContentLoaded',function(){
+    setTimeout(function(){
+      if(sessionStorage.getItem('equoluz_session')){
+        refreshDashboardMetricsSafe();
+      }
+    },1500);
+  });
+
+})();
+</script>
