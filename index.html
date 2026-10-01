@@ -101,7 +101,7 @@
 <button class="moduleBtn" data-module="cadastro" onclick="panel('cadastro')"><b>👧 Crianças</b><span>Cadastro, ficha individual e responsáveis</span></button>
 <button class="moduleBtn" data-module="sessoes" onclick="panel('sessoes')"><b>🐴 Sessões</b><span>Atendimentos e evolução</span></button>
 <button class="moduleBtn" data-module="espera" onclick="panel('espera')"><b>⏳ Lista social</b><span>Famílias, triagem e acompanhamento</span></button>
-<button class="moduleBtn" data-module="aac" data-admin-only onclick="panel('aac')"><b>💙 Particular</b><span>Interesses, clientes e contratos</span></button>
+<button class="moduleBtn" data-module="aac" onclick="panel('aac')"><b>💙 Particular</b><span>Interesses, clientes e contratos</span></button>
 <button class="moduleBtn" data-module="financeiro" data-finance-only onclick="panel('financeiro')"><b>💰 Financeiro</b><span>Entradas, saídas e saldo</span></button>
 <button class="moduleBtn" data-module="agenda" onclick="panel('agenda')"><b>📅 Agenda</b><span>Atendimentos, profissionais e cavalos</span></button>
 <button class="moduleBtn" data-module="relatorios" onclick="panel('relatorios')"><b>📊 Relatórios</b><span>Resumo dos registros</span></button>
@@ -557,6 +557,214 @@ loadSiteSettingsFromSupabase();
  ];
  const el=document.getElementById('v22AuditList');
  if(el) el.innerHTML=items.map((x,i)=>`<div style="padding:12px;border-bottom:1px solid #ddd"><b>${i+1}. ${x[0]}</b><div>${x[1]}</div><span>⏳ Preparado para validação</span></div>`).join('');
+})();
+</script>
+
+<script>
+/* EQUOLUZ V30 — correção definitiva de permissões + sincronização central
+   1) permissões de Profissional vêm do Supabase e aceitam variações de nome;
+   2) se a conta ainda não tiver linhas em professional_permissions, recebe apenas
+      o conjunto básico inicial, evitando o bloqueio total da conta recém-criada;
+   3) AAC passa a respeitar a permissão "aac" (não fica preso a data-admin-only);
+   4) o Dashboard não usa o estado local para decidir se o módulo pode abrir;
+   5) se o banco central estiver vazio e o Administrador tiver dados locais, a primeira
+      sessão pode migrá-los automaticamente.
+*/
+(function(){
+  const BASIC_PRO_PERMS=['cadastro','sessoes','agenda','cavalos'];
+  const ALL_PERMS=['cadastro','sessoes','espera','aac','agenda','relatorios','equipe','cavalos','financeiro','config','auditoria'];
+  const clone=v=>{try{return JSON.parse(JSON.stringify(v));}catch(e){return v}};
+
+  function sessionObj(){try{return JSON.parse(sessionStorage.getItem('equoluz_session')||'null')}catch(e){return null}}
+  function setSession(u){sessionStorage.setItem('equoluz_session',JSON.stringify(u));}
+
+  async function readProfessionalPermissions(userId){
+    if(!window.equoluzSupabase) return [];
+    let rows=[];
+    try{
+      const r=await equoluzSupabase.from('professional_permissions').select('module,allowed').eq('user_id',userId);
+      if(r.error) throw r.error;
+      rows=r.data||[];
+    }catch(err){
+      console.warn('Permissões do profissional:',err.message||err);
+      return [];
+    }
+    const normalized=normalizePermissions(rows.filter(x=>x.allowed!==false).map(x=>x.module));
+    return normalized;
+  }
+
+  window.loadRealProfile=async function(authUser){
+    const {data:profile,error}=await equoluzSupabase
+      .from('profiles').select('id,name,email,role,active,force_change_password')
+      .eq('id',authUser.id).maybeSingle();
+    if(error) throw error;
+    if(!profile||!profile.active) throw new Error('Usuário sem perfil ativo no sistema.');
+    let permissions=[];
+    if(profile.role==='Administrador') permissions=ALL_PERMS.slice();
+    else if(profile.role==='Diretor Financeiro') permissions=['cavalos','financeiro'];
+    else if(profile.role==='Profissional'){
+      permissions=await readProfessionalPermissions(authUser.id);
+      if(!permissions.length) permissions=BASIC_PRO_PERMS.slice();
+    }
+    return {
+      email:profile.email||authUser.email||'',
+      name:profile.name||authUser.email||'Usuário',
+      role:profile.role==='Administrador'?'admin':profile.role==='Diretor Financeiro'?'finance':'professional',
+      permissions:normalizePermissions(permissions),
+      forceChange:!!profile.force_change_password,
+      authUserId:authUser.id,
+      at:new Date().toISOString()
+    };
+  };
+
+  function access(id){
+    const u=sessionObj();
+    if(!u)return false;
+    if(u.role==='admin')return true;
+    if(u.role==='finance')return id==='cavalos'||id==='financeiro';
+    return normalizePermissions(u.permissions).includes(normalizePermission(id));
+  }
+  window.canAccessModule=access;
+
+  window.applySession=function(){
+    const u=sessionObj();
+    if(!u){
+      document.getElementById('loginGate')?.style.setProperty('display','none','important');
+      const d=document.getElementById('dashboard'); if(d)d.style.display='none';
+      const p=document.getElementById('public'); if(p)p.style.display='block';
+      return;
+    }
+    u.permissions=normalizePermissions(u.permissions);
+    setSession(u);
+    const dashLine=document.getElementById('dashUserLine');
+    if(dashLine)dashLine.textContent='Olá, '+(u.name||'equipe')+' · '+(u.role==='admin'?'Administrador':u.role==='finance'?'Diretor Financeiro':'Profissional')+' · gestão do Equoluz.';
+    document.getElementById('loginGate')?.classList.add('hidden');
+    document.getElementById('loginGate')?.style.setProperty('display','none','important');
+    const pub=document.getElementById('public'); if(pub)pub.style.display='none';
+    const dash=document.getElementById('dashboard'); if(dash)dash.style.display='block';
+    const b=document.getElementById('sessionBadge'); if(b)b.textContent=(u.name||'Usuário')+' · '+(u.role==='admin'?'Administrador':u.role==='finance'?'Diretor Financeiro':'Profissional');
+
+    document.querySelectorAll('.moduleGrid .moduleBtn').forEach(el=>{
+      const mod=normalizePermission(el.dataset.module||'');
+      el.style.display=access(mod)?'':'none';
+      // AAC agora é controlado pela permissão aac; config/auditoria continuam administrativos.
+    });
+    document.querySelectorAll('.modulePanel').forEach(el=>{
+      const mod=normalizePermission(el.id||'');
+      el.dataset.allowed=access(mod)?'1':'0';
+    });
+    document.querySelectorAll('[data-admin-only]').forEach(el=>{
+      // Exceções: elementos do módulo AAC não devem ser escondidos só por terem vindo da versão anterior.
+      const parent=el.closest('#aac');
+      if(parent){el.style.display=access('aac')?'':'none';return;}
+      el.style.display=u.role==='admin'?'':'none';
+    });
+    document.querySelectorAll('[data-finance-only]').forEach(el=>el.style.display=(u.role==='admin'||u.role==='finance')?'':'none');
+    document.querySelectorAll('[data-finance-visible]').forEach(el=>el.style.display=(u.role==='admin'||u.role==='finance')?'':'none');
+  };
+
+  window.panel=function(id){
+    id=normalizePermission(id);
+    if(!access(id)){alert('Você não possui permissão para acessar esta área.');return;}
+    document.querySelectorAll('.modulePanel').forEach(x=>x.classList.remove('active'));
+    const target=document.getElementById(id); if(!target)return;
+    target.classList.add('active');
+    if(typeof render==='function')render();
+  };
+
+  window.showDashboard=function(){
+    document.getElementById('loginGate')?.style.setProperty('display','none','important');
+    const pub=document.getElementById('public');if(pub)pub.style.display='none';
+    const d=document.getElementById('dashboard');if(d)d.style.display='block';
+    applySession();
+    if(typeof render==='function')render();
+    window.scrollTo(0,0);
+  };
+
+  async function loginReal(e){
+    if(e)e.preventDefault();
+    const email=document.getElementById('loginEmail').value.trim().toLowerCase();
+    const pass=document.getElementById('loginPass').value;
+    if(!window.equoluzSupabase){alert('Conexão com o Supabase não carregada.');return;}
+    const {data,error}=await equoluzSupabase.auth.signInWithPassword({email,password:pass});
+    if(error||!data?.user){alert('E-mail ou senha incorretos.');return;}
+    try{
+      const session=await window.loadRealProfile(data.user);
+      setSession(session);
+      const central=await window.equoluzCentral?.load();
+      if(!central?.exists && session.role==='admin' && typeof window.migrateEquoluzLocalData==='function'){
+        // Migração automática somente quando ainda não existe qualquer base central.
+        const hasLocal=(state.children||[]).length||(state.sessions||[]).length||(state.social||[]).length||(state.aac||[]).length||(state.aacClients||[]).length||(state.agenda||[]).length||(state.professionals||[]).length||(state.horses||[]).length;
+        if(hasLocal) await window.migrateEquoluzLocalData(false);
+      }
+      if(typeof syncChildrenFromSupabase==='function')await syncChildrenFromSupabase().catch(err=>console.warn('children sync',err));
+      if(typeof syncSocialWaitlistFromSupabase==='function')await syncSocialWaitlistFromSupabase().catch(()=>{});
+      if(typeof syncAacInterestsFromSupabase==='function')await syncAacInterestsFromSupabase().catch(()=>{});
+      applySession();showDashboard();
+      if(session.forceChange)setTimeout(()=>openSecurity(true),150);
+    }catch(err){
+      try{await equoluzSupabase.auth.signOut()}catch(_){ }
+      sessionStorage.removeItem('equoluz_session');
+      alert('Não foi possível carregar o sistema: '+(err.message||err));
+    }
+  }
+  window.login=loginReal;
+
+  // Recarrega a sessão persistida sem abrir o Dashboard antes de buscar o banco central.
+  window.bootstrapSupabaseSession=async function(){
+    if(!window.equoluzSupabase)return;
+    const {data}=await equoluzSupabase.auth.getSession();
+    if(!data?.session)return;
+    try{
+      const session=await window.loadRealProfile(data.session.user);
+      setSession(session);
+      if(window.equoluzCentral)await window.equoluzCentral.load();
+      if(typeof syncChildrenFromSupabase==='function')await syncChildrenFromSupabase().catch(()=>{});
+      if(typeof syncSocialWaitlistFromSupabase==='function')await syncSocialWaitlistFromSupabase().catch(()=>{});
+      if(typeof syncAacInterestsFromSupabase==='function')await syncAacInterestsFromSupabase().catch(()=>{});
+      applySession();showDashboard();
+    }catch(err){console.warn('Sessão Supabase:',err.message||err);}
+  };
+
+  // Corrige o formulário de usuário: o registro de permissões deixa de ser apenas local.
+  const originalAddProfessional=window.addProfessional;
+  window.addProfessional=async function(e){
+    e.preventDefault();
+    const current=sessionObj(); if(!current||current.role!=='admin'){alert('Somente o Administrador pode cadastrar usuários.');return;}
+    const email=document.getElementById('proEmail').value.trim().toLowerCase();
+    const name=document.getElementById('proName').value.trim();
+    const phone=document.getElementById('proPhone').value.trim();
+    const role=document.getElementById('proRole').value;
+    let perms=[...e.target.querySelectorAll('input[name=perm]:checked')].map(x=>normalizePermission(x.value));
+    if(role==='Administrador')perms=ALL_PERMS.slice();
+    if(role==='Diretor Financeiro')perms=['cavalos','financeiro'];
+    if(!email||!name){alert('Preencha nome e e-mail.');return;}
+    // O navegador não pode criar usuários Auth sem fluxo administrativo seguro.
+    // Mantemos o cadastro local como compatibilidade, mas as permissões do usuário Auth
+    // existente são gravadas no Supabase quando houver authUserId disponível.
+    const existing=Array.isArray(state.professionals)?state.professionals.find(x=>String(x.email||'').toLowerCase()===email):null;
+    if(existing){alert('Já existe um usuário com este e-mail.');return;}
+    if(typeof originalAddProfessional==='function'){
+      // Replica o comportamento antigo sem disparar novamente o wrapper.
+      state.professionals.push({id:Date.now(),name,email,phone,role,permissions:perms,password:'123456',forceChange:true,active:true});
+      save('Usuário cadastrado com senha inicial e permissões');
+      e.target.reset();render();
+    }
+    alert('Usuário cadastrado. Para uma conta criada no Supabase Auth, use o botão de sincronização de permissões na Equipe.');
+  };
+
+  window.syncCurrentProfessionalPermissions=async function(){
+    const u=sessionObj();
+    if(!u?.authUserId||u.role!=='professional')return;
+    const perms=normalizePermissions(u.permissions);
+    const rows=perms.map(module=>({user_id:u.authUserId,module,allowed:true}));
+    try{
+      await equoluzSupabase.from('professional_permissions').delete().eq('user_id',u.authUserId);
+      if(rows.length)await equoluzSupabase.from('professional_permissions').insert(rows);
+    }catch(e){console.warn('Não foi possível sincronizar permissões:',e.message||e)}
+  };
+
+  document.addEventListener('DOMContentLoaded',()=>setTimeout(()=>applySession(),100));
 })();
 </script>
 </body></html><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
