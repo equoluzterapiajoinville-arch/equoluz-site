@@ -655,17 +655,14 @@ async function addChildReal(e){
 }
 
 async function removeChildReal(id){
-  if(!window.equoluzSupabase){alert('Conexão com o banco não está disponível.');return;}
+  if(!window.equoluzSupabase) return;
   if(!confirm('Excluir este cadastro do banco?')) return;
   try{
-    // Remove primeiro os vínculos para evitar erro de chave estrangeira.
-    const {error:linkError}=await equoluzSupabase.from('child_responsibles').delete().eq('child_id',id);
-    if(linkError) throw linkError;
     const {error}=await equoluzSupabase.from('children').delete().eq('id',id);
     if(error) throw error;
     await syncChildrenFromSupabase();
-    alert('Cadastro excluído com sucesso.');
-  }catch(err){alert('Não foi possível excluir a criança: '+(err.message||err));}
+    alert('Cadastro excluído.');
+  }catch(err){alert('Não foi possível excluir: '+(err.message||err));}
 }
 
 async function loadRealProfile(authUser){
@@ -785,21 +782,10 @@ window.addEventListener('DOMContentLoaded',()=>{
     const notes=promptEdit('Observações:',x.notes);if(notes===null)return;
     try{
       if(window.equoluzSupabase){
-        const {error:childError}=await equoluzSupabase.from('children').update({name,birth_date:birth||null,notes:notes||null,updated_at:new Date().toISOString()}).eq('id',id);
-        if(childError) throw childError;
-
-        const {data:links,error:linkError}=await equoluzSupabase.from('child_responsibles').select('responsible_id').eq('child_id',id).limit(1);
-        if(linkError) throw linkError;
-        const link=links&&links[0];
-        if(link?.responsible_id){
-          const {error:respError}=await equoluzSupabase.from('responsibles').update({name:guardian,phone}).eq('id',link.responsible_id);
-          if(respError) throw respError;
-        }else if(guardian){
-          const {data:r,error:respError}=await equoluzSupabase.from('responsibles').insert({name:guardian,phone,email:null}).select('id').single();
-          if(respError) throw respError;
-          const {error:linkInsertError}=await equoluzSupabase.from('child_responsibles').insert({child_id:id,responsible_id:r.id});
-          if(linkInsertError) throw linkInsertError;
-        }
+        const {error}=await equoluzSupabase.from('children').update({name,birth_date:birth||null,notes:notes||null,updated_at:new Date().toISOString()}).eq('id',id);if(error)throw error;
+        const {data:link,error:le}=await equoluzSupabase.from('child_responsibles').select('responsible_id').eq('child_id',id).maybeSingle();if(le)throw le;
+        if(link?.responsible_id){const {error:re}=await equoluzSupabase.from('responsibles').update({name:guardian,phone}).eq('id',link.responsible_id);if(re)throw re;}
+        else {const {data:r,error:re}=await equoluzSupabase.from('responsibles').insert({name:guardian,phone,email:null}).select('id').single();if(re)throw re;const {error:ce}=await equoluzSupabase.from('child_responsibles').insert({child_id:id,responsible_id:r.id});if(ce)throw ce;}
         await syncChildrenFromSupabase();
       }else{Object.assign(x,{name,birth,guardian,phone,notes});save('Criança editada: '+name);render();}
       alert('Cadastro da criança atualizado com sucesso.');
@@ -1140,3 +1126,148 @@ function go(target){
 }
 </script>
 </html>
+
+<script>
+/* EQUOLUZ — CORREÇÃO DEFINITIVA DA ABA CRIANÇAS V2
+   Usa eventos delegados e remove os vínculos antes da exclusão.
+   Não altera as demais abas. */
+(function(){
+  function childById(id){
+    return (Array.isArray(state.children)?state.children:[]).find(c=>String(c.id)===String(id));
+  }
+  function val(v){ return v==null?'':String(v); }
+  function escLocal(v){
+    return val(v).replace(/[&<>'"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c];});
+  }
+
+  async function editChildV2(id){
+    const x=childById(id);
+    if(!x){ alert('Criança não encontrada.'); return; }
+    const name=prompt('Nome da criança:',val(x.name)); if(name===null)return;
+    const birth=prompt('Data de nascimento (AAAA-MM-DD):',val(x.birth)); if(birth===null)return;
+    const guardian=prompt('Nome do responsável:',val(x.guardian)); if(guardian===null)return;
+    const phone=prompt('WhatsApp:',val(x.phone)); if(phone===null)return;
+    const notes=prompt('Observações:',val(x.notes)); if(notes===null)return;
+    const cleanName=name.trim();
+    if(!cleanName){alert('O nome da criança é obrigatório.');return;}
+    try{
+      if(window.equoluzSupabase){
+        const {error:ce}=await equoluzSupabase.from('children').update({
+          name:cleanName,
+          birth_date:birth.trim()||null,
+          notes:notes.trim()||null,
+          updated_at:new Date().toISOString()
+        }).eq('id',id);
+        if(ce)throw ce;
+
+        const {data:links,error:le}=await equoluzSupabase
+          .from('child_responsibles').select('responsible_id').eq('child_id',id).limit(1);
+        if(le)throw le;
+        const link=links&&links[0];
+        if(link&&link.responsible_id){
+          const {error:re}=await equoluzSupabase.from('responsibles').update({
+            name:guardian.trim(), phone:phone.trim()
+          }).eq('id',link.responsible_id);
+          if(re)throw re;
+        }else if(guardian.trim()){
+          const {data:r,error:re}=await equoluzSupabase.from('responsibles').insert({
+            name:guardian.trim(),phone:phone.trim(),email:null
+          }).select('id').single();
+          if(re)throw re;
+          const {error:linkErr}=await equoluzSupabase.from('child_responsibles').insert({child_id:id,responsible_id:r.id});
+          if(linkErr)throw linkErr;
+        }
+        await syncChildrenFromSupabase();
+      }else{
+        Object.assign(x,{name:cleanName,birth:birth.trim(),guardian:guardian.trim(),phone:phone.trim(),notes:notes.trim()});
+        if(typeof save==='function')save('Criança editada: '+cleanName);
+        render();
+      }
+      alert('Criança atualizada com sucesso.');
+    }catch(err){
+      alert('Não foi possível editar a criança: '+(err.message||err));
+    }
+  }
+
+  async function deleteChildV2(id){
+    const x=childById(id);
+    if(!x){alert('Criança não encontrada.');return;}
+    if(!confirm('Excluir a criança "'+val(x.name)+'"? Esta ação não pode ser desfeita.'))return;
+    try{
+      if(window.equoluzSupabase){
+        // Primeiro remove a relação. Isso evita erro de chave estrangeira.
+        const {data:links,error:le}=await equoluzSupabase
+          .from('child_responsibles').select('responsible_id').eq('child_id',id);
+        if(le)throw le;
+        const responsibleIds=[...(links||[])].map(r=>r.responsible_id).filter(Boolean);
+
+        const {error:dre}=await equoluzSupabase.from('child_responsibles').delete().eq('child_id',id);
+        if(dre)throw dre;
+
+        const {error:de}=await equoluzSupabase.from('children').delete().eq('id',id);
+        if(de)throw de;
+
+        // Limpa responsáveis que ficaram sem nenhum vínculo.
+        for(const rid of responsibleIds){
+          const {data:still,error:se}=await equoluzSupabase.from('child_responsibles').select('child_id').eq('responsible_id',rid).limit(1);
+          if(se)continue;
+          if(!still||!still.length) await equoluzSupabase.from('responsibles').delete().eq('id',rid);
+        }
+        await syncChildrenFromSupabase();
+      }else{
+        state.children=state.children.filter(c=>String(c.id)!==String(id));
+        if(typeof save==='function')save('Criança excluída: '+val(x.name));
+        render();
+      }
+      alert('Criança excluída com sucesso.');
+    }catch(err){
+      alert('Não foi possível excluir a criança: '+(err.message||err));
+    }
+  }
+
+  window.editChildV2=editChildV2;
+  window.deleteChildV2=deleteChildV2;
+
+  function paintChildren(){
+    const box=document.getElementById('childList');
+    if(!box||!Array.isArray(state.children))return;
+    box.innerHTML=state.children.length?state.children.map(x=>
+      '<div class="record">'+
+        '<div style="display:flex;gap:7px;justify-content:flex-end">'+
+          '<button type="button" class="smallBtn js-child-edit" data-child-id="'+escLocal(x.id)+'">✏️ Editar</button>'+ 
+          '<button type="button" class="danger js-child-delete" data-child-id="'+escLocal(x.id)+'">Excluir</button>'+ 
+        '</div>'+ 
+        '<b>'+escLocal(x.name)+'</b>'+ 
+        '<div class="mini">Nascimento: '+escLocal(x.birth)+' · Responsável: '+escLocal(x.guardian)+' · WhatsApp: '+escLocal(x.phone)+'</div>'+ 
+        '<div class="mini">Situação: <b>'+escLocal(x.status||'Ativa')+'</b> · Entrada: '+escLocal(x.entry||'não informada')+'</div>'+ 
+        '<div>'+escLocal(x.notes||'')+'</div>'+ 
+      '</div>'
+    ).join(''):'<div class="empty">Nenhuma criança cadastrada.</div>';
+  }
+
+  function install(){
+    const box=document.getElementById('childList');
+    if(!box||box.dataset.childFixV2==='1')return;
+    box.dataset.childFixV2='1';
+    box.addEventListener('click',function(e){
+      const edit=e.target.closest('.js-child-edit');
+      const del=e.target.closest('.js-child-delete');
+      if(!edit&&!del)return;
+      e.preventDefault();
+      e.stopPropagation();
+      const id=(edit||del).getAttribute('data-child-id');
+      if(edit) editChildV2(id); else deleteChildV2(id);
+    },true);
+  }
+
+  const oldRenderV2=window.render;
+  window.render=function(){
+    if(typeof oldRenderV2==='function')oldRenderV2();
+    setTimeout(function(){paintChildren();install();},0);
+  };
+
+  document.addEventListener('DOMContentLoaded',function(){
+    setTimeout(function(){paintChildren();install();},100);
+  });
+})();
+</script>
