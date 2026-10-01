@@ -1733,3 +1733,91 @@ function go(target){
   });
 })();
 </script>
+
+<script>
+/* EQUOLUZ V31 — indicadores do Dashboard sincronizados com o banco central.
+   Não altera o layout. Apenas recalcula os números a partir do Supabase/state atual. */
+(function(){
+  let metricTimer=null;
+  let metricBusy=false;
+
+  function setText(id,value){const el=document.getElementById(id);if(el)el.textContent=String(value);}
+  function brl(value){try{return new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'}).format(Number(value)||0)}catch(e){return 'R$ 0,00'}}
+
+  async function refreshDashboardMetrics(){
+    if(metricBusy)return;
+    metricBusy=true;
+    try{
+      /* Fallback imediato: usa o estado que já está na tela. */
+      const children=Array.isArray(window.state?.children)?window.state.children:[];
+      const activeChildren=children.filter(x=>String(x.status||'Ativa')!=='Encerrada');
+      const social=Array.isArray(window.state?.social)?window.state.social:[];
+      const aac=Array.isArray(window.state?.aac)?window.state.aac:[];
+      const contracts=Array.isArray(window.state?.aacContracts)?window.state.aacContracts:[];
+      let activeContracts=contracts.filter(x=>String(x.status||'')==='Ativo');
+      let revenue=activeContracts.reduce((s,x)=>s+(Number(x.value)||0),0);
+
+      setText('mActive',activeChildren.length);
+      setText('mWait',social.filter(x=>!['Atendendo','Encerrado','Em atendimento'].includes(String(x.status||''))).length);
+      setText('mAac',aac.length);
+      setText('mAacActive',activeContracts.length);
+      setText('mAacRevenue',brl(revenue));
+      setText('rChildren',children.length);
+      setText('rSessions',Array.isArray(window.state?.sessions)?window.state.sessions.length:0);
+      setText('rAgenda',Array.isArray(window.state?.agenda)?window.state.agenda.length:0);
+
+      /* Fonte oficial: Supabase. Isso garante que o número não dependa do cache do navegador. */
+      if(!window.equoluzSupabase || !sessionStorage.getItem('equoluz_session')) return;
+
+      const [childrenQ,socialQ,aacQ]=await Promise.all([
+        equoluzSupabase.from('children').select('id',{count:'exact',head:true}),
+        equoluzSupabase.from('social_waitlist').select('id,status',{count:'exact'}),
+        equoluzSupabase.from('aac_interests').select('id',{count:'exact',head:true})
+      ]);
+
+      if(!childrenQ.error){
+        const total=Number(childrenQ.count||0);
+        setText('mActive',total);
+        setText('rChildren',total);
+      }
+      if(!socialQ.error){
+        const rows=socialQ.data||[];
+        const waiting=rows.filter(x=>!['Atendendo','Encerrado','Em atendimento'].includes(String(x.status||''))).length;
+        setText('mWait',waiting);
+      }
+      if(!aacQ.error) setText('mAac',Number(aacQ.count||0));
+
+      /* Contratos AAC continuam no estado central porque essa parte do sistema usa o snapshot central. */
+      const latestContracts=Array.isArray(window.state?.aacContracts)?window.state.aacContracts:[];
+      activeContracts=latestContracts.filter(x=>String(x.status||'')==='Ativo');
+      revenue=activeContracts.reduce((s,x)=>s+(Number(x.value)||0),0);
+      setText('mAacActive',activeContracts.length);
+      setText('mAacRevenue',brl(revenue));
+    }catch(err){
+      console.warn('Equoluz · indicadores do Dashboard:',err.message||err);
+    }finally{metricBusy=false;}
+  }
+
+  function queueMetrics(){
+    clearTimeout(metricTimer);
+    metricTimer=setTimeout(()=>refreshDashboardMetrics(),120);
+  }
+
+  window.refreshDashboardMetrics=refreshDashboardMetrics;
+
+  /* O render pode ser chamado por vários módulos; o contador é atualizado sem chamar render novamente. */
+  const previousRender=window.render;
+  window.render=function(){
+    if(typeof previousRender==='function')previousRender();
+    queueMetrics();
+  };
+
+  const previousShow=window.showDashboard;
+  window.showDashboard=function(){
+    if(typeof previousShow==='function')previousShow();
+    setTimeout(refreshDashboardMetrics,80);
+  };
+
+  document.addEventListener('DOMContentLoaded',()=>setTimeout(refreshDashboardMetrics,500));
+})();
+</script>
