@@ -499,148 +499,7 @@ function generateReport(){
   html+='</div>';result.innerHTML=html;
 }
 function v21ExportFilteredRows(){const scope=document.getElementById('reportScope')?.value||'social';const person=document.getElementById('reportPerson')?.value||'';const professional=document.getElementById('reportProfessional')?.value||'';const horse=document.getElementById('reportHorse')?.value||'';const start=document.getElementById('reportStart')?.value||'';const end=document.getElementById('reportEnd')?.value||'';let rows=reportAllRows().filter(x=>x.scope===scope);if(person)rows=rows.filter(x=>x.person===person);if(professional)rows=rows.filter(x=>x.professional===professional);if(horse)rows=rows.filter(x=>x.horse===horse);if(start)rows=rows.filter(x=>x.date>=start);if(end)rows=rows.filter(x=>x.date<=end);rows.sort((a,b)=>(b.date||'').localeCompare(a.date||''));return {scope,rows};}
-function v21ExcelHtml(title,headers,rows){const escx=v=>String(v??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');return '<html><head><meta charset="UTF-8"></head><body><h2>'+escx(title)+'</h2><table border="1"><thead><tr>'+headers.map(h=>'<th>'+escx(h)+'</th>').join('')+'</tr></thead><tbody>'+rows.map(r=>'<tr>'+r.map(v=>'<td>'+escx(v)+'</td>').join('')+'</tr>').join('')+'</tbody></table>
-<script>
-/* EQUOLUZ V33 — separação definitiva Social x Crianças Ativas + ações completas AAC */
-(function(){
-  function arr(v){return Array.isArray(v)?v:[];}
-  function sid(v){return String(v==null?'':v);}
-  function safe(v){return typeof esc==='function'?esc(v==null?'':v):String(v==null?'':v).replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));}
-  function socialMap(){
-    const m=new Map();
-    arr(state.social).forEach(x=>{if(x&&x.childId)m.set(sid(x.childId),x);});
-    return m;
-  }
-  function isActiveChild(c){
-    if(!c || (c.status||'Ativa')!=='Ativa') return false;
-    const s=socialMap().get(sid(c.id));
-    if(s && s.status!=='Atendendo') return false;
-    return true;
-  }
-
-  /* Esconde da aba Crianças e do seletor de sessões qualquer criança que ainda esteja na Lista Social. */
-  const oldRenderV33=window.render;
-  window.render=function(){
-    if(typeof oldRenderV33==='function') oldRenderV33();
-    const social=socialMap();
-    const active=arr(state.children).filter(isActiveChild);
-    const m=document.getElementById('mActive'); if(m)m.textContent=active.length;
-    const list=document.getElementById('childList');
-    if(list){
-      list.innerHTML=active.length?active.map(x=>`<div class="record"><button class="danger" onclick="removeChildReal('${sid(x.id).replace(/'/g,"\\'")}')">Excluir</button><b>${safe(x.name)}</b><div class="mini">Nascimento: ${safe(x.birth)} · Responsável: ${safe(x.guardian)} · WhatsApp: ${safe(x.phone)}</div><div class="mini">Situação: <b>${safe(x.status||'Ativa')}</b> · Entrada: ${safe(x.entry||'não informada')}</div><div>${safe(x.notes)}</div></div>`).join(''):'<div class="empty">Nenhuma criança ativa cadastrada.</div>';
-    }
-    const sel=document.getElementById('sessionChild');
-    if(sel){
-      const current=sel.value;
-      sel.innerHTML='<option value="">Selecione a criança</option>'+active.map(x=>`<option value="${sid(x.id)}">${safe(x.name)} · ${safe(x.status||'Ativa')}</option>`).join('');
-      if(active.some(x=>sid(x.id)===sid(current))) sel.value=current;
-    }
-  };
-
-  /* Excluir da Lista Social também remove o cadastro-base da criança quando ela ainda NÃO foi convertida em ativa. */
-  window.deleteSocial=async function(id){
-    if(!confirm('Excluir esta família da Lista Social?\n\nSe ainda não foi convertida em criança ativa, o cadastro-base da criança também será removido para que ela não apareça na lista de crianças ativas.'))return;
-    const x=arr(state.social).find(s=>sid(s.id)===sid(id));
-    try{
-      if(window.equoluzSupabase){
-        if(x && x.status==='Atendendo'){
-          const {error}=await equoluzSupabase.from('social_waitlist').delete().eq('id',id);
-          if(error)throw error;
-        }else{
-          const {error}=await equoluzSupabase.from('social_waitlist').delete().eq('id',id);
-          if(error)throw error;
-          if(x?.childId){
-            const {error:ce}=await equoluzSupabase.from('children').delete().eq('id',x.childId);
-            if(ce)throw ce;
-          }
-          /* responsável sem vínculo restante pode ser removido; se houver outro vínculo, permanece. */
-          if(x?.responsibleId){
-            const {data:links,error:le}=await equoluzSupabase.from('child_responsibles').select('child_id').eq('responsible_id',x.responsibleId);
-            if(le)throw le;
-            if(!(links||[]).length){await equoluzSupabase.from('responsibles').delete().eq('id',x.responsibleId);}
-          }
-        }
-        await syncChildrenFromSupabase();
-        await syncSocialWaitlistFromSupabase();
-        if(typeof saveCentral==='function')await saveCentral('Cadastro social excluído');
-      }else{
-        state.social=arr(state.social).filter(s=>sid(s.id)!==sid(id));
-        if(x && x.status!=='Atendendo' && x.childId) state.children=arr(state.children).filter(c=>sid(c.id)!==sid(x.childId));
-        save('Cadastro social excluído');render();
-      }
-      alert('Cadastro da Lista Social excluído.');
-    }catch(err){alert('Não foi possível excluir: '+(err.message||err));}
-  };
-
-  async function aacStatus(id,status){
-    if(!window.equoluzSupabase){alert('Conexão com o Supabase não carregada.');return;}
-    const {error}=await equoluzSupabase.from('aac_interests').update({status,updated_at:new Date().toISOString()}).eq('id',id);
-    if(error){alert('Não foi possível atualizar o contato AAC: '+error.message);return;}
-    await syncAacInterestsFromSupabase();
-  }
-  window.updateAacInterestStatusReal=aacStatus;
-
-  window.editAacInterest=async function(id){
-    const x=arr(state.aac).find(a=>sid(a.id)===sid(id)); if(!x)return;
-    const participant=promptEdit('Nome do participante:',x['Nome do participante']);if(participant===null)return;
-    const responsible=promptEdit('Nome do responsável:',x['Nome do responsável']);if(responsible===null)return;
-    const phone=promptEdit('WhatsApp:',x['WhatsApp']);if(phone===null)return;
-    const email=promptEdit('E-mail:',x.Email);if(email===null)return;
-    const age=promptEdit('Idade:',String(x.Idade??''));if(age===null)return;
-    const city=promptEdit('Cidade:',x.Cidade);if(city===null)return;
-    const period=promptEdit('Melhor período:',x['Melhor período']);if(period===null)return;
-    const observations=promptEdit('Observações:',x['Observações']);if(observations===null)return;
-    try{
-      const {error}=await equoluzSupabase.from('aac_interests').update({
-        participant_name:participant.trim(),responsible_name:responsible.trim(),phone:phone.trim(),email:email.trim()||null,
-        age:age.trim()?Number(age):null,city:city.trim()||null,preferred_schedule:period.trim()||null,
-        observations:observations.trim()||null,updated_at:new Date().toISOString()
-      }).eq('id',id);
-      if(error)throw error;
-      await syncAacInterestsFromSupabase();
-      alert('Interesse AAC atualizado.');
-    }catch(err){alert('Não foi possível editar o interesse AAC: '+(err.message||err));}
-  };
-
-  window.deleteAacInterest=async function(id){
-    if(!confirm('Excluir este interesse AAC? Esta ação remove somente o interesse da lista AAC.'))return;
-    try{
-      const {error}=await equoluzSupabase.from('aac_interests').delete().eq('id',id);
-      if(error)throw error;
-      await syncAacInterestsFromSupabase();
-      alert('Interesse AAC excluído.');
-    }catch(err){alert('Não foi possível excluir o interesse AAC: '+(err.message||err));}
-  };
-
-  function renderAACActions(){
-    const box=document.getElementById('aacList'); if(!box)return;
-    const rows=arr(state.aac);
-    const session=JSON.parse(sessionStorage.getItem('equoluz_session')||'null'); if(!session)return;
-    const canSee=session.role==='admin'||(session.role==='professional'&&(session.permissions||[]).map(String).includes('aac'));
-    if(!canSee){box.innerHTML='<div class="empty">Acesso aos interessados AAC não autorizado para este perfil.</div>';return;}
-    box.innerHTML='<div class="card" style="margin-top:18px"><h3>📥 Interessados AAC</h3><p>Interesses recebidos pelo formulário público, separados da Lista Social do Instituto.</p>'+(
-      rows.length?rows.map(x=>{const id=sid(x.id).replace(/'/g,"\\'");return `<div class="record" data-aac-id="${safe(x.id)}"><div style="display:flex;justify-content:flex-end;gap:6px;flex-wrap:wrap"><button type="button" class="smallBtn js-aac-contact" data-id="${safe(x.id)}" ${x.status==='Contato'?'disabled':''}>${x.status==='Contato'?'✓ Contato realizado':'📞 Marcar contato'}</button><button type="button" class="smallBtn js-aac-edit" data-id="${safe(x.id)}">✏️ Editar</button><button type="button" class="danger js-aac-delete" data-id="${safe(x.id)}">Excluir</button></div><b>${safe(x['Nome do participante']||'')}</b><div class="mini">Responsável: ${safe(x['Nome do responsável']||'')} · WhatsApp: ${safe(x.WhatsApp||'')} · Status: <b>${safe(x.status||'Novo interesse')}</b></div><div class="mini">Interesses: ${safe((x.interesses||[]).join(' · '))} · ${safe(x.Cidade||'')}</div>${x['Melhor período']?`<div class="mini">Período: ${safe(x['Melhor período'])}</div>`:''}${x['Observações']?`<div>${safe(x['Observações'])}</div>`:''}</div>`}).join(''):'<div class="empty">Nenhum interessado AAC cadastrado.</div>'
-    )+'</div>';
-    if(!box.__equoluzAacActions){
-      box.__equoluzAacActions=true;
-      box.addEventListener('click',function(ev){
-        const b=ev.target.closest('button');if(!b)return;
-        const id=b.getAttribute('data-id');if(!id)return;
-        ev.preventDefault();ev.stopPropagation();
-        if(b.classList.contains('js-aac-contact')) window.updateAacInterestStatusReal(id,'Contato');
-        else if(b.classList.contains('js-aac-edit')) window.editAacInterest(id);
-        else if(b.classList.contains('js-aac-delete')) window.deleteAacInterest(id);
-      });
-    }
-  }
-
-  const oldAacRender=window.v27RenderAacInterests;
-  window.v27RenderAacInterests=renderAACActions;
-  const oldRenderAfter=window.render;
-  window.render=function(){if(typeof oldRenderAfter==='function')oldRenderAfter();renderAACActions();};
-})();
-</script>
-</body></html>';}
+function v21ExcelHtml(title,headers,rows){const escx=v=>String(v??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');return '<html><head><meta charset="UTF-8"></head><body><h2>'+escx(title)+'</h2><table border="1"><thead><tr>'+headers.map(h=>'<th>'+escx(h)+'</th>').join('')+'</tr></thead><tbody>'+rows.map(r=>'<tr>'+r.map(v=>'<td>'+escx(v)+'</td>').join('')+'</tr>').join('')+'</tbody></table>>';}
 function v21DownloadExcel(name,title,headers,rows){const html='\ufeff'+v21ExcelHtml(title,headers,rows);v21Download(name,html,'application/vnd.ms-excel;charset=utf-8');}
 function v21ExportFilteredExcel(){const q=v21ExportFilteredRows();const rows=q.rows.map(x=>[q.scope==='social'?'Instituto Equoluz':'Equoluz AAC',x.date,x.person,x.professional,x.horse||'',x.activity,x.evolution,x.notes||'']);v21DownloadExcel('equoluz-relatorio.xls','Relatório Equoluz',['Frente','Data','Participante','Profissional','Cavalo','Atividade','Evolução','Observações'],rows);}
 function v21ExportFilteredPdf(){const result=document.getElementById('reportResult');if(!result||!result.innerText.trim()||result.innerText.includes('Escolha os filtros')){generateReport();}setTimeout(()=>{const r=document.getElementById('reportResult');if(!r||!r.innerText.trim()){alert('Gere o relatório antes de exportar para PDF.');return}window.print();},80);}
@@ -1874,6 +1733,127 @@ function go(target){
       const st=document.getElementById('centralStatus');if(st)st.innerHTML='<span class="statusDot" style="background:#56a477"></span> Supabase configurado como banco central.';
     },1200);
   });
+})();
+</script>
+<script>
+/* EQUOLUZ V33.1 — correções cirúrgicas Social + AAC */
+(function(){
+  function escA(v){return String(v==null?'':v).replace(/[&<>'"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c];});}
+  function socialWaitingIds(){
+    const ids=new Set();
+    (Array.isArray(state.social)?state.social:[]).forEach(s=>{
+      const st=String(s.status||s.etapa||'').trim().toLowerCase();
+      if(st!=='atendendo' && st!=='encerrado' && (s.childId||s.child_id)) ids.add(String(s.childId||s.child_id));
+    });
+    return ids;
+  }
+  function activeChildrenSafe(){
+    const ids=socialWaitingIds();
+    return (Array.isArray(state.children)?state.children:[]).filter(c=>{
+      if(String(c.status||'Ativa')!=='Ativa') return false;
+      return !ids.has(String(c.id||''));
+    });
+  }
+  function cleanChildLists(){
+    const ids=socialWaitingIds();
+    const children=(Array.isArray(state.children)?state.children:[]).filter(c=>!ids.has(String(c.id||'')));
+    const list=document.getElementById('childList');
+    if(list){
+      list.innerHTML=children.length?children.map(x=>`<div class="record"><button class="danger" onclick="removeChildReal('${escA(x.id)}')">Excluir</button><b>${escA(x.name)}</b><div class="mini">Nascimento: ${escA(x.birth)} · Responsável: ${escA(x.guardian)} · WhatsApp: ${escA(x.phone)}</div><div class="mini">Situação: <b>${escA(x.status||'Ativa')}</b> · Entrada: ${escA(x.entry||'não informada')}</div><div>${escA(x.notes)}</div></div>`).join(''):'<div class="empty">Nenhuma criança ativa cadastrada.</div>';
+    }
+    const sel=document.getElementById('sessionChild');
+    if(sel){
+      const current=sel.value;
+      sel.innerHTML='<option value="">Selecione a criança</option>'+children.filter(x=>(x.status||'Ativa')!=='Encerrada').map(x=>`<option value="${escA(x.id)}">${escA(x.name)}</option>`).join('');
+      if(current && children.some(x=>String(x.id)===String(current))) sel.value=current;
+    }
+    const active=activeChildrenSafe();
+    const m=document.getElementById('mActive'); if(m)m.textContent=String(active.length);
+    const w=document.getElementById('mWait'); if(w)w.textContent=String((Array.isArray(state.social)?state.social:[]).filter(x=>{const st=String(x.status||x.etapa||'').trim().toLowerCase();return st!=='atendendo'&&st!=='encerrado';}).length);
+  }
+  const oldRender33=window.render;
+  window.render=function(){
+    if(typeof oldRender33==='function') oldRender33();
+    try{cleanChildLists(); renderAacInterestsV33();}catch(e){console.warn('Equoluz V33.1:',e.message||e);}
+  };
+
+  window.deleteSocial=async function(id){
+    if(!confirm('Excluir esta família da Lista Social?'))return;
+    const x=(Array.isArray(state.social)?state.social:[]).find(s=>String(s.id)===String(id));
+    try{
+      if(window.equoluzSupabase){
+        const {error}=await equoluzSupabase.from('social_waitlist').delete().eq('id',id);
+        if(error)throw error;
+        /* Se ainda não foi convertida em atendimento, remove também o cadastro-base que a fazia aparecer como ativa. */
+        if(x && x.childId && String(x.status||'').toLowerCase()!=='atendendo'){
+          const {error:ce}=await equoluzSupabase.from('children').delete().eq('id',x.childId);
+          if(ce)console.warn('Cadastro-base Social não removido:',ce.message);
+        }
+        await syncSocialWaitlistFromSupabase();
+        await syncChildrenFromSupabase();
+        if(typeof saveCentral==='function')await saveCentral('Cadastro social excluído');
+        cleanChildLists();
+      }else{
+        if(x&&x.childId)state.children=state.children.filter(c=>String(c.id)!==String(x.childId));
+        state.social=state.social.filter(s=>String(s.id)!==String(id));
+        save('Cadastro social excluído');render();
+      }
+    }catch(err){alert('Não foi possível excluir: '+(err.message||err));}
+  };
+
+  window.editAacInterestV33=async function(id){
+    const x=(Array.isArray(state.aac)?state.aac:[]).find(a=>String(a.id)===String(id));
+    if(!x)return;
+    const participant=prompt('Nome do participante:',x['Nome do participante']||'');if(participant===null)return;
+    const responsible=prompt('Nome do responsável:',x['Nome do responsável']||'');if(responsible===null)return;
+    const phone=prompt('WhatsApp:',x['WhatsApp']||'');if(phone===null)return;
+    const email=prompt('E-mail:',x['Email']||'');if(email===null)return;
+    const age=prompt('Idade:',x['Idade']??'');if(age===null)return;
+    const city=prompt('Cidade:',x['Cidade']||'');if(city===null)return;
+    const period=prompt('Melhor período:',x['Melhor período']||'');if(period===null)return;
+    const notes=prompt('Observações:',x['Observações']||'');if(notes===null)return;
+    try{
+      if(window.equoluzSupabase){
+        const {error}=await equoluzSupabase.from('aac_interests').update({participant_name:participant,responsible_name:responsible,phone,email:email||null,age:age===''?null:Number(age),city:city||null,preferred_schedule:period||null,observations:notes||null,updated_at:new Date().toISOString()}).eq('id',id);
+        if(error)throw error;
+        await syncAacInterestsFromSupabase();
+      }else{
+        Object.assign(x,{'Nome do participante':participant,'Nome do responsável':responsible,'WhatsApp':phone,'Email':email,'Idade':age,'Cidade':city,'Melhor período':period,'Observações':notes});
+        save('Interessado AAC editado');render();
+      }
+    }catch(err){alert('Não foi possível editar o interesse AAC: '+(err.message||err));}
+  };
+
+  window.deleteAacInterestV33=async function(id){
+    if(!confirm('Excluir este interesse AAC?'))return;
+    try{
+      if(window.equoluzSupabase){
+        const {error}=await equoluzSupabase.from('aac_interests').delete().eq('id',id);
+        if(error)throw error;
+        await syncAacInterestsFromSupabase();
+      }else{
+        state.aac=(Array.isArray(state.aac)?state.aac:[]).filter(x=>String(x.id)!==String(id));
+        save('Interessado AAC excluído');render();
+      }
+    }catch(err){alert('Não foi possível excluir o interesse AAC: '+(err.message||err));}
+  };
+
+  async function markAacContactV33(id){
+    await updateAacInterestStatusReal(id,'Contato');
+  }
+  window.markAacContactV33=markAacContactV33;
+
+  window.renderAacInterestsV33=function(){
+    const box=document.getElementById('aacList'); if(!box)return;
+    const session=JSON.parse(sessionStorage.getItem('equoluz_session')||'null'); if(!session)return;
+    const canSee=session.role==='admin'||(session.role==='professional'&&(session.permissions||[]).includes('aac'));
+    if(!canSee){box.innerHTML='<div class="empty">Acesso aos interessados AAC não autorizado para este perfil.</div>';return;}
+    const rows=Array.isArray(state.aac)?state.aac:[];
+    box.innerHTML='<div class="card" style="margin-top:18px"><h3>📥 Interessados AAC</h3><p>Interesses recebidos pelo formulário público, separados da Lista Social do Instituto.</p>'+
+      (rows.length?rows.map(x=>`<div class="record"><div class="actions" style="margin-bottom:8px"><button type="button" class="smallBtn" onclick="markAacContactV33('${escA(x.id)}')">📞 Marcar contato</button><button type="button" class="smallBtn" onclick="editAacInterestV33('${escA(x.id)}')">✏️ Editar</button><button type="button" class="danger" onclick="deleteAacInterestV33('${escA(x.id)}')">🗑️ Excluir</button></div><b>${escA(x['Nome do participante']||'')}</b><div class="mini">Responsável: ${escA(x['Nome do responsável']||'')} · WhatsApp: ${escA(x['WhatsApp']||'')} · Status: <b>${escA(x.status||'Novo interesse')}</b></div><div class="mini">Interesses: ${escA((x.interesses||[]).join(' · '))} · ${escA(x['Cidade']||'')}</div>${x['Melhor período']?`<div class="mini">Período: ${escA(x['Melhor período'])}</div>`:''}${x['Observações']?`<div>${escA(x['Observações'])}</div>`:''}</div>`).join(''):'<div class="empty">Nenhum interessado AAC cadastrado.</div>')+'</div>';
+  };
+
+  window.addEventListener('DOMContentLoaded',function(){setTimeout(function(){try{cleanChildLists();renderAacInterestsV33();}catch(e){}},1000);});
 })();
 </script>
 </body></html>
