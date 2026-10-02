@@ -952,25 +952,46 @@ async function removeChildReal(id){
   }catch(err){alert('Não foi possível excluir: '+(err.message||err));}
 }
 
-function normalizePermission(value){
+window.normalizePermission = function(value){
   const raw=String(value||'').trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
   const map={
-    'cadastro':'cadastro','cadastros':'cadastro','criancas':'cadastro','criancas/cadastros':'cadastro','crianca':'cadastro',
-    'sessoes':'sessoes','sessao':'sessoes','sessoes e evolucao':'sessoes',
-    'espera':'espera','lista social':'espera','lista de espera':'espera',
-    'aac':'aac','particular':'aac',
+    'cadastro':'cadastro',
+    'cadastros':'cadastro',
+    'criancas':'cadastro',
+    'criancas/cadastros':'cadastro',
+    'crianca':'cadastro',
+    'sessoes':'sessoes',
+    'sessao':'sessoes',
+    'sessoes e evolucao':'sessoes',
+    'espera':'espera',
+    'lista social':'espera',
+    'lista de espera':'espera',
+    'aac':'aac',
+    'particular':'aac',
     'agenda':'agenda',
-    'relatorios':'relatorios','relatorio':'relatorios',
-    'equipe':'equipe','profissionais':'equipe','usuarios':'equipe',
-    'cavalos':'cavalos','cavalo':'cavalos',
-    'financeiro':'financeiro','financeiro social':'financeiro',
-    'config':'config','gerenciador do site':'config',
+    'relatorios':'relatorios',
+    'relatorio':'relatorios',
+    'equipe':'equipe',
+    'profissionais':'equipe',
+    'usuarios':'equipe',
+    'cavalos':'cavalos',
+    'cavalo':'cavalos',
+    'financeiro':'financeiro',
+    'financeiro social':'financeiro',
+    'config':'config',
+    'gerenciador do site':'config',
     'auditoria':'auditoria'
   };
   return map[raw] || raw;
-}
-function normalizePermissions(values){return [...new Set((Array.isArray(values)?values:[]).map(normalizePermission).filter(Boolean))];}
+};
 
+window.normalizePermissions = function(values){
+  return [...new Set(
+    (Array.isArray(values)?values:[])
+      .map(window.normalizePermission)
+      .filter(Boolean)
+  )];
+};
 async function loadRealProfile(authUser){
   const { data: profile, error } = await equoluzSupabase
     .from('profiles').select('id,name,email,role,active,force_change_password')
