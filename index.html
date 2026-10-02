@@ -63,6 +63,22 @@
 @media(max-width:1050px){.dashboard .metrics{grid-template-columns:repeat(3,minmax(0,1fr))}.dashboard .moduleGrid{grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media(max-width:680px){.dashboard{padding:22px 14px 45px}.dashTop,.dashOverviewHead,.moduleAreaTitle{display:block}.dashActions{margin-top:13px}.quickActions,.dashboard .metrics,.dashboard .moduleGrid,.dashBottomGrid{grid-template-columns:1fr}.dashOverview{padding:17px}.dashboard .metric b{font-size:25px}}
 </style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+/* EQUOLUZ V25 — conexão real com Supabase Auth + PostgreSQL (RLS). */
+window.EQUOLUZ_BACKEND = {
+  version: '25',
+  provider: 'supabase',
+  configured: true,
+  mode: 'supabase',
+  url: 'https://rtlagyivmvqlknlafqls.supabase.co',
+  publishableKey: 'sb_publishable_83FgjuV7gQEB8AExC2VhRw_HwsJRl2o'
+};
+window.equoluzSupabase = window.supabase.createClient(
+  window.EQUOLUZ_BACKEND.url,
+  window.EQUOLUZ_BACKEND.publishableKey
+);
+</script>
 </head><body><div id="loginGate" class="loginGate"><div class="loginCard"><div class="loginBrand"><div class="logoMark">🐴</div><h1>Equoluz</h1><p>Sistema administrativo · V15</p></div><form onsubmit="login(event)"><div class="loginField"><label>E-mail</label><input id="loginEmail" type="email" required autocomplete="username" placeholder="seu e-mail"></div><div class="loginField"><label>Senha</label><input id="loginPass" type="password" required autocomplete="current-password" placeholder="sua senha"></div><button class="loginBtn">Entrar no sistema</button></form><div class="loginHint">Acesso protegido pelo Supabase. Use o e-mail e a senha cadastrados na Área de Autenticação.</div></div></div>
 <header class="top"><nav class="nav"><div class="logo"><div class="logoMark">✦</div><div>Equo<span>luz</span><small>TRANSFORMANDO VIDAS</small></div></div><a href="#sobre">O projeto</a><a href="#social">Instituto Equoluz</a><a href="#particular">Equoluz AAC</a><a href="#ajudar">Como ajudar</a><a href="#inscricoes">Inscrições</a><button class="login" onclick="openLogin()">Área profissional</button></nav></header>
 <main id="public"><div class="hero"><div><div class="eyebrow">Equoluz · Joinville/SC</div><h1>Dois caminhos.<br><em>Um mesmo propósito.</em></h1><p class="lead">O Equoluz une uma frente social, gratuita e voluntária, a uma frente particular de <b>Atividades Assistidas com Cavalos</b> — com identidades e objetivos claramente apresentados.</p><div class="actions"><button class="primary" onclick="go('instituto')">Conheça o Instituto Equoluz</button><button class="secondary" onclick="go('aacPublic')">Conheça o Equoluz AAC</button></div></div><div class="heroVisual"><div class="brandBadge">EQUOLUZ</div><div class="horsePhotos"><img id="publicBoneca" alt="Boneca"/><img id="publicBabaloo" alt="Babaloo"/></div><div class="photoLabel">Boneca e Babaloo · Equoluz</div></div></div>
@@ -161,12 +177,12 @@ function save(action='Atualização do sistema'){state.audit.push({id:Date.now()
 const V8_USERS={admin:{name:'Administrador Equoluz',role:'admin'},professional:{name:'Profissional Equoluz',role:'professional'},finance:{name:'Diretor Financeiro',role:'finance'}};
 function openLogin(){const g=document.getElementById('loginGate');if(!g)return;g.classList.remove('hidden');g.classList.add('login-open');g.style.removeProperty('display');g.style.setProperty('display','grid','important');const email=document.getElementById('loginEmail');if(email){setTimeout(()=>email.focus(),50)}}
 function closeLogin(){const g=document.getElementById('loginGate');if(g){g.classList.remove('login-open');g.classList.add('hidden')}}
-async function login(e){e.preventDefault();const email=document.getElementById('loginEmail').value.trim().toLowerCase();const pass=document.getElementById('loginPass').value;let role=document.getElementById('loginRole').value;let u=V8_USERS[role];let saved=state.professionals.find(x=>String(x.email||'').toLowerCase()===email);if(saved){role=saved.role==='Administrador'?'admin':saved.role==='Diretor Financeiro'?'finance':'professional';if(pass!==(saved.password||'123456')){alert('Senha incorreta.');return}u={name:saved.name,role};}else{if(role==='admin'&&(email!=='admin@equoluz.local'||pass!==(state.demoPasswords&&state.demoPasswords[email]||'123456'))){alert('Senha incorreta.');return}if(role==='professional'&&(email!=='profissional@equoluz.local'||pass!==(state.demoPasswords&&state.demoPasswords[email]||'123456'))){alert('Senha incorreta.');return}if(role==='finance'&&(email!=='financeiro@equoluz.local'||pass!==(state.demoPasswords&&state.demoPasswords[email]||'123456'))){alert('Senha incorreta.');return}}let permissions=[];if(role==='admin')permissions=['cadastro','sessoes','espera','aac','agenda','relatorios','equipe','cavalos','financeiro','config','auditoria'];if(role==='finance')permissions=['cavalos','financeiro'];if(role==='professional')permissions=saved?(saved.permissions||[]):['cadastro','sessoes','agenda','cavalos'];sessionStorage.setItem('equoluz_session',JSON.stringify({email,role,name:u.name,permissions,at:new Date().toISOString(),forceChange:false}));applySession();showDashboard();if(typeof addAudit==='function')addAudit('Login realizado: '+role+' · '+email);} 
+async function login(e){e.preventDefault();const email=document.getElementById('loginEmail').value.trim().toLowerCase();const pass=document.getElementById('loginPass').value;let role=document.getElementById('loginRole').value;let u=V8_USERS[role];let saved=state.professionals.find(x=>String(x.email||'').toLowerCase()===email);if(saved){role=saved.role==='Administrador'?'admin':saved.role==='Diretor Financeiro'?'finance':'professional';if(pass!==(saved.password||'123456')){alert('Senha incorreta.');return}u={name:saved.name,role};}else{if(role==='admin'&&(email!=='admin@equoluz.local'||pass!==(state.demoPasswords&&state.demoPasswords[email]||'123456'))){alert('Senha incorreta.');return}if(role==='professional'&&(email!=='profissional@equoluz.local'||pass!==(state.demoPasswords&&state.demoPasswords[email]||'123456'))){alert('Senha incorreta.');return}if(role==='finance'&&(email!=='financeiro@equoluz.local'||pass!==(state.demoPasswords&&state.demoPasswords[email]||'123456'))){alert('Senha incorreta.');return}}let permissions=[];if(role==='admin')permissions=['cadastro','sessoes','espera','aac','agenda','relatorios','equipe','cavalos','financeiro','config','auditoria'];if(role==='finance')permissions=['cavalos','financeiro'];if(role==='professional')permissions=saved?(saved.permissions||[]):['cadastro','sessoes','agenda','cavalos'];sessionStorage.setItem('equoluz_session',JSON.stringify({email,role,name:u.name,permissions,at:new Date().toISOString(),forceChange:!!(saved&&saved.forceChange)}));applySession();showDashboard();if(typeof addAudit==='function')addAudit('Login realizado: '+role+' · '+email);if(saved&&saved.forceChange)setTimeout(()=>openSecurity(true),150);} 
 
 function logout(){sessionStorage.removeItem('equoluz_session');document.getElementById('dashboard').style.display='none';document.getElementById('public').style.display='block';document.getElementById('loginGate').style.setProperty('display','none','important');window.scrollTo(0,0);}
 function applySession(){const raw=sessionStorage.getItem('equoluz_session');if(!raw){document.getElementById('loginGate').style.setProperty('display','none','important');document.getElementById('dashboard').style.display='none';document.getElementById('public').style.display='block';return}const u=JSON.parse(raw);u.permissions=normalizePermissions(u.permissions);sessionStorage.setItem('equoluz_session',JSON.stringify(u));const dashLine=document.getElementById('dashUserLine');if(dashLine)dashLine.textContent='Olá, '+(u.name||'equipe')+' · '+(u.role==='admin'?'Administrador':u.role==='finance'?'Diretor Financeiro':'Profissional')+' · gestão do Equoluz.';document.getElementById('loginGate').classList.add('hidden');document.getElementById('loginGate').style.setProperty('display','none','important');document.getElementById('public').style.display='none';const b=document.getElementById('sessionBadge');if(b)b.textContent=u.name+' · '+(u.role==='admin'?'Administrador':u.role==='finance'?'Diretor Financeiro':'Profissional');const perms=new Set(u.permissions||[]);document.querySelectorAll('.moduleGrid .moduleBtn').forEach(el=>{const mod=el.dataset.module;let visible=false;if(u.role==='admin')visible=true;else if(u.role==='finance')visible=(mod==='cavalos'||mod==='financeiro');else visible=perms.has(mod);el.style.display=visible?'':'none';});document.querySelectorAll('[data-admin-only]').forEach(el=>el.style.display=u.role==='admin'?'':'none');document.querySelectorAll('[data-finance-only]').forEach(el=>el.style.display=(u.role==='admin'||u.role==='finance')?'':'none');document.querySelectorAll('[data-finance-visible]').forEach(el=>el.style.display=(u.role==='admin'||u.role==='finance')?'':'none');document.querySelectorAll('.modulePanel').forEach(el=>{const mod=el.id;let allowed=false;if(u.role==='admin')allowed=true;else if(u.role==='finance')allowed=(mod==='cavalos'||mod==='financeiro');else allowed=perms.has(mod);el.dataset.allowed=allowed?'1':'0';});}
 function guardRole(){const raw=sessionStorage.getItem('equoluz_session');if(!raw)return null;return JSON.parse(raw).role}
-function canAccessModule(id){const raw=sessionStorage.getItem('equoluz_session');if(!raw)return false;const u=JSON.parse(raw);if(u.role==='admin')return true;if(u.role==='finance')return id==='espera'||id==='cavalos'||id==='financeiro';const perms=normalizePermissions(u.permissions);return perms.includes(normalizePermission(id));}
+function canAccessModule(id){const raw=sessionStorage.getItem('equoluz_session');if(!raw)return false;const u=JSON.parse(raw);if(u.role==='admin')return true;if(u.role==='finance')return id==='cavalos'||id==='financeiro';const perms=normalizePermissions(u.permissions);return perms.includes(normalizePermission(id));}
 function showDashboard(){document.getElementById('loginGate').style.setProperty('display','none','important');document.getElementById('public').style.display='none';document.getElementById('dashboard').style.display='block';render();window.scrollTo(0,0)}
 function closeDashboard(){logout()}
 function panel(id){if(!canAccessModule(id)){alert('Você não possui permissão para acessar esta área.');return}document.querySelectorAll('.modulePanel').forEach(x=>x.classList.remove('active'));const target=document.getElementById(id);if(!target)return;target.classList.add('active');render()}
@@ -180,7 +196,7 @@ function promoteSocialToChild(id){const item=state.social.find(x=>x.id===id);if(
 function addAgenda(e){e.preventDefault();const person=agendaPerson.value.trim();const professional=agendaProfessional.value.trim();if(!person||!professional){alert('Selecione participante e profissional.');return}state.agenda.push({id:Date.now(),date:agendaDate.value,time:agendaTime.value,front:agendaFront.value,person,professional,horse:agendaHorse.value,type:agendaType.value,status:agendaStatus.value,notes:agendaNotes.value.trim()});save('Agendamento criado: '+person);e.target.reset();render();renderAgenda();alert('Agendamento salvo com sucesso.')}
 function removeItem(type,id){state[type]=state[type].filter(x=>x.id!==id);save('Registro excluído: '+type)}
 function updateStatus(type,id,status){const item=state[type].find(x=>x.id===id);if(!item)return;item.status=status;save('Status alterado: '+type+' → '+status)}
-function addProfessional(e){e.preventDefault();const email=proEmail.value.trim().toLowerCase();if(state.professionals.some(x=>String(x.email||'').toLowerCase()===email)){alert('Já existe um usuário cadastrado com este e-mail.');return}const role=proRole.value;let perms=[...e.target.querySelectorAll('input[name=perm]:checked')].map(x=>x.value);if(role==='Administrador')perms=['cadastro','sessoes','espera','aac','agenda','relatorios','equipe','cavalos','financeiro','config','auditoria'];if(role==='Diretor Financeiro')perms=['espera','cavalos','financeiro'];state.professionals.push({id:Date.now(),name:proName.value.trim(),email,phone:proPhone.value.trim(),role,permissions:perms,password:'123456',forceChange:true,active:true});save('Usuário cadastrado com senha inicial e permissões');e.target.reset();render();alert('Usuário cadastrado. A senha inicial é 123456 e deverá ser alterada no primeiro acesso.')} 
+function addProfessional(e){e.preventDefault();const email=proEmail.value.trim().toLowerCase();if(state.professionals.some(x=>String(x.email||'').toLowerCase()===email)){alert('Já existe um usuário cadastrado com este e-mail.');return}const role=proRole.value;let perms=[...e.target.querySelectorAll('input[name=perm]:checked')].map(x=>x.value);if(role==='Administrador')perms=['cadastro','sessoes','espera','aac','agenda','relatorios','equipe','cavalos','financeiro','config','auditoria'];if(role==='Diretor Financeiro')perms=['cavalos','financeiro'];state.professionals.push({id:Date.now(),name:proName.value.trim(),email,phone:proPhone.value.trim(),role,permissions:perms,password:'123456',forceChange:true,active:true});save('Usuário cadastrado com senha inicial e permissões');e.target.reset();render();alert('Usuário cadastrado. A senha inicial é 123456 e deverá ser alterada no primeiro acesso.')} 
 function syncEditRolePermissions(){const role=document.getElementById('editProRole').value;const box=document.getElementById('editPermBox');const checks=[...box.querySelectorAll('input[name=editPerm]')];if(role==='Administrador'){checks.forEach(c=>c.checked=true);checks.forEach(c=>c.disabled=true)}else if(role==='Diretor Financeiro'){checks.forEach(c=>{c.checked=(c.value==='cavalos'||c.value==='financeiro');c.disabled=true})}else{checks.forEach(c=>c.disabled=false)}}
 function editProfessional(id){const x=state.professionals.find(p=>p.id===id);if(!x)return;document.getElementById('editProId').value=x.id;document.getElementById('editProName').value=x.name||'';document.getElementById('editProEmail').value=x.email||'';document.getElementById('editProPhone').value=x.phone||'';document.getElementById('editProRole').value=x.role||'Profissional';[...document.querySelectorAll('#editPermBox input[name=editPerm]')].forEach(c=>{c.checked=(x.permissions||[]).includes(c.value)});syncEditRolePermissions();const m=document.getElementById('professionalEditModal');m.style.setProperty('display','grid','important')}
 function closeProfessionalEdit(){document.getElementById('professionalEditModal').style.setProperty('display','none','important')}
@@ -571,6 +587,26 @@ loadSiteSettingsFromSupabase();
       sessão pode migrá-los automaticamente.
 */
 (function(){
+  // Helpers globais de permissão: ficam disponíveis para todos os módulos/versões do sistema.
+  window.normalizePermission = function(value){
+    const raw=String(value||'').trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+    const map={
+      'cadastro':'cadastro','cadastros':'cadastro','criancas':'cadastro','criancas/cadastros':'cadastro','crianca':'cadastro',
+      'sessoes':'sessoes','sessao':'sessoes','sessoes e evolucao':'sessoes',
+      'espera':'espera','lista social':'espera','lista de espera':'espera',
+      'aac':'aac','particular':'aac','agenda':'agenda',
+      'relatorios':'relatorios','relatorio':'relatorios',
+      'equipe':'equipe','profissionais':'equipe','usuarios':'equipe',
+      'cavalos':'cavalos','cavalo':'cavalos',
+      'financeiro':'financeiro','financeiro social':'financeiro',
+      'config':'config','gerenciador do site':'config','auditoria':'auditoria'
+    };
+    return map[raw] || raw;
+  };
+  window.normalizePermissions = function(values){
+    return [...new Set((Array.isArray(values)?values:[]).map(window.normalizePermission).filter(Boolean))];
+  };
+
   const BASIC_PRO_PERMS=['cadastro','sessoes','agenda','cavalos'];
   const ALL_PERMS=['cadastro','sessoes','espera','aac','agenda','relatorios','equipe','cavalos','financeiro','config','auditoria'];
   const clone=v=>{try{return JSON.parse(JSON.stringify(v));}catch(e){return v}};
@@ -601,7 +637,7 @@ loadSiteSettingsFromSupabase();
     if(!profile||!profile.active) throw new Error('Usuário sem perfil ativo no sistema.');
     let permissions=[];
     if(profile.role==='Administrador') permissions=ALL_PERMS.slice();
-    else if(profile.role==='Diretor Financeiro') permissions=['espera','cavalos','financeiro'];
+    else if(profile.role==='Diretor Financeiro') permissions=['cavalos','financeiro'];
     else if(profile.role==='Profissional'){
       permissions=await readProfessionalPermissions(authUser.id);
       if(!permissions.length) permissions=BASIC_PRO_PERMS.slice();
@@ -611,7 +647,7 @@ loadSiteSettingsFromSupabase();
       name:profile.name||authUser.email||'Usuário',
       role:profile.role==='Administrador'?'admin':profile.role==='Diretor Financeiro'?'finance':'professional',
       permissions:normalizePermissions(permissions),
-      forceChange:false,
+      forceChange:!!profile.force_change_password,
       authUserId:authUser.id,
       at:new Date().toISOString()
     };
@@ -621,7 +657,7 @@ loadSiteSettingsFromSupabase();
     const u=sessionObj();
     if(!u)return false;
     if(u.role==='admin')return true;
-    if(u.role==='finance')return id==='espera'||id==='cavalos'||id==='financeiro';
+    if(u.role==='finance')return id==='cavalos'||id==='financeiro';
     return normalizePermissions(u.permissions).includes(normalizePermission(id));
   }
   window.canAccessModule=access;
@@ -701,7 +737,7 @@ loadSiteSettingsFromSupabase();
       if(typeof syncSocialWaitlistFromSupabase==='function')await syncSocialWaitlistFromSupabase().catch(()=>{});
       if(typeof syncAacInterestsFromSupabase==='function')await syncAacInterestsFromSupabase().catch(()=>{});
       applySession();showDashboard();
-      
+      if(session.forceChange)setTimeout(()=>openSecurity(true),150);
     }catch(err){
       try{await equoluzSupabase.auth.signOut()}catch(_){ }
       sessionStorage.removeItem('equoluz_session');
@@ -737,7 +773,7 @@ loadSiteSettingsFromSupabase();
     const role=document.getElementById('proRole').value;
     let perms=[...e.target.querySelectorAll('input[name=perm]:checked')].map(x=>normalizePermission(x.value));
     if(role==='Administrador')perms=ALL_PERMS.slice();
-    if(role==='Diretor Financeiro')perms=['espera','cavalos','financeiro'];
+    if(role==='Diretor Financeiro')perms=['cavalos','financeiro'];
     if(!email||!name){alert('Preencha nome e e-mail.');return;}
     // O navegador não pode criar usuários Auth sem fluxo administrativo seguro.
     // Mantemos o cadastro local como compatibilidade, mas as permissões do usuário Auth
@@ -767,47 +803,7 @@ loadSiteSettingsFromSupabase();
   document.addEventListener('DOMContentLoaded',()=>setTimeout(()=>applySession(),100));
 })();
 </script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-/* EQUOLUZ V25 — conexão real com Supabase Auth + PostgreSQL (RLS).
-   A chave usada no navegador é a Publishable Key. A Secret/Service Role nunca deve
-   ser colocada neste arquivo. O acesso aos dados é protegido pelas políticas RLS. */
-window.EQUOLUZ_BACKEND = {
-  version: '25',
-  provider: 'supabase',
-  configured: true,
-  mode: 'supabase',
-  url: 'https://rtlagyivmvqlknlafqls.supabase.co',
-  publishableKey: 'sb_publishable_83FgjuV7gQEB8AExC2VhRw_HwsJRl2o'
-};
-
-window.equoluzSupabase = window.supabase.createClient(
-  window.EQUOLUZ_BACKEND.url,
-  window.EQUOLUZ_BACKEND.publishableKey
-);
-</script>
-
-</body>
-</html>
-<script>
-/* EQUOLUZ V25 — conexão real com Supabase Auth + PostgreSQL (RLS).
-   A chave usada no navegador é a Publishable Key. A Secret/Service Role nunca deve
-   ser colocada neste arquivo. O acesso aos dados é protegido pelas políticas RLS. */
-window.EQUOLUZ_BACKEND = {
-  version: '25',
-  provider: 'supabase',
-  configured: true,
-  mode: 'supabase',
-  url: 'https://rtlagyivmvqlknlafqls.supabase.co',
-  publishableKey: 'sb_publishable_83FgjuV7gQEB8AExC2VhRw_HwsJRl2o'
-};
-
-window.equoluzSupabase = window.supabase.createClient(
-  window.EQUOLUZ_BACKEND.url,
-  window.EQUOLUZ_BACKEND.publishableKey
-);
-
-
 async function syncChildrenFromSupabase(){
   if(!window.equoluzSupabase) return;
   const {data: rows,error}=await equoluzSupabase
@@ -835,11 +831,6 @@ async function syncChildrenFromSupabase(){
     }
   }
 
-  if((rows||[]).length===0 && Array.isArray(state.children) && state.children.length){
-    console.warn('Equoluz: Supabase retornou 0 crianças; mantendo os cadastros locais para evitar perda visual de dados.');
-    render();
-    return;
-  }
   state.children=(rows||[]).map(x=>{
     const link=links.find(l=>String(l.child_id)===String(x.id));
     const r=link ? respMap[link.responsible_id] : null;
@@ -859,88 +850,38 @@ async function syncChildrenFromSupabase(){
     };
   });
   render();
+}
+
 async function addChildReal(e){
   e.preventDefault();
-
-  if(!window.equoluzSupabase){
-    alert('Conexão com o Supabase não carregada.');
-    return;
-  }
-
-  const name=childName.value.trim();
-  const birth=childBirth.value;
-  const guardian=childGuardian.value.trim();
-  const phone=childPhone.value.trim();
-
-  if(!name){
-    alert('Informe o nome da criança.');
-    return;
-  }
-
+  if(!window.equoluzSupabase){ alert('Conexão com o Supabase não carregada.'); return; }
+  const name=childName.value.trim(), birth=childBirth.value, guardian=childGuardian.value.trim(), phone=childPhone.value.trim();
+  if(!name){alert('Informe o nome da criança.');return;}
   try{
     let responsibleId=null;
-
     if(guardian){
-      const {data:r,error:re}=await equoluzSupabase
-        .from('responsibles')
-        .insert({
-          name:guardian,
-          phone,
-          email:null
-        })
-        .select('id')
-        .single();
-
+      const {data:r,error:re}=await equoluzSupabase.from('responsibles').insert({name:guardian,phone,email:null}).select('id').single();
       if(re) throw re;
-
       responsibleId=r.id;
     }
-
-    const {data:child,error:ce}=await equoluzSupabase
-      .from('children')
-      .insert({
-        name,
-        birth_date:birth||null,
-        city:null,
-        neighborhood:null,
-        diagnosis_condition:null,
-        age:null,
-        notes:childNotes.value.trim()
-      })
-      .select('id,name,birth_date,notes,created_at')
-      .single();
-
+    const {data:child,error:ce}=await equoluzSupabase.from('children').insert({
+      name,birth_date:birth||null,city:null,neighborhood:null,diagnosis_condition:null,
+      age:null,notes:childNotes.value.trim()
+    }).select('id,name,birth_date,notes,created_at').single();
     if(ce) throw ce;
-
     if(responsibleId){
-      const {error:cr}=await equoluzSupabase
-        .from('child_responsibles')
-        .insert({
-          child_id:child.id,
-          responsible_id:responsibleId
-        });
-
+      const {error:cr}=await equoluzSupabase.from('child_responsibles').insert({child_id:child.id,responsible_id:responsibleId});
       if(cr) throw cr;
     }
-
-    // Recarrega a lista completa do banco.
     await syncChildrenFromSupabase();
-
-    // IMPORTANTE:
-    // Depois de atualizar state.children, grava também
-    // o estado central para que ele não volte para a versão antiga.
-    if(typeof saveCentral==='function'){
-      await saveCentral('Nova criança cadastrada: '+name);
-    }
-
+    if(typeof saveCentral==='function') await saveCentral('Nova criança cadastrada: '+name);
     e.target.reset();
-
     alert('Criança cadastrada no banco do Equoluz com sucesso.');
-
   }catch(err){
     alert('Não foi possível salvar a criança: '+(err.message||err));
   }
 }
+
 async function removeChildReal(id){
   if(!window.equoluzSupabase) return;
   if(!confirm('Excluir este cadastro do banco?')) return;
@@ -948,50 +889,13 @@ async function removeChildReal(id){
     const {error}=await equoluzSupabase.from('children').delete().eq('id',id);
     if(error) throw error;
     await syncChildrenFromSupabase();
+    if(typeof saveCentral==='function') await saveCentral('Criança excluída: '+id);
     alert('Cadastro excluído.');
   }catch(err){alert('Não foi possível excluir: '+(err.message||err));}
 }
 
-window.normalizePermission = function(value){
-  const raw=String(value||'').trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
-  const map={
-    'cadastro':'cadastro',
-    'cadastros':'cadastro',
-    'criancas':'cadastro',
-    'criancas/cadastros':'cadastro',
-    'crianca':'cadastro',
-    'sessoes':'sessoes',
-    'sessao':'sessoes',
-    'sessoes e evolucao':'sessoes',
-    'espera':'espera',
-    'lista social':'espera',
-    'lista de espera':'espera',
-    'aac':'aac',
-    'particular':'aac',
-    'agenda':'agenda',
-    'relatorios':'relatorios',
-    'relatorio':'relatorios',
-    'equipe':'equipe',
-    'profissionais':'equipe',
-    'usuarios':'equipe',
-    'cavalos':'cavalos',
-    'cavalo':'cavalos',
-    'financeiro':'financeiro',
-    'financeiro social':'financeiro',
-    'config':'config',
-    'gerenciador do site':'config',
-    'auditoria':'auditoria'
-  };
-  return map[raw] || raw;
-};
+// Helpers de permissão definidos globalmente no V30.
 
-window.normalizePermissions = function(values){
-  return [...new Set(
-    (Array.isArray(values)?values:[])
-      .map(window.normalizePermission)
-      .filter(Boolean)
-  )];
-};
 async function loadRealProfile(authUser){
   const { data: profile, error } = await equoluzSupabase
     .from('profiles').select('id,name,email,role,active,force_change_password')
@@ -1012,7 +916,7 @@ async function loadRealProfile(authUser){
     name: profile.name || authUser.email || 'Usuário',
     role: profile.role === 'Administrador' ? 'admin' : profile.role === 'Diretor Financeiro' ? 'finance' : 'professional',
     permissions,
-    forceChange:false,
+    forceChange: !!profile.force_change_password,
     authUserId: authUser.id,
     at: new Date().toISOString()
   };
@@ -1032,7 +936,7 @@ async function login(e){
         await syncChildrenFromSupabase();
         applySession(); showDashboard();
         if(typeof addAudit==='function') addAudit('Login Supabase realizado · '+session.email);
-        
+        if(session.forceChange) setTimeout(()=>openSecurity(true),150);
         return;
       }catch(err){
         await equoluzSupabase.auth.signOut();
@@ -1046,10 +950,10 @@ async function login(e){
     if(pass!==(saved.password||'123456')){alert('Senha incorreta.');return;}
     const role=saved.role==='Administrador'?'admin':saved.role==='Diretor Financeiro'?'finance':'professional';
     const permissions=role==='admin'?['cadastro','sessoes','espera','aac','agenda','relatorios','equipe','cavalos','financeiro','config','auditoria']:role==='finance'?['cavalos','financeiro']:(saved.permissions||['cadastro','sessoes','agenda','cavalos']);
-    sessionStorage.setItem('equoluz_session',JSON.stringify({email,role,name:saved.name,permissions,at:new Date().toISOString(),forceChange:false}));
+    sessionStorage.setItem('equoluz_session',JSON.stringify({email,role,name:saved.name,permissions,at:new Date().toISOString(),forceChange:!!saved.forceChange}));
     applySession();showDashboard();
     if(typeof addAudit==='function') addAudit('Login local compatível realizado · '+email);
-    
+    if(saved.forceChange)setTimeout(()=>openSecurity(true),150);
     return;
   }
   const demo={
@@ -1198,83 +1102,6 @@ window.addEventListener('DOMContentLoaded',()=>{
   };
 })();
 </script>
-<script>
-/* EQUOLUZ V31 CORRIGIDO — Indicadores compartilhados pelo estado central */
-(function(){
-
-  async function refreshDashboardMetrics(){
-    try{
-      const raw = sessionStorage.getItem('equoluz_session');
-      if(!raw) return;
-
-      /*
-       * Todos os perfis usam o mesmo estado central.
-       * Não consultar diretamente children/social_waitlist/aac_interests
-       * aqui, pois o RLS pode devolver números diferentes por usuário.
-       */
-      if(
-        window.equoluzCentral &&
-        typeof window.equoluzCentral.load === 'function'
-      ){
-        await window.equoluzCentral.load().catch(function(err){
-          console.warn('Equoluz · estado central:', err);
-        });
-      }
-
-      /*
-       * O render calcula os indicadores a partir do estado central.
-       */
-      if(typeof render === 'function'){
-        render();
-      }
-
-      /*
-       * Atualiza os indicadores de clientes particulares
-       * somente quando essa função existir.
-       */
-      if(typeof window.updateAacDashboard === 'function'){
-        try{
-          window.updateAacDashboard();
-        }catch(err){}
-      }
-
-    }catch(err){
-      console.warn(
-        'Equoluz · indicadores compartilhados:',
-        err.message || err
-      );
-    }
-  }
-
-  window.refreshDashboardMetrics = refreshDashboardMetrics;
-
-  /*
-   * Timer único para atualização periódica.
-   */
-  try{
-    if(window.__equoluzMetricTimer){
-      clearInterval(window.__equoluzMetricTimer);
-    }
-  }catch(e){}
-
-  window.__equoluzMetricTimer = setInterval(function(){
-
-    const session = sessionStorage.getItem('equoluz_session');
-    const dashboard = document.getElementById('dashboard');
-
-    if(
-      session &&
-      dashboard &&
-      dashboard.style.display !== 'none'
-    ){
-      refreshDashboardMetrics();
-    }
-
-  },15000);
-
-})();
-</script>
-
 </body>
 <script>
 /* EQUOLUZ V26 — Lista Social conectada ao Supabase. */
@@ -1736,17 +1563,6 @@ function go(target){
   function applySnapshot(payload){
     if(!payload||typeof payload!=='object')return false;
     const merged=clone(payload);
-    // Proteção: uma base central antiga/vazia nunca pode apagar cadastros locais existentes.
-    if((!Array.isArray(merged.children) || merged.children.length===0)){
-      const currentChildren=Array.isArray(state?.children)?state.children:[];
-      let legacyChildren=[];
-      try{
-        const legacy=readLocal('equoluz_v18',null);
-        legacyChildren=Array.isArray(legacy?.children)?legacy.children:[];
-      }catch(e){}
-      if(currentChildren.length) merged.children=clone(currentChildren);
-      else if(legacyChildren.length) merged.children=clone(legacyChildren);
-    }
     Object.keys(DEFAULT_STATE).forEach(k=>{
       if(Array.isArray(DEFAULT_STATE[k]) && !Array.isArray(merged[k])) merged[k]=[];
     });
@@ -1854,16 +1670,8 @@ function go(target){
   async function refreshCentral(){
     if(!cloudReady)return;
     cloudLoading=true;
-    try{
-      const res=await fetchCentral();
-      if(res.exists&&res.payload){
-        const before=Array.isArray(state?.children)?state.children.length:0;
-        applySnapshot(res.payload);
-        const after=Array.isArray(state?.children)?state.children.length:0;
-        if(after>0 || before===0) nativeSet.call(localStorage,KEY,JSON.stringify(state));
-        render();
-      }
-    } finally{cloudLoading=false;}
+    try{const res=await fetchCentral();if(res.exists&&res.payload){applySnapshot(res.payload);nativeSet.call(localStorage,KEY,JSON.stringify(state));render();}}
+    finally{cloudLoading=false;}
   }
 
   window.equoluzCentral={load:loadCentralForSession,save:saveCentral,migrate:migrateLocalToCentral,refresh:refreshCentral,isReady:()=>cloudReady};
@@ -1890,7 +1698,7 @@ function go(target){
       if(typeof syncSocialWaitlistFromSupabase==='function')await syncSocialWaitlistFromSupabase().catch(()=>{});
       if(typeof syncAacInterestsFromSupabase==='function')await syncAacInterestsFromSupabase().catch(()=>{});
       applySession();showDashboard();
-      
+      if(session.forceChange)setTimeout(()=>openSecurity(true),150);
     }catch(err){try{await equoluzSupabase.auth.signOut()}catch(_){}sessionStorage.removeItem('equoluz_session');alert('Não foi possível carregar o sistema: '+(err.message||err));}
   };
 
@@ -1927,95 +1735,4 @@ function go(target){
   });
 })();
 </script>
-<script>
-/* EQUOLUZ V32.1 — CORREÇÃO DOS INDICADORES POR PERFIL
-   O Dashboard usa o banco central/state.
-   Não sobrescreve os números com consultas sujeitas ao RLS do perfil.
-*/
-(function(){
-
-  async function refreshDashboardMetricsSafe(){
-    try{
-      const raw=sessionStorage.getItem('equoluz_session');
-      if(!raw)return;
-
-      /*
-       * Primeiro garante que o estado central esteja carregado.
-       * O banco central já é compartilhado entre os perfis.
-       */
-      if(window.equoluzCentral &&
-         typeof window.equoluzCentral.load==='function'){
-        await window.equoluzCentral.load().catch(()=>{});
-      }
-
-      /*
-       * Os indicadores passam a ser calculados pelo mesmo estado
-       * usado pelo Dashboard, e não por consultas diretas que podem
-       * sofrer restrições de RLS para determinados perfis.
-       */
-      if(typeof render==='function'){
-        render();
-      }
-
-      /*
-       * Atualiza somente os indicadores particulares pelo estado central,
-       * quando essa função existir.
-       */
-      if(typeof window.updateAacDashboard==='function'){
-        try{
-          window.updateAacDashboard();
-        }catch(e){}
-      }
-
-    }catch(err){
-      console.warn(
-        'Equoluz · indicadores seguros:',
-        err.message || err
-      );
-    }
-  }
-
-  /*
-   * Substitui a rotina V31 que estava consultando diretamente
-   * a tabela children e transformando 9 em 0 para alguns perfis.
-   */
-  window.refreshDashboardMetrics=refreshDashboardMetricsSafe;
-
-  /*
-   * Cancela qualquer timer anterior conhecido.
-   */
-  try{
-    if(window.__equoluzMetricTimer){
-      clearInterval(window.__equoluzMetricTimer);
-    }
-  }catch(e){}
-
-  /*
-   * Atualização periódica usando o estado central.
-   */
-  window.__equoluzMetricTimer=setInterval(function(){
-    const session=sessionStorage.getItem('equoluz_session');
-    const dashboard=document.getElementById('dashboard');
-
-    if(
-      session &&
-      dashboard &&
-      dashboard.style.display!=='none'
-    ){
-      refreshDashboardMetricsSafe();
-    }
-  },15000);
-
-  /*
-   * Atualiza uma vez após o carregamento da página.
-   */
-  document.addEventListener('DOMContentLoaded',function(){
-    setTimeout(function(){
-      if(sessionStorage.getItem('equoluz_session')){
-        refreshDashboardMetricsSafe();
-      }
-    },1500);
-  });
-
-})();
-</script>
+</body></html>
