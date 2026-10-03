@@ -2284,3 +2284,67 @@ function go(target){
   setInterval(updateDashboardMetrics,4000);
 })();
 </script>
+
+
+<script>
+/* EQUOLUZ — CORREÇÃO FINAL DOS BOTÕES DA LISTA SOCIAL
+   Esta camada fica por último para impedir que scripts antigos sobrescrevam as ações. */
+(function(){
+  function bindSocialButtons(){
+    const root=document.getElementById('waitList');
+    if(!root) return;
+    root.querySelectorAll('button').forEach(function(btn){
+      let action='', id='';
+      const raw=String(btn.getAttribute('onclick')||'');
+      let m=raw.match(/^\s*editSocial\((?:['"])?([^'")]+)(?:['"])?\)\s*$/);
+      if(m){ action='edit'; id=m[1]; }
+      m=raw.match(/^\s*deleteSocial\((?:['"])?([^'")]+)(?:['"])?\)\s*$/);
+      if(m){ action='delete'; id=m[1]; }
+      if(!action){
+        action=btn.dataset.socialAction||'';
+        id=btn.dataset.socialId||'';
+      }
+      if(!action || !id) return;
+      if(btn.dataset.equoluzSocialBound==='1') return;
+      btn.dataset.equoluzSocialBound='1';
+      btn.dataset.socialAction=action;
+      btn.dataset.socialId=id;
+      btn.removeAttribute('onclick');
+      btn.type='button';
+      btn.addEventListener('click',function(ev){
+        ev.preventDefault();
+        ev.stopPropagation();
+        ev.stopImmediatePropagation();
+        if(action==='edit'){
+          if(typeof window.editSocial==='function') window.editSocial(id);
+          else alert('A função de edição da Lista Social não foi carregada.');
+        }else{
+          if(typeof window.deleteSocial==='function') window.deleteSocial(id);
+          else alert('A função de exclusão da Lista Social não foi carregada.');
+        }
+      },true);
+    });
+  }
+  window.equoluzBindSocialButtons=bindSocialButtons;
+  document.addEventListener('DOMContentLoaded',function(){
+    bindSocialButtons();
+    const root=document.getElementById('waitList');
+    if(root){
+      new MutationObserver(function(){bindSocialButtons();}).observe(root,{childList:true,subtree:true});
+    }
+    setTimeout(bindSocialButtons,100);
+    setTimeout(bindSocialButtons,500);
+    setTimeout(bindSocialButtons,1500);
+    setTimeout(bindSocialButtons,3000);
+  });
+  /* Reforça a ligação sempre que o dashboard renderizar. */
+  const previousRender=window.render;
+  if(typeof previousRender==='function'){
+    window.render=function(){
+      const result=previousRender.apply(this,arguments);
+      setTimeout(bindSocialButtons,0);
+      return result;
+    };
+  }
+})();
+</script>
