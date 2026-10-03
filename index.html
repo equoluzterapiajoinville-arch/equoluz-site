@@ -2018,7 +2018,7 @@ function go(target){
     const deleted=readDeleted();
     state.children=(Array.isArray(state.children)?state.children:[])
       .filter(x=>!deleted.has(String(x.id)))
-      .map(x=>Object.assign({},x,{status:socialIds.has(String(x.id))?'Social':'Ativa'}));
+      .map(x=>Object.assign({},x,{status:socialIds.has(String(x.id))?'Social':(String(x.status||'Ativa')==='Ativa'?'Ativa':x.status)}));
   }
 
   /* Carrega Lista Social antes de Crianças. Isso corrige o contador do Diretor Financeiro. */
@@ -2191,6 +2191,17 @@ function go(target){
     if(!item){alert('Cadastro da Lista Social não encontrado.');return;}
     if(!confirm('Excluir esta família da Lista Social?'))return;
     try{
+      /* Marca o vínculo localmente para que o cadastro não volte à lista de crianças. */
+      if(item.childId){
+        try{
+          const key='equoluz_social_deleted_child_ids_v1';
+          const old=JSON.parse(localStorage.getItem(key)||'[]');
+          const ids=new Set(Array.isArray(old)?old.map(String):[]);
+          ids.add(String(item.childId));
+          localStorage.setItem(key,JSON.stringify([...ids]));
+          state.socialDeletedChildIds=[...ids];
+        }catch(e){}
+      }
       if(window.equoluzSupabase){
         const r=await window.equoluzSupabase.rpc('delete_social_waitlist_secure',{p_waitlist_id:id});
         if(r.error)throw r.error;
@@ -2199,7 +2210,8 @@ function go(target){
       }else{
         state.social=state.social.filter(x=>String(x.id)!==String(id));
       }
-      if(typeof window.applyChildClassification==='function')window.applyChildClassification();
+      state.social=Array.isArray(state.social)?state.social.filter(x=>String(x.id)!==String(id)):[];
+      if(item.childId)state.children=(Array.isArray(state.children)?state.children:[]).filter(x=>String(x.id)!==String(item.childId));
       if(typeof window.render==='function')window.render();
       alert('Cadastro da Lista Social excluído com sucesso.');
     }catch(err){
