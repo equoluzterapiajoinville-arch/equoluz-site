@@ -1547,6 +1547,95 @@ function go(target){
 })();
 </script>
 
+
+<script>
+/* PATCH FINAL — LISTA SOCIAL + MÉTRICAS DIRETOR FINANCEIRO
+   Não altera nenhuma função nem renderização do AAC. */
+(function(){
+  function getSession(){try{return JSON.parse(sessionStorage.getItem('equoluz_session')||'null')}catch(e){return null}}
+  function findSocial(id){return (Array.isArray(state.social)?state.social:[]).find(x=>String(x.id)===String(id));}
+  function ask(label,value){const v=prompt(label,value==null?'':value);return v===null?null:v.trim();}
+
+  window.deleteSocial=async function(id){
+    const item=findSocial(id);
+    if(!item){alert('Cadastro da Lista Social não encontrado.');return;}
+    if(!confirm('Excluir esta família da Lista Social?'))return;
+    try{
+      if(window.equoluzSupabase){
+        const {data,error}=await window.equoluzSupabase.rpc('delete_social_waitlist_secure',{p_waitlist_id:id});
+        if(error)throw error;
+        if(data===false)throw new Error('A exclusão não foi autorizada.');
+        await window.syncSocialWaitlistFromSupabase();
+      }else{
+        state.social=state.social.filter(x=>String(x.id)!==String(id));
+      }
+      if(typeof applyChildClassification==='function')applyChildClassification();
+      if(typeof window.render==='function')window.render();
+      alert('Cadastro da Lista Social excluído com sucesso.');
+    }catch(err){
+      alert('Não foi possível excluir: '+(err.message||err));
+    }
+  };
+
+  window.editSocial=async function(id){
+    const x=findSocial(id);
+    if(!x){alert('Cadastro da Lista Social não encontrado.');return;}
+    const guardian=ask('Responsável:',x.responsavel);if(guardian===null)return;
+    const phone=ask('WhatsApp:',x.whatsapp);if(phone===null)return;
+    const email=ask('E-mail:',x.email);if(email===null)return;
+    const child=ask('Nome da criança:',x.crianca);if(child===null)return;
+    const birth=ask('Nascimento (AAAA-MM-DD):',x.nascimento);if(birth===null)return;
+    const notes=ask('Observações:',x.observacoes);if(notes===null)return;
+    try{
+      if(window.equoluzSupabase){
+        const {data,error}=await window.equoluzSupabase.rpc('update_social_waitlist_secure',{
+          p_waitlist_id:id,
+          p_child_id:x.childId||null,
+          p_responsible_id:x.responsibleId||null,
+          p_child_name:child,
+          p_birth_date:birth||null,
+          p_child_notes:notes||null,
+          p_responsible_name:guardian,
+          p_phone:phone,
+          p_email:email||null
+        });
+        if(error)throw error;
+        if(data===false)throw new Error('A alteração não foi autorizada.');
+        await window.syncSocialWaitlistFromSupabase();
+      }else{
+        Object.assign(x,{responsavel:guardian,whatsapp:phone,email,crianca:child,nascimento:birth,observacoes:notes});
+      }
+      if(typeof window.render==='function')window.render();
+      alert('Cadastro da Lista Social atualizado com sucesso.');
+    }catch(err){alert('Não foi possível editar: '+(err.message||err));}
+  };
+
+  async function refreshFinanceDashboard(){
+    const u=getSession();
+    if(!u)return;
+    const mA=document.getElementById('mActive'),mW=document.getElementById('mWait');
+    if(!window.equoluzSupabase)return;
+    try{
+      const {data,error}=await window.equoluzSupabase.rpc('get_dashboard_metrics_secure');
+      if(error)throw error;
+      if(data){
+        if(mA)mA.textContent=String(Number(data.active_children||0));
+        if(mW)mW.textContent=String(Number(data.social_waiting||0));
+      }
+    }catch(err){
+      console.warn('Métricas do dashboard:',err.message||err);
+    }
+  }
+  window.equoluzRefreshFinanceDashboard=refreshFinanceDashboard;
+
+  const oldShow=window.showDashboard;
+  window.showDashboard=function(){
+    if(typeof oldShow==='function')oldShow();
+    setTimeout(refreshFinanceDashboard,300);
+  };
+  document.addEventListener('DOMContentLoaded',()=>setTimeout(refreshFinanceDashboard,1200));
+})();
+</script>
 </html>
 
 <script>
