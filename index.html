@@ -2372,3 +2372,52 @@ function go(target){
   }
 })();
 </script>
+
+<script>
+/* EQUOLUZ — CORREÇÃO ISOLADA DO DASHBOARD DO DIRETOR FINANCEIRO
+   Não altera Lista Social, Crianças, AAC ou permissões dos módulos. */
+(function(){
+  function getSession(){
+    try{return JSON.parse(sessionStorage.getItem('equoluz_session')||'null')}catch(e){return null}
+  }
+  async function refreshFinanceDashboardFinal(){
+    const u=getSession();
+    if(!u || (u.role!=='finance' && u.role!=='admin')) return;
+    if(!window.equoluzSupabase) return;
+    try{
+      const r=await window.equoluzSupabase.rpc('get_dashboard_metrics_finance_v2');
+      if(r.error) throw r.error;
+      const d=r.data||{};
+      const a=document.getElementById('mActive');
+      const w=document.getElementById('mWait');
+      if(a) a.textContent=String(Number(d.active_children||0));
+      if(w) w.textContent=String(Number(d.social_waiting||0));
+    }catch(err){
+      console.warn('Indicadores Diretor Financeiro:',err && err.message ? err.message : err);
+    }
+  }
+  window.equoluzRefreshFinanceDashboardFinal=refreshFinanceDashboardFinal;
+
+  /* Atualiza imediatamente após login e também após qualquer renderização. */
+  const oldShow=window.showDashboard;
+  window.showDashboard=function(){
+    if(typeof oldShow==='function') oldShow();
+    setTimeout(refreshFinanceDashboardFinal,150);
+    setTimeout(refreshFinanceDashboardFinal,800);
+  };
+
+  const oldRender=window.render;
+  window.render=function(){
+    if(typeof oldRender==='function') oldRender();
+    const u=getSession();
+    if(u && (u.role==='finance'||u.role==='admin')) setTimeout(refreshFinanceDashboardFinal,100);
+  };
+
+  document.addEventListener('DOMContentLoaded',function(){
+    setTimeout(refreshFinanceDashboardFinal,500);
+    setTimeout(refreshFinanceDashboardFinal,1500);
+  });
+
+  setInterval(refreshFinanceDashboardFinal,3000);
+})();
+</script>
