@@ -1379,6 +1379,174 @@ function go(target){
   history.replaceState(null,'','#'+id);
 }
 </script>
+<script>
+/* EQUOLUZ — V36 FINAL: AÇÕES AAC + LISTA SOCIAL + DASHBOARD FINANCEIRO */
+(function(){
+  const asText=v=>v==null?'':String(v);
+  function currentSession(){try{return JSON.parse(sessionStorage.getItem('equoluz_session')||'null')}catch(e){return null}}
+  function activeRows(){return (Array.isArray(state.children)?state.children:[]).filter(x=>String(x.status||'Ativa')==='Ativa')}
+  function waitingRows(){return (Array.isArray(state.social)?state.social:[]).filter(x=>{const s=asText(x.status||x.etapa).trim().toLowerCase();return s!=='atendendo'&&s!=='encerrado'})}
+  function esc2(v){return typeof esc==='function'?esc(v):asText(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+
+  async function refreshDashboardNumbers(){
+    const u=currentSession();
+    if(!u)return;
+    try{
+      if(window.equoluzCentral && typeof window.equoluzCentral.load==='function'){
+        await window.equoluzCentral.load();
+      }
+    }catch(e){console.warn('Central dashboard:',e.message||e)}
+    try{
+      if(typeof window.syncSocialWaitlistFromSupabase==='function') await window.syncSocialWaitlistFromSupabase();
+    }catch(e){console.warn('Social dashboard:',e.message||e)}
+    try{
+      if(typeof window.syncChildrenFromSupabase==='function') await window.syncChildrenFromSupabase();
+    }catch(e){console.warn('Children dashboard:',e.message||e)}
+    try{
+      const a=activeRows(),w=waitingRows();
+      const mA=document.getElementById('mActive'),mW=document.getElementById('mWait');
+      if(mA)mA.textContent=String(a.length);
+      if(mW)mW.textContent=String(w.length);
+    }catch(e){}
+  }
+
+  async function aacContact(id){
+    if(!window.equoluzSupabase){alert('Conexão com o Supabase não carregada.');return}
+    try{
+      const r=await window.equoluzSupabase.from('aac_interests').update({status:'Contato',updated_at:new Date().toISOString()}).eq('id',id);
+      if(r.error)throw r.error;
+      if(typeof window.syncAacInterestsFromSupabase==='function')await window.syncAacInterestsFromSupabase();
+      if(typeof window.render==='function')window.render();
+      alert('Contato marcado com sucesso.');
+    }catch(e){alert('Não foi possível marcar o contato: '+(e.message||e))}
+  }
+
+  async function aacEdit(id){
+    const x=(Array.isArray(state.aac)?state.aac:[]).find(v=>String(v.id)===String(id));
+    if(!x){alert('Interessado AAC não encontrado.');return}
+    const ask=(label,val)=>{const r=prompt(label,asText(val));return r===null?null:r.trim()};
+    const participant=ask('Nome do participante:',x['Nome do participante']);if(participant===null)return;
+    const responsible=ask('Nome do responsável:',x['Nome do responsável']);if(responsible===null)return;
+    const phone=ask('WhatsApp:',x.WhatsApp);if(phone===null)return;
+    const email=ask('E-mail:',x.Email);if(email===null)return;
+    const city=ask('Cidade:',x.Cidade);if(city===null)return;
+    const period=ask('Melhor período:',x['Melhor período']);if(period===null)return;
+    const notes=ask('Observações:',x.Observações);if(notes===null)return;
+    try{
+      if(window.equoluzSupabase){
+        const r=await window.equoluzSupabase.from('aac_interests').update({participant_name:participant,responsible_name:responsible,phone:phone,email:email||null,city:city||null,preferred_schedule:period||null,observations:notes||null,updated_at:new Date().toISOString()}).eq('id',id);
+        if(r.error)throw r.error;
+        if(typeof window.syncAacInterestsFromSupabase==='function')await window.syncAacInterestsFromSupabase();
+      }else{
+        Object.assign(x,{'Nome do participante':participant,'Nome do responsável':responsible,WhatsApp:phone,Email:email,Cidade:city,'Melhor período':period,Observações:notes});
+      }
+      if(typeof window.render==='function')window.render();
+      alert('Interessado AAC atualizado com sucesso.');
+    }catch(e){alert('Não foi possível editar o interessado AAC: '+(e.message||e))}
+  }
+
+  async function aacDelete(id){
+    if(!confirm('Excluir este interessado AAC da lista?'))return;
+    try{
+      if(window.equoluzSupabase){
+        const r=await window.equoluzSupabase.from('aac_interests').delete().eq('id',id);
+        if(r.error)throw r.error;
+        if(typeof window.syncAacInterestsFromSupabase==='function')await window.syncAacInterestsFromSupabase();
+      }else{
+        state.aac=(Array.isArray(state.aac)?state.aac:[]).filter(v=>String(v.id)!==String(id));
+      }
+      if(typeof window.render==='function')window.render();
+      alert('Interessado AAC excluído com sucesso.');
+    }catch(e){alert('Não foi possível excluir o interessado AAC: '+(e.message||e))}
+  }
+
+  function renderAacFinal(){
+    const box=document.getElementById('aacList');if(!box)return;
+    const u=currentSession();if(!u)return;
+    const allowed=u.role==='admin'||(u.role==='professional'&&((u.permissions||[]).map(String).includes('aac')));
+    if(!allowed){box.innerHTML='<div class="empty">Acesso aos interessados AAC não autorizado para este perfil.</div>';return}
+    const rows=Array.isArray(state.aac)?state.aac:[];
+    box.innerHTML=rows.length?rows.slice().reverse().map(x=>{
+      const id=esc2(x.id);
+      return '<div class="record" data-aac-row="'+id+'">'+
+        '<div style="display:flex;gap:7px;justify-content:flex-end;flex-wrap:wrap">'+
+        '<button type="button" class="smallBtn" data-final-aac="contato" data-aac-id="'+id+'">📞 Marcar contato</button>'+
+        '<button type="button" class="smallBtn" data-final-aac="edit" data-aac-id="'+id+'">✏️ Editar</button>'+
+        '<button type="button" class="danger" data-final-aac="delete" data-aac-id="'+id+'">Excluir</button>'+
+        '</div>'+
+        '<b>'+esc2(x['Nome do participante']||'Participante')+'</b>'+
+        '<div class="mini">Responsável: '+esc2(x['Nome do responsável']||'')+' · WhatsApp: '+esc2(x.WhatsApp||'')+' · Status: <b>'+esc2(x.status||'Novo interesse')+'</b></div>'+ 
+        '<div class="mini">Interesses: '+esc2((x.interesses||[]).join(' · '))+' · '+esc2(x.Cidade||'')+'</div>'+ 
+        (x['Melhor período']?'<div class="mini">Período: '+esc2(x['Melhor período'])+'</div>':'')+
+        (x.Observações?'<div>'+esc2(x.Observações)+'</div>':'')+
+        '</div>';
+    }).join(''):'<div class="empty">Nenhum interessado AAC cadastrado.</div>';
+  }
+
+  function renderSocialActionsFinal(){
+    const box=document.getElementById('waitList');if(!box)return;
+    box.querySelectorAll('[onclick]').forEach(btn=>{
+      const raw=asText(btn.getAttribute('onclick'));
+      let m=raw.match(/^editSocial\((?:['"])?([^'")]+)(?:['"])?\)$/);if(m){btn.removeAttribute('onclick');btn.dataset.finalSocial='edit';btn.dataset.socialId=m[1];}
+      m=raw.match(/^deleteSocial\((?:['"])?([^'")]+)(?:['"])?\)$/);if(m){btn.removeAttribute('onclick');btn.dataset.finalSocial='delete';btn.dataset.socialId=m[1];}
+    });
+  }
+
+  document.addEventListener('click',function(ev){
+    const aac=ev.target.closest('[data-final-aac]');
+    if(aac){
+      ev.preventDefault();ev.stopImmediatePropagation();
+      const id=aac.getAttribute('data-aac-id'), action=aac.getAttribute('data-final-aac');
+      if(action==='contato')aacContact(id);
+      else if(action==='edit')aacEdit(id);
+      else if(action==='delete')aacDelete(id);
+      return;
+    }
+    const social=ev.target.closest('[data-final-social]');
+    if(social){
+      ev.preventDefault();ev.stopImmediatePropagation();
+      const id=social.getAttribute('data-social-id');
+      if(social.getAttribute('data-final-social')==='edit')window.editSocial(id);else window.deleteSocial(id);
+    }
+  },true);
+
+  const previousRender=window.render;
+  window.render=function(){
+    if(typeof previousRender==='function')previousRender();
+    setTimeout(function(){
+      try{renderAacFinal()}catch(e){console.warn('AAC render:',e.message||e)}
+      try{renderSocialActionsFinal()}catch(e){console.warn('Social actions:',e.message||e)}
+      try{
+        const a=activeRows(),w=waitingRows();
+        const mA=document.getElementById('mActive'),mW=document.getElementById('mWait');
+        if(mA)mA.textContent=String(a.length);
+        if(mW)mW.textContent=String(w.length);
+      }catch(e){}
+    },0);
+  };
+
+  const previousShowDashboard=window.showDashboard;
+  window.showDashboard=function(){
+    if(typeof previousShowDashboard==='function')previousShowDashboard();
+    setTimeout(refreshDashboardNumbers,250);
+  };
+
+  window.equoluzRefreshDashboardNumbers=refreshDashboardNumbers;
+  window.equoluzAacContact=aacContact;
+  window.equoluzAacEdit=aacEdit;
+  window.equoluzAacDelete=aacDelete;
+
+  document.addEventListener('DOMContentLoaded',function(){
+    setTimeout(function(){
+      if(currentSession()){
+        try{window.render&&window.render()}catch(e){}
+        refreshDashboardNumbers();
+      }
+    },700);
+  });
+})();
+</script>
+
 </html>
 
 <script>
