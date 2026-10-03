@@ -1022,8 +1022,8 @@ window.addEventListener('DOMContentLoaded',()=>{
   };
   var equoluzFinance=window.equoluzFinance;
 
-  function btnEdit(fn,id){return `<button class="smallBtn" onclick="${fn}(${JSON.stringify(id)})">✏️ Editar</button>`}
-  function btnDel(fn,id){return `<button class="danger" onclick="${fn}(${JSON.stringify(id)})">Excluir</button>`}
+  function btnEdit(fn,id){const safe=String(id==null?'':id).replace(/&/g,'&amp;').replace(/'/g,'&#39;');return `<button type="button" class="smallBtn" data-social-direct="edit" data-social-id="${safe}">✏️ Editar</button>`}
+  function btnDel(fn,id){const safe=String(id==null?'':id).replace(/&/g,'&amp;').replace(/'/g,'&#39;');return `<button type="button" class="danger" data-social-direct="delete" data-social-id="${safe}">Excluir</button>`}
   function promptEdit(label,value){const v=prompt(label,value??'');return v===null?null:v.trim()}
   function dateSort(a,b){return String(a||'').localeCompare(String(b||''))}
 
@@ -2325,6 +2325,18 @@ function go(target){
       },true);
     });
   }
+  document.addEventListener('click',function(ev){
+    const b=ev.target.closest && ev.target.closest('#waitList button[data-social-direct]');
+    if(!b)return;
+    ev.preventDefault(); ev.stopImmediatePropagation();
+    const id=b.getAttribute('data-social-id');
+    if(b.getAttribute('data-social-direct')==='edit'){
+      if(typeof window.editSocial==='function') window.editSocial(id); else alert('A função de edição da Lista Social não foi carregada.');
+    }else{
+      if(typeof window.deleteSocial==='function') window.deleteSocial(id); else alert('A função de exclusão da Lista Social não foi carregada.');
+    }
+  },true);
+
   window.equoluzBindSocialButtons=bindSocialButtons;
   document.addEventListener('DOMContentLoaded',function(){
     bindSocialButtons();
