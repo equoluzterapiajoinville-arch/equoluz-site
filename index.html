@@ -2183,7 +2183,7 @@ function go(target){
    IMPORTANTE: não altera nenhuma função ou ação do AAC. */
 (function(){
   function session(){try{return JSON.parse(sessionStorage.getItem('equoluz_session')||'null')}catch(e){return null}}
-  function socialItem(id){return (Array.isArray(window.state?.social)?window.state.social:[]).find(x=>String(x.id)===String(id));}
+  function socialItem(id){return (typeof state!=='undefined' && Array.isArray(state.social)?state.social:[]).find(x=>String(x.id)===String(id));}
   function ask2(label,value){const v=prompt(label,value==null?'':value);return v===null?null:v.trim();}
 
   window.deleteSocial=async function(id){
