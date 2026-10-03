@@ -2177,3 +2177,110 @@ function go(target){
 })();
 </script>
 
+
+<script>
+/* EQUOLUZ — CAMADA FINAL REAL — LISTA SOCIAL + DASHBOARD FINANCEIRO
+   IMPORTANTE: não altera nenhuma função ou ação do AAC. */
+(function(){
+  function session(){try{return JSON.parse(sessionStorage.getItem('equoluz_session')||'null')}catch(e){return null}}
+  function socialItem(id){return (Array.isArray(window.state?.social)?window.state.social:[]).find(x=>String(x.id)===String(id));}
+  function ask2(label,value){const v=prompt(label,value==null?'':value);return v===null?null:v.trim();}
+
+  window.deleteSocial=async function(id){
+    const item=socialItem(id);
+    if(!item){alert('Cadastro da Lista Social não encontrado.');return;}
+    if(!confirm('Excluir esta família da Lista Social?'))return;
+    try{
+      if(window.equoluzSupabase){
+        const r=await window.equoluzSupabase.rpc('delete_social_waitlist_secure',{p_waitlist_id:id});
+        if(r.error)throw r.error;
+        if(r.data===false)throw new Error('A exclusão não foi autorizada.');
+        if(typeof window.syncSocialWaitlistFromSupabase==='function')await window.syncSocialWaitlistFromSupabase();
+      }else{
+        state.social=state.social.filter(x=>String(x.id)!==String(id));
+      }
+      if(typeof window.applyChildClassification==='function')window.applyChildClassification();
+      if(typeof window.render==='function')window.render();
+      alert('Cadastro da Lista Social excluído com sucesso.');
+    }catch(err){
+      alert('Não foi possível excluir: '+(err?.message||err));
+      console.error('deleteSocial secure:',err);
+    }
+  };
+
+  window.editSocial=async function(id){
+    const x=socialItem(id);
+    if(!x){alert('Cadastro da Lista Social não encontrado.');return;}
+    const guardian=ask2('Responsável:',x.responsavel);if(guardian===null)return;
+    const phone=ask2('WhatsApp:',x.whatsapp);if(phone===null)return;
+    const email=ask2('E-mail:',x.email);if(email===null)return;
+    const child=ask2('Nome da criança:',x.crianca);if(child===null)return;
+    const birth=ask2('Nascimento (AAAA-MM-DD):',x.nascimento);if(birth===null)return;
+    const notes=ask2('Observações:',x.observacoes);if(notes===null)return;
+    try{
+      if(window.equoluzSupabase){
+        const r=await window.equoluzSupabase.rpc('update_social_waitlist_secure',{
+          p_waitlist_id:id,
+          p_child_id:x.childId||null,
+          p_responsible_id:x.responsibleId||null,
+          p_child_name:child,
+          p_birth_date:birth||null,
+          p_child_notes:notes||null,
+          p_responsible_name:guardian,
+          p_phone:phone,
+          p_email:email||null
+        });
+        if(r.error)throw r.error;
+        if(r.data===false)throw new Error('A alteração não foi autorizada.');
+        if(typeof window.syncSocialWaitlistFromSupabase==='function')await window.syncSocialWaitlistFromSupabase();
+      }else{
+        Object.assign(x,{responsavel:guardian,whatsapp:phone,email,crianca:child,nascimento:birth,observacoes:notes});
+      }
+      if(typeof window.render==='function')window.render();
+      alert('Cadastro da Lista Social atualizado com sucesso.');
+    }catch(err){
+      alert('Não foi possível editar: '+(err?.message||err));
+      console.error('editSocial secure:',err);
+    }
+  };
+
+  async function updateDashboardMetrics(){
+    const u=session();
+    if(!u || !window.equoluzSupabase)return;
+    if(u.role!=='finance' && u.role!=='admin')return;
+    try{
+      const r=await window.equoluzSupabase.rpc('get_dashboard_metrics_secure');
+      if(r.error)throw r.error;
+      const d=r.data||{};
+      const a=document.getElementById('mActive'),w=document.getElementById('mWait');
+      if(a)a.textContent=String(Number(d.active_children||0));
+      if(w)w.textContent=String(Number(d.social_waiting||0));
+    }catch(err){
+      console.warn('Dashboard seguro:',err?.message||err);
+    }
+  }
+  window.equoluzRefreshFinanceDashboard=updateDashboardMetrics;
+
+  /* Captura os botões da Lista Social mesmo que um render antigo os recrie. */
+  document.addEventListener('click',function(ev){
+    const b=ev.target.closest && ev.target.closest('#waitList button');
+    if(!b)return;
+    const raw=String(b.getAttribute('onclick')||'');
+    let m=raw.match(/editSocial\((?:['"])?([^'")]+)(?:['"])?\)/);
+    if(m){ev.preventDefault();ev.stopImmediatePropagation();window.editSocial(m[1]);return;}
+    m=raw.match(/deleteSocial\((?:['"])?([^'")]+)(?:['"])?\)/);
+    if(m){ev.preventDefault();ev.stopImmediatePropagation();window.deleteSocial(m[1]);return;}
+    if(b.dataset.socialId && b.dataset.socialAction){
+      ev.preventDefault();ev.stopImmediatePropagation();
+      if(b.dataset.socialAction==='edit')window.editSocial(b.dataset.socialId);else window.deleteSocial(b.dataset.socialId);
+    }
+  },true);
+
+  document.addEventListener('DOMContentLoaded',function(){
+    setTimeout(updateDashboardMetrics,500);
+    setTimeout(updateDashboardMetrics,1500);
+    setTimeout(updateDashboardMetrics,3000);
+  });
+  setInterval(updateDashboardMetrics,4000);
+})();
+</script>
