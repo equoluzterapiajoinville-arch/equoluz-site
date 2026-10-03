@@ -161,7 +161,7 @@ function save(action='Atualização do sistema'){state.audit.push({id:Date.now()
 const V8_USERS={admin:{name:'Administrador Equoluz',role:'admin'},professional:{name:'Profissional Equoluz',role:'professional'},finance:{name:'Diretor Financeiro',role:'finance'}};
 function openLogin(){const g=document.getElementById('loginGate');if(!g)return;g.classList.remove('hidden');g.classList.add('login-open');g.style.removeProperty('display');g.style.setProperty('display','grid','important');const email=document.getElementById('loginEmail');if(email){setTimeout(()=>email.focus(),50)}}
 function closeLogin(){const g=document.getElementById('loginGate');if(g){g.classList.remove('login-open');g.classList.add('hidden')}}
-async function login(e){e.preventDefault();const email=document.getElementById('loginEmail').value.trim().toLowerCase();const pass=document.getElementById('loginPass').value;let role=document.getElementById('loginRole').value;let u=V8_USERS[role];let saved=state.professionals.find(x=>String(x.email||'').toLowerCase()===email);if(saved){role=saved.role==='Administrador'?'admin':saved.role==='Diretor Financeiro'?'finance':'professional';if(pass!==(saved.password||'123456')){alert('Senha incorreta.');return}u={name:saved.name,role};}else{if(role==='admin'&&(email!=='admin@equoluz.local'||pass!==(state.demoPasswords&&state.demoPasswords[email]||'123456'))){alert('Senha incorreta.');return}if(role==='professional'&&(email!=='profissional@equoluz.local'||pass!==(state.demoPasswords&&state.demoPasswords[email]||'123456'))){alert('Senha incorreta.');return}if(role==='finance'&&(email!=='financeiro@equoluz.local'||pass!==(state.demoPasswords&&state.demoPasswords[email]||'123456'))){alert('Senha incorreta.');return}}let permissions=[];if(role==='admin')permissions=['cadastro','sessoes','espera','aac','agenda','relatorios','equipe','cavalos','financeiro','config','auditoria'];if(role==='finance')permissions=['cavalos','financeiro'];if(role==='professional')permissions=saved?(saved.permissions||[]):['cadastro','sessoes','agenda','cavalos'];sessionStorage.setItem('equoluz_session',JSON.stringify({email,role,name:u.name,permissions,at:new Date().toISOString(),forceChange:!!(saved&&saved.forceChange)}));applySession();showDashboard();if(typeof addAudit==='function')addAudit('Login realizado: '+role+' · '+email);} 
+async function login(e){e.preventDefault();const email=document.getElementById('loginEmail').value.trim().toLowerCase();const pass=document.getElementById('loginPass').value;let role=document.getElementById('loginRole').value;let u=V8_USERS[role];let saved=state.professionals.find(x=>String(x.email||'').toLowerCase()===email);if(saved){role=saved.role==='Administrador'?'admin':saved.role==='Diretor Financeiro'?'finance':'professional';if(pass!==(saved.password||'123456')){alert('Senha incorreta.');return}u={name:saved.name,role};}else{if(role==='admin'&&(email!=='admin@equoluz.local'||pass!==(state.demoPasswords&&state.demoPasswords[email]||'123456'))){alert('Senha incorreta.');return}if(role==='professional'&&(email!=='profissional@equoluz.local'||pass!==(state.demoPasswords&&state.demoPasswords[email]||'123456'))){alert('Senha incorreta.');return}if(role==='finance'&&(email!=='financeiro@equoluz.local'||pass!==(state.demoPasswords&&state.demoPasswords[email]||'123456'))){alert('Senha incorreta.');return}}let permissions=[];if(role==='admin')permissions=['cadastro','sessoes','espera','aac','agenda','relatorios','equipe','cavalos','financeiro','config','auditoria'];if(role==='finance')permissions=['cavalos','financeiro'];if(role==='professional')permissions=saved?(saved.permissions||[]):['cadastro','sessoes','agenda','cavalos'];sessionStorage.setItem('equoluz_session',JSON.stringify({email,role,name:u.name,permissions,at:new Date().toISOString(),forceChange:!!(saved&&saved.forceChange)}));applySession();showDashboard();if(typeof addAudit==='function')addAudit('Login realizado: '+role+' · '+email);if(saved&&saved.forceChange)setTimeout(()=>openSecurity(true),150);} 
 
 function logout(){sessionStorage.removeItem('equoluz_session');document.getElementById('dashboard').style.display='none';document.getElementById('public').style.display='block';document.getElementById('loginGate').style.setProperty('display','none','important');window.scrollTo(0,0);}
 function applySession(){const raw=sessionStorage.getItem('equoluz_session');if(!raw){document.getElementById('loginGate').style.setProperty('display','none','important');document.getElementById('dashboard').style.display='none';document.getElementById('public').style.display='block';return}const u=JSON.parse(raw);u.permissions=normalizePermissions(u.permissions);sessionStorage.setItem('equoluz_session',JSON.stringify(u));const dashLine=document.getElementById('dashUserLine');if(dashLine)dashLine.textContent='Olá, '+(u.name||'equipe')+' · '+(u.role==='admin'?'Administrador':u.role==='finance'?'Diretor Financeiro':'Profissional')+' · gestão do Equoluz.';document.getElementById('loginGate').classList.add('hidden');document.getElementById('loginGate').style.setProperty('display','none','important');document.getElementById('public').style.display='none';const b=document.getElementById('sessionBadge');if(b)b.textContent=u.name+' · '+(u.role==='admin'?'Administrador':u.role==='finance'?'Diretor Financeiro':'Profissional');const perms=new Set(u.permissions||[]);document.querySelectorAll('.moduleGrid .moduleBtn').forEach(el=>{const mod=el.dataset.module;let visible=false;if(u.role==='admin')visible=true;else if(u.role==='finance')visible=(mod==='cavalos'||mod==='financeiro');else visible=perms.has(mod);el.style.display=visible?'':'none';});document.querySelectorAll('[data-admin-only]').forEach(el=>el.style.display=u.role==='admin'?'':'none');document.querySelectorAll('[data-finance-only]').forEach(el=>el.style.display=(u.role==='admin'||u.role==='finance')?'':'none');document.querySelectorAll('[data-finance-visible]').forEach(el=>el.style.display=(u.role==='admin'||u.role==='finance')?'':'none');document.querySelectorAll('.modulePanel').forEach(el=>{const mod=el.id;let allowed=false;if(u.role==='admin')allowed=true;else if(u.role==='finance')allowed=(mod==='cavalos'||mod==='financeiro');else allowed=perms.has(mod);el.dataset.allowed=allowed?'1':'0';});}
@@ -187,7 +187,7 @@ function closeProfessionalEdit(){document.getElementById('professionalEditModal'
 function saveProfessionalEdit(e){e.preventDefault();const id=Number(document.getElementById('editProId').value);const x=state.professionals.find(p=>p.id===id);if(!x)return;const email=document.getElementById('editProEmail').value.trim().toLowerCase();if(state.professionals.some(p=>p.id!==id&&String(p.email||'').toLowerCase()===email)){alert('Já existe outro usuário com este e-mail.');return}const role=document.getElementById('editProRole').value;x.name=document.getElementById('editProName').value.trim();x.email=email;x.phone=document.getElementById('editProPhone').value.trim();x.role=role;x.permissions=role==='Administrador'?['cadastro','sessoes','espera','aac','agenda','relatorios','equipe','cavalos','financeiro','config','auditoria']:role==='Diretor Financeiro'?['cavalos','financeiro']:[...document.querySelectorAll('#editPermBox input[name=editPerm]:checked')].map(c=>c.value);save('Permissões/dados do usuário atualizados: '+x.name);closeProfessionalEdit();render();alert('Usuário atualizado com sucesso.')}
 async function changePassword(e,force){e.preventDefault();const raw=sessionStorage.getItem('equoluz_session');if(!raw){alert('Faça login novamente.');return}const u=JSON.parse(raw);const next=document.getElementById('newPassword').value;const confirm=document.getElementById('confirmPassword').value;if(next.length<6){alert('A nova senha deve ter pelo menos 6 caracteres.');return}if(next!==confirm){alert('A confirmação da nova senha não confere.');return}try{if(window.equoluzSupabase&&u.authUserId){const {error}=await equoluzSupabase.auth.updateUser({password:next});if(error)throw error;const {error:pe}=await equoluzSupabase.from('profiles').update({force_change_password:false}).eq('id',u.authUserId);if(pe)throw pe;u.forceChange=false;sessionStorage.setItem('equoluz_session',JSON.stringify(u));save('Senha alterada no Supabase: '+u.email);closeSecurity();e.target.reset();alert('Senha alterada com sucesso.');return}let saved=state.professionals.find(x=>String(x.email||'').toLowerCase()===String(u.email).toLowerCase());if(saved){const current=document.getElementById('currentPassword').value;if(current!==saved.password){alert('Senha atual incorreta.');return}saved.password=next;saved.forceChange=false;u.forceChange=false}else{alert('Esta conta está vinculada ao Supabase e não possui cadastro local de demonstração.');return}sessionStorage.setItem('equoluz_session',JSON.stringify(u));save('Senha alterada: '+u.email);closeSecurity();e.target.reset();alert('Senha alterada com sucesso.')}catch(err){alert('Não foi possível alterar a senha: '+(err.message||err));}}
 function openSecurity(force=false){const raw=sessionStorage.getItem('equoluz_session');if(!raw)return;const u=JSON.parse(raw);const modal=document.getElementById('securityModal');if(!modal)return;modal.style.display='flex';document.getElementById('securityTitle').textContent=force?'Primeiro acesso · crie sua senha':'Segurança da conta';document.getElementById('securityHint').textContent=force?'Por segurança, altere a senha inicial antes de continuar.':'Altere sua senha sempre que precisar.';document.getElementById('currentPassword').value='';document.getElementById('newPassword').value='';document.getElementById('confirmPassword').value='';if(force){const cancel=document.getElementById('securityCancel');if(cancel)cancel.style.display='none';}else{const cancel=document.getElementById('securityCancel');if(cancel)cancel.style.display='inline-block';}document.getElementById('newPassword').focus()}
-function closeSecurity(){const m=document.getElementById('securityModal');if(m)m.style.display='none';}
+function closeSecurity(){const m=document.getElementById('securityModal');if(m)m.style.display='none';const raw=sessionStorage.getItem('equoluz_session');if(raw){const u=JSON.parse(raw);if(u.forceChange)setTimeout(()=>openSecurity(true),50)}}
 
 function addHorseCare(e,horseId){e.preventDefault();const h=state.horses.find(x=>x.id===horseId);if(!h)return;if(!h.cares)h.cares=[];const type=document.getElementById('careType-'+horseId).value;const product=document.getElementById('careProduct-'+horseId).value;const date=document.getElementById('careDate-'+horseId).value;const next=document.getElementById('careNext-'+horseId).value;const vet=document.getElementById('careVet-'+horseId).value;h.cares.push({id:Date.now(),type,product,date,next,vet});save('Cuidado veterinário registrado: '+h.name+' · '+type);e.target.reset();render()}
 function removeHorseCare(horseId,id){const h=state.horses.find(x=>x.id===horseId);if(!h)return;h.cares=(h.cares||[]).filter(x=>x.id!==id);save('Cuidado veterinário excluído: '+h.name);render()}
@@ -483,7 +483,7 @@ function generateReport(){
   html+='</div>';result.innerHTML=html;
 }
 function v21ExportFilteredRows(){const scope=document.getElementById('reportScope')?.value||'social';const person=document.getElementById('reportPerson')?.value||'';const professional=document.getElementById('reportProfessional')?.value||'';const horse=document.getElementById('reportHorse')?.value||'';const start=document.getElementById('reportStart')?.value||'';const end=document.getElementById('reportEnd')?.value||'';let rows=reportAllRows().filter(x=>x.scope===scope);if(person)rows=rows.filter(x=>x.person===person);if(professional)rows=rows.filter(x=>x.professional===professional);if(horse)rows=rows.filter(x=>x.horse===horse);if(start)rows=rows.filter(x=>x.date>=start);if(end)rows=rows.filter(x=>x.date<=end);rows.sort((a,b)=>(b.date||'').localeCompare(a.date||''));return {scope,rows};}
-function v21ExcelHtml(title,headers,rows){const escx=v=>String(v??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');return '<html><head><meta charset="UTF-8"></head><body><h2>'+escx(title)+'</h2><table border="1"><thead><tr>'+headers.map(h=>'<th>'+escx(h)+'</th>').join('')+'</tr></thead><tbody>'+rows.map(r=>'<tr>'+r.map(v=>'<td>'+escx(v)+'</td>').join('')+'</tr>').join('')+'</tbody></table>';}
+function v21ExcelHtml(title,headers,rows){const escx=v=>String(v??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');return '<html><head><meta charset="UTF-8"></head><body><h2>'+escx(title)+'</h2><table border="1"><thead><tr>'+headers.map(h=>'<th>'+escx(h)+'</th>').join('')+'</tr></thead><tbody>'+rows.map(r=>'<tr>'+r.map(v=>'<td>'+escx(v)+'</td>').join('')+'</tr>').join('')+'</tbody></table></body></html>';}
 function v21DownloadExcel(name,title,headers,rows){const html='\ufeff'+v21ExcelHtml(title,headers,rows);v21Download(name,html,'application/vnd.ms-excel;charset=utf-8');}
 function v21ExportFilteredExcel(){const q=v21ExportFilteredRows();const rows=q.rows.map(x=>[q.scope==='social'?'Instituto Equoluz':'Equoluz AAC',x.date,x.person,x.professional,x.horse||'',x.activity,x.evolution,x.notes||'']);v21DownloadExcel('equoluz-relatorio.xls','Relatório Equoluz',['Frente','Data','Participante','Profissional','Cavalo','Atividade','Evolução','Observações'],rows);}
 function v21ExportFilteredPdf(){const result=document.getElementById('reportResult');if(!result||!result.innerText.trim()||result.innerText.includes('Escolha os filtros')){generateReport();}setTimeout(()=>{const r=document.getElementById('reportResult');if(!r||!r.innerText.trim()){alert('Gere o relatório antes de exportar para PDF.');return}window.print();},80);}
@@ -701,7 +701,7 @@ loadSiteSettingsFromSupabase();
       if(typeof syncSocialWaitlistFromSupabase==='function')await syncSocialWaitlistFromSupabase().catch(()=>{});
       if(typeof syncAacInterestsFromSupabase==='function')await syncAacInterestsFromSupabase().catch(()=>{});
       applySession();showDashboard();
-      
+      if(session.forceChange)setTimeout(()=>openSecurity(true),150);
     }catch(err){
       try{await equoluzSupabase.auth.signOut()}catch(_){ }
       sessionStorage.removeItem('equoluz_session');
@@ -767,7 +767,7 @@ loadSiteSettingsFromSupabase();
   document.addEventListener('DOMContentLoaded',()=>setTimeout(()=>applySession(),100));
 })();
 </script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</body></html><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 /* EQUOLUZ V25 — conexão real com Supabase Auth + PostgreSQL (RLS).
    A chave usada no navegador é a Publishable Key. A Secret/Service Role nunca deve
@@ -814,16 +814,6 @@ async function syncChildrenFromSupabase(){
     }
   }
 
-  // Uma criança criada pela Lista Social não deve aparecer como criança ativa.
-  // O status é derivado da Lista Social carregada para esta sessão.
-  const socialChildIds=new Set((Array.isArray(state.social)?state.social:[])
-    .filter(s=>{
-      const st=String(s.status||s.etapa||'').trim().toLowerCase();
-      return st && st!=='em atendimento' && st!=='atendendo' && st!=='transferido para aac';
-    })
-    .map(s=>String(s.childId||s.child_id||''))
-    .filter(Boolean));
-
   state.children=(rows||[]).map(x=>{
     const link=links.find(l=>String(l.child_id)===String(x.id));
     const r=link ? respMap[link.responsible_id] : null;
@@ -833,7 +823,7 @@ async function syncChildrenFromSupabase(){
       birth:x.birth_date||'',
       guardian:r?.name||'',
       phone:r?.phone||'',
-      status:socialChildIds.has(String(x.id))?'Social':'Ativa',
+      status:'Ativa',
       entry:(x.created_at||'').slice(0,10),
       notes:x.notes||'',
       city:x.city||'',
@@ -961,7 +951,7 @@ async function login(e){
     sessionStorage.setItem('equoluz_session',JSON.stringify({email,role,name:saved.name,permissions,at:new Date().toISOString(),forceChange:!!saved.forceChange}));
     applySession();showDashboard();
     if(typeof addAudit==='function') addAudit('Login local compatível realizado · '+email);
-    
+    if(saved.forceChange)setTimeout(()=>openSecurity(true),150);
     return;
   }
   const demo={
@@ -1062,43 +1052,7 @@ window.addEventListener('DOMContentLoaded',()=>{
   window.updateSocialStatusV28=async function(id,status){
     try{if(window.equoluzSupabase){const {error}=await equoluzSupabase.from('social_waitlist').update({status,updated_at:new Date().toISOString()}).eq('id',id);if(error)throw error;await syncSocialWaitlistFromSupabase();}else{const x=state.social.find(x=>String(x.id)===String(id));if(x){x.status=status;x.etapa=status;save('Status social alterado: '+status);render();}}}catch(err){alert('Não foi possível alterar o status: '+(err.message||err));}
   };
-  window.deleteSocial=async function(id){
-    if(!confirm('Excluir esta família da Lista Social?'))return;
-    const item=state.social.find(x=>String(x.id)===String(id));
-    try{
-      if(window.equoluzSupabase){
-        if(!item){alert('Cadastro social não encontrado na tela.');return;}
-        const childId=item.childId||item.child_id||null;
-        const status=String(item.status||item.etapa||'').trim().toLowerCase();
-        const preserveChild=status==='em atendimento'||status==='atendendo'||status==='transferido para aac';
-
-        const {error}=await equoluzSupabase.from('social_waitlist').delete().eq('id',id);
-        if(error)throw error;
-
-        // Se era somente um cadastro social, remove também o registro infantil
-        // órfão. Se já virou atendimento/AAC, preserva a criança.
-        if(childId && !preserveChild){
-          const {data:otherSocial,error:oe}=await equoluzSupabase
-            .from('social_waitlist').select('id').eq('child_id',childId).limit(1);
-          if(oe)throw oe;
-          if(!otherSocial||!otherSocial.length){
-            const {error:ce}=await equoluzSupabase.from('children').delete().eq('id',childId);
-            if(ce)throw ce;
-          }
-        }
-        await syncSocialWaitlistFromSupabase();
-        await syncChildrenFromSupabase();
-      }else{
-        state.social=state.social.filter(x=>String(x.id)!==String(id));
-        if(item?.childId && !['em atendimento','atendendo','transferido para aac'].includes(String(item.status||item.etapa||'').trim().toLowerCase())){
-          state.children=state.children.filter(c=>String(c.id)!==String(item.childId));
-        }
-        save('Cadastro social excluído');
-        render();
-      }
-      alert('Cadastro da Lista Social excluído com sucesso.');
-    }catch(err){alert('Não foi possível excluir: '+(err.message||err));}
-  };
+  window.deleteSocial=async function(id){if(!confirm('Excluir esta família da Lista Social?'))return;try{if(window.equoluzSupabase){const {error}=await equoluzSupabase.from('social_waitlist').delete().eq('id',id);if(error)throw error;await syncSocialWaitlistFromSupabase();}else{state.social=state.social.filter(x=>String(x.id)!==String(id));save('Cadastro social excluído');render();}}catch(err){alert('Não foi possível excluir: '+(err.message||err));}};
   window.editSocial=async function(id){const x=state.social.find(s=>String(s.id)===String(id));if(!x)return;const guardian=promptEdit('Responsável:',x.responsavel);if(guardian===null)return;const phone=promptEdit('WhatsApp:',x.whatsapp);if(phone===null)return;const email=promptEdit('E-mail:',x.email);if(email===null)return;const child=promptEdit('Nome da criança:',x.crianca);if(child===null)return;const birth=promptEdit('Nascimento (AAAA-MM-DD):',x.nascimento);if(birth===null)return;const notes=promptEdit('Observações:',x.observacoes);if(notes===null)return;try{if(window.equoluzSupabase){if(x.childId){const {error:ce}=await equoluzSupabase.from('children').update({name:child,birth_date:birth||null,notes:notes||null}).eq('id',x.childId);if(ce)throw ce;}if(x.responsibleId){const {error:re}=await equoluzSupabase.from('responsibles').update({name:guardian,phone,email:email||null}).eq('id',x.responsibleId);if(re)throw re;}const {error:we}=await equoluzSupabase.from('social_waitlist').update({updated_at:new Date().toISOString()}).eq('id',x.id);if(we)throw we;await syncSocialWaitlistFromSupabase();}else{Object.assign(x,{responsavel:guardian,whatsapp:phone,email,crianca:child,nascimento:birth,observacoes:notes});save('Cadastro social editado');render();}alert('Cadastro da Lista Social atualizado.')}catch(err){alert('Não foi possível editar: '+(err.message||err));}};
 
   window.editAacClientV28=function(id){const c=getAacClients().find(x=>String(x.id)===String(id));if(!c)return;const name=promptEdit('Participante:',c.name);if(name===null)return;const responsible=promptEdit('Responsável:',c.responsible);if(responsible===null)return;const phone=promptEdit('WhatsApp:',c.phone);if(phone===null)return;const status=promptEdit('Status:',c.status);if(status===null)return;const notes=promptEdit('Observações:',c.notes);if(notes===null)return;Object.assign(c,{name,responsible,phone,status,notes});saveAacClients(getAacClients());save('Cliente particular editado: '+name);render();};
@@ -1125,7 +1079,7 @@ window.addEventListener('DOMContentLoaded',()=>{
     if(typeof baseRender==='function')baseRender();
     setTimeout(function(){
       /* Crianças */
-      const cl=document.getElementById('childList');if(cl&&Array.isArray(state.children)){const activeChildren=state.children.filter(x=>(x.status||'Ativa')==='Ativa');cl.innerHTML=activeChildren.length?activeChildren.map(x=>`<div class="record"><div style="display:flex;gap:7px;justify-content:flex-end">${btnEdit('editChild',x.id)}${btnDel('removeChildReal',x.id)}</div><b>${esc(x.name)}</b><div class="mini">Nascimento: ${esc(x.birth)} · Responsável: ${esc(x.guardian)} · WhatsApp: ${esc(x.phone)}</div><div class="mini">Situação: <b>${esc(x.status||'Ativa')}</b> · Entrada: ${esc(x.entry||'não informada')}</div><div>${esc(x.notes||'')}</div></div>`).join(''):'<div class="empty">Nenhuma criança cadastrada.</div>'}
+      const cl=document.getElementById('childList');if(cl&&Array.isArray(state.children)){cl.innerHTML=state.children.length?state.children.map(x=>`<div class="record"><div style="display:flex;gap:7px;justify-content:flex-end">${btnEdit('editChild',x.id)}${btnDel('removeChildReal',x.id)}</div><b>${esc(x.name)}</b><div class="mini">Nascimento: ${esc(x.birth)} · Responsável: ${esc(x.guardian)} · WhatsApp: ${esc(x.phone)}</div><div class="mini">Situação: <b>${esc(x.status||'Ativa')}</b> · Entrada: ${esc(x.entry||'não informada')}</div><div>${esc(x.notes||'')}</div></div>`).join(''):'<div class="empty">Nenhuma criança cadastrada.</div>'}
       /* Sessões */
       const sl=document.getElementById('sessionList');if(sl){sl.innerHTML=state.sessions.length?state.sessions.slice().sort((a,b)=>dateSort(b.date,a.date)).map(x=>`<div class="record"><div style="display:flex;gap:7px;justify-content:flex-end">${btnEdit('editSession',x.id)}${btnDel('deleteSession',x.id)}</div><b>${esc(x.date)} · ${esc(x.child)}</b><div class="mini">${esc(x.professional)} · Cavalo: ${esc(x.horse||'não informado')} · ${esc(x.activity)}</div><div>${esc(x.evolution)}</div></div>`).join(''):'<div class="empty">Nenhuma sessão registrada.</div>'}
       /* Lista social — mais antiga primeiro */
@@ -1146,6 +1100,7 @@ window.addEventListener('DOMContentLoaded',()=>{
   };
 })();
 </script>
+</body>
 <script>
 /* EQUOLUZ V26 — Lista Social conectada ao Supabase. */
 async function syncSocialWaitlistFromSupabase(){
@@ -1424,7 +1379,7 @@ function go(target){
   history.replaceState(null,'','#'+id);
 }
 </script>
-
+</html>
 
 <script>
 /* EQUOLUZ — CORREÇÃO DEFINITIVA DA ABA CRIANÇAS V2
@@ -1530,7 +1485,7 @@ function go(target){
   function paintChildren(){
     const box=document.getElementById('childList');
     if(!box||!Array.isArray(state.children))return;
-    const activeChildren=state.children.filter(x=>(x.status||'Ativa')==='Ativa'); box.innerHTML=activeChildren.length?activeChildren.map(x=>
+    box.innerHTML=state.children.length?state.children.map(x=>
       '<div class="record">'+
         '<div style="display:flex;gap:7px;justify-content:flex-end">'+
           '<button type="button" class="smallBtn js-child-edit" data-child-id="'+escLocal(x.id)+'">✏️ Editar</button>'+ 
@@ -1737,11 +1692,11 @@ function go(target){
         await pushChildrenToRelational();
         await saveCentral('migração inicial automática');
       }
-      if(typeof syncSocialWaitlistFromSupabase==='function')await syncSocialWaitlistFromSupabase().catch(()=>{});
       await syncChildrenFromSupabase();
+      if(typeof syncSocialWaitlistFromSupabase==='function')await syncSocialWaitlistFromSupabase().catch(()=>{});
       if(typeof syncAacInterestsFromSupabase==='function')await syncAacInterestsFromSupabase().catch(()=>{});
       applySession();showDashboard();
-      
+      if(session.forceChange)setTimeout(()=>openSecurity(true),150);
     }catch(err){try{await equoluzSupabase.auth.signOut()}catch(_){}sessionStorage.removeItem('equoluz_session');alert('Não foi possível carregar o sistema: '+(err.message||err));}
   };
 
@@ -1751,8 +1706,8 @@ function go(target){
     try{
       const session=await loadRealProfile(data.session.user);sessionStorage.setItem('equoluz_session',JSON.stringify(session));
       await loadCentralForSession();
-      if(typeof syncSocialWaitlistFromSupabase==='function')await syncSocialWaitlistFromSupabase().catch(()=>{});
       await syncChildrenFromSupabase();
+      if(typeof syncSocialWaitlistFromSupabase==='function')await syncSocialWaitlistFromSupabase().catch(()=>{});
       if(typeof syncAacInterestsFromSupabase==='function')await syncAacInterestsFromSupabase().catch(()=>{});
       applySession();showDashboard();
     }catch(err){console.warn('Sessão Supabase:',err.message||err);}
@@ -1778,5 +1733,190 @@ function go(target){
   });
 })();
 </script>
-</body>
-</html>
+
+<script>
+/* EQUOLUZ — CORREÇÃO FINAL: ações Social/AAC + indicadores por perfil */
+(function(){
+  const DELETED_KEY='equoluz_social_deleted_child_ids_v1';
+  function readDeleted(){
+    try{
+      const central=Array.isArray(state.socialDeletedChildIds)?state.socialDeletedChildIds:[];
+      const local=JSON.parse(localStorage.getItem(DELETED_KEY)||'[]');
+      return new Set([...central,...(Array.isArray(local)?local:[])].map(String));
+    }catch(e){return new Set(Array.isArray(state.socialDeletedChildIds)?state.socialDeletedChildIds.map(String):[])}
+  }
+  function writeDeleted(set){
+    const values=[...set].map(String);
+    state.socialDeletedChildIds=values;
+    try{localStorage.setItem(DELETED_KEY,JSON.stringify(values))}catch(e){}
+  }
+  function session(){try{return JSON.parse(sessionStorage.getItem('equoluz_session')||'null')}catch(e){return null}}
+  function activeChildren(){return (Array.isArray(state.children)?state.children:[]).filter(x=>String(x.status||'Ativa')==='Ativa')}
+  function socialWaiting(){return (Array.isArray(state.social)?state.social:[]).filter(x=>{
+    const s=String(x.status||x.etapa||'').trim().toLowerCase();
+    return s!=='atendendo' && s!=='encerrado';
+  })}
+  function applyChildClassification(){
+    const socialIds=new Set(socialWaiting().map(x=>String(x.childId||x.child_id||'')).filter(Boolean));
+    const deleted=readDeleted();
+    state.children=(Array.isArray(state.children)?state.children:[])
+      .filter(x=>!deleted.has(String(x.id)))
+      .map(x=>Object.assign({},x,{status:socialIds.has(String(x.id))?'Social':'Ativa'}));
+  }
+
+  /* Carrega Lista Social antes de Crianças. Isso corrige o contador do Diretor Financeiro. */
+  const oldSyncChildren=window.syncChildrenFromSupabase;
+  window.syncChildrenFromSupabase=async function(){
+    if(typeof window.syncSocialWaitlistFromSupabase==='function'){
+      try{await window.syncSocialWaitlistFromSupabase()}catch(e){console.warn('Lista Social antes das crianças:',e.message||e)}
+    }
+    if(typeof oldSyncChildren==='function') await oldSyncChildren();
+    applyChildClassification();
+    if(typeof window.render==='function')window.render();
+  };
+
+  /* Excluir uma família social também marca o child_id original como removido do cadastro ativo.
+     A marca fica persistida no navegador e no estado central via save/saveCentral, sem apagar dados ativos. */
+  window.deleteSocial=async function(id){
+    const item=(Array.isArray(state.social)?state.social:[]).find(x=>String(x.id)===String(id));
+    if(!item){alert('Cadastro da Lista Social não encontrado.');return;}
+    if(!confirm('Excluir esta família da Lista Social?'))return;
+    try{
+      const deleted=readDeleted();
+      if(item.childId)deleted.add(String(item.childId));
+      if(window.equoluzSupabase){
+        const {error}=await window.equoluzSupabase.from('social_waitlist').delete().eq('id',id);
+        if(error)throw error;
+      }
+      writeDeleted(deleted);
+      state.social=state.social.filter(x=>String(x.id)!==String(id));
+      state.children=(state.children||[]).filter(x=>!deleted.has(String(x.id)));
+      if(typeof save==='function')save('Cadastro social excluído');
+      if(typeof window.equoluzCentral?.save==='function'){
+        try{await window.equoluzCentral.save('Cadastro social excluído');}catch(e){console.warn('Central:',e.message||e)}
+      }
+      if(typeof window.syncSocialWaitlistFromSupabase==='function')await window.syncSocialWaitlistFromSupabase();
+      applyChildClassification();
+      if(typeof window.render==='function')window.render();
+      alert('Cadastro da Lista Social excluído com sucesso.');
+    }catch(err){alert('Não foi possível excluir: '+(err.message||err));}
+  };
+
+  /* Edição Social com evento direto e atualização das tabelas relacionadas. */
+  window.editSocial=async function(id){
+    const x=(Array.isArray(state.social)?state.social:[]).find(s=>String(s.id)===String(id));
+    if(!x){alert('Cadastro da Lista Social não encontrado.');return;}
+    const ask=(label,value)=>{const v=prompt(label,value==null?'':value);return v===null?null:v.trim()};
+    const guardian=ask('Responsável:',x.responsavel);if(guardian===null)return;
+    const phone=ask('WhatsApp:',x.whatsapp);if(phone===null)return;
+    const email=ask('E-mail:',x.email);if(email===null)return;
+    const child=ask('Nome da criança:',x.crianca);if(child===null)return;
+    const birth=ask('Nascimento (AAAA-MM-DD):',x.nascimento);if(birth===null)return;
+    const notes=ask('Observações:',x.observacoes);if(notes===null)return;
+    try{
+      if(window.equoluzSupabase){
+        if(x.childId){
+          const {error}=await window.equoluzSupabase.from('children').update({name:child,birth_date:birth||null,notes:notes||null,updated_at:new Date().toISOString()}).eq('id',x.childId);
+          if(error)throw error;
+        }
+        if(x.responsibleId){
+          const {error}=await window.equoluzSupabase.from('responsibles').update({name:guardian,phone,email:email||null}).eq('id',x.responsibleId);
+          if(error)throw error;
+        }
+        const {error}=await window.equoluzSupabase.from('social_waitlist').update({updated_at:new Date().toISOString()}).eq('id',x.id);
+        if(error)throw error;
+        await window.syncSocialWaitlistFromSupabase();
+      }else{
+        Object.assign(x,{responsavel:guardian,whatsapp:phone,email,crianca:child,nascimento:birth,observacoes:notes});
+      }
+      if(typeof save==='function')save('Cadastro social editado');
+      if(typeof window.render==='function')window.render();
+      alert('Cadastro da Lista Social atualizado com sucesso.');
+    }catch(err){alert('Não foi possível editar: '+(err.message||err));}
+  };
+
+  /* AAC: botão funciona por delegação, evitando problemas com onclick/reescrita do render. */
+  window.updateAacInterestStatusReal=async function(id,status){
+    if(!window.equoluzSupabase){alert('Conexão com o Supabase não carregada.');return;}
+    try{
+      const {error}=await window.equoluzSupabase.from('aac_interests').update({status:status,updated_at:new Date().toISOString()}).eq('id',id);
+      if(error)throw error;
+      if(typeof window.syncAacInterestsFromSupabase==='function')await window.syncAacInterestsFromSupabase();
+      alert('Interessado AAC marcado como '+status+'.');
+    }catch(err){alert('Não foi possível marcar o contato AAC: '+(err.message||err));}
+  };
+
+  function patchActions(){
+    const wl=document.getElementById('waitList');
+    if(wl){
+      wl.querySelectorAll('button[onclick*="editSocial"],button[onclick*="deleteSocial"]').forEach(btn=>{
+        const m=String(btn.getAttribute('onclick')||'').match(/(?:editSocial|deleteSocial)\((['"]?)(.*?)\1\)/);
+        if(!m)return;
+        const fn=String(btn.getAttribute('onclick')).startsWith('editSocial')?'edit':'delete';
+        btn.type='button';btn.removeAttribute('onclick');btn.dataset.socialAction=fn;btn.dataset.socialId=m[2];
+      });
+      if(!wl.dataset.equoluzActions){
+        wl.dataset.equoluzActions='1';
+        wl.addEventListener('click',function(ev){
+          const b=ev.target.closest('button[data-social-action]');if(!b)return;
+          ev.preventDefault();ev.stopPropagation();
+          const id=b.dataset.socialId;
+          if(b.dataset.socialAction==='edit')window.editSocial(id);else window.deleteSocial(id);
+        },true);
+      }
+    }
+    const aac=document.getElementById('aacList');
+    if(aac){
+      aac.querySelectorAll('button[onclick*="updateAacInterestStatusReal"]').forEach(btn=>{
+        const raw=String(btn.getAttribute('onclick')||'');
+        const m=raw.match(/updateAacInterestStatusReal\((['"])(.*?)\1\s*,\s*(['"])Contato\3\)/);
+        if(!m)return;
+        btn.type='button';btn.removeAttribute('onclick');btn.dataset.aacAction='contato';btn.dataset.aacId=m[2];
+      });
+      if(!aac.dataset.equoluzAacActions){
+        aac.dataset.equoluzAacActions='1';
+        aac.addEventListener('click',function(ev){
+          const b=ev.target.closest('button[data-aac-action="contato"]');if(!b)return;
+          ev.preventDefault();ev.stopPropagation();window.updateAacInterestStatusReal(b.dataset.aacId,'Contato');
+        },true);
+      }
+    }
+  }
+
+  /* Último render da cadeia: corrige indicadores e listas sem substituir o dashboard. */
+  const oldRender=window.render;
+  window.render=function(){
+    if(typeof oldRender==='function')oldRender();
+    applyChildClassification();
+    const active=activeChildren();
+    const wait=socialWaiting();
+    const mA=document.getElementById('mActive'),mW=document.getElementById('mWait');
+    if(mA)mA.textContent=String(active.length);
+    if(mW)mW.textContent=String(wait.length);
+    const cl=document.getElementById('childList');
+    if(cl){cl.innerHTML=active.length?active.map(x=>`<div class="record"><div style="display:flex;gap:7px;justify-content:flex-end"><button type="button" class="smallBtn" onclick="editChild(${JSON.stringify(x.id)})">✏️ Editar</button><button type="button" class="danger" onclick="removeChildReal(${JSON.stringify(x.id)})">Excluir</button></div><b>${esc(x.name)}</b><div class="mini">Nascimento: ${esc(x.birth)} · Responsável: ${esc(x.guardian)} · WhatsApp: ${esc(x.phone)}</div><div class="mini">Situação: <b>Ativa</b> · Entrada: ${esc(x.entry||'não informada')}</div><div>${esc(x.notes||'')}</div></div>`).join(''):'<div class="empty">Nenhuma criança ativa cadastrada.</div>'}
+    const sc=document.getElementById('sessionChild');
+    if(sc){const cur=sc.value;sc.innerHTML='<option value="">Selecione a criança</option>'+active.map(x=>`<option value="${String(x.id).replace(/"/g,'&quot;')}">${esc(x.name)}</option>`).join('');if(cur)sc.value=cur}
+    patchActions();
+  };
+
+  /* Recarrega os indicadores logo após login/refresh do Diretor Financeiro. */
+  async function refreshForCurrentSession(){
+    const u=session();if(!u)return;
+    try{
+      if(window.equoluzCentral?.load)await window.equoluzCentral.load();
+      if(typeof window.syncSocialWaitlistFromSupabase==='function')await window.syncSocialWaitlistFromSupabase().catch(()=>{});
+      if(typeof window.syncChildrenFromSupabase==='function'){
+        const original=window.syncChildrenFromSupabase;
+        // O wrapper acima já sincroniza Social antes das crianças.
+        await original();
+      }
+      if(typeof window.syncAacInterestsFromSupabase==='function' && (u.role==='admin'||u.role==='professional'))await window.syncAacInterestsFromSupabase().catch(()=>{});
+      if(typeof window.render==='function')window.render();
+    }catch(e){console.warn('Atualização do Dashboard:',e.message||e)}
+  }
+  window.addEventListener('DOMContentLoaded',()=>setTimeout(refreshForCurrentSession,900));
+  window.addEventListener('storage',()=>{if(session())setTimeout(()=>window.render&&window.render(),50)});
+})();
+</script>
+
